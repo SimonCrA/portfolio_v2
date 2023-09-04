@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import HorizontalCard from '../components/astro/HorizontalCard.astro'
+
+interface Videos {
+  kind: string
+  nextPageToken: string
+  regionCode: string
+  pageInfo: PageInfo
+  items: Item[]
+}
+
+interface Item {
+  kind: string
+  id: Id
+  snippet: Snippet
+}
+
+interface Snippet {
+  publishedAt: string
+  channelId: string
+  title: string
+  description: string
+  thumbnails: Thumbnails
+  channelTitle: string
+  liveBroadcastContent: string
+  publishTime: string
+}
+
+interface Thumbnails {
+  default: Default
+  medium: Default
+  high: Default
+}
+
+interface Default {
+  url: string
+  width: number
+  height: number
+}
+
+interface Id {
+  kind: string
+  videoId: string
+}
+
+interface PageInfo {
+  totalResults: number
+  resultsPerPage: number
+}
+
+const API_CALL = await fetch(import.meta.env.RAPID_API_URL + '?channelId=UCtTPHC06STvf4fDktedxxMA&part=snippet,id&order=date&maxResults=5', {
+  method: 'GET',
+  headers: {
+    'Content-type': 'application-json',
+    'X-RapidAPI-Key': import.meta.env.RAPID_API_KEY,
+    'X-RapidAPI-Host': 'youtube-v31.p.rapidapi.com',
+  },
+})
+const API_DATA: Videos = await API_CALL.json()
+---
+
+<BaseLayout title="Videos" sideBarActiveItemID="videos">
+  <div>
+    <div class="text-3xl w-full font-bold mb-5">Últimos Videos YT</div>
+    <p>Disfruta de los videos que comparto en mi canal.</p>
+  </div>
+
+  {
+    API_DATA.items.map((video: Item) => (
+      <>
+        <HorizontalCard
+          title={video.snippet.title}
+          img={video.snippet.thumbnails.medium.url}
+          desc={video.snippet.description}
+          url={'https://youtube.com/watch?v=' + video.id.videoId}
+          target="default"
+        />
+        <div class="divider my-0" />
+      </>
+    ))
+  }
+</BaseLayout>
