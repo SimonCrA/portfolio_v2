@@ -18,8 +18,6 @@ Los ciclos son fragmentos de código que se repiten hasta que una condición de 
 
 Al terminar de leer este post tendrás una idea más clara de lo que son los loops en javascript y cómo utilizarlo dependiendo del tipo de datos que tengas de entrada.
 
-> Si eres de los que va directo al grano, te invito a que te saltes la explicación y vayas al final, que hay una tabla dónde puedes ver de manera resumida la respuesta a cada una de estas preguntas.
-
 Imaginemos que tienes datos de usuarios guardados en un objeto, con estos conocimientos sabrás cuál es la manera más eficiente para buscar dentro de este objeto de usuarios, o si en cambio los datos están en un Arreglo sabrás cuál bucle es el más adecuado y así podrás elegir cuál te conviene más. Sin más rodeos empecemos ¡A programar!
 
 ## Bucle for y ¿cómo puedo usarlo?

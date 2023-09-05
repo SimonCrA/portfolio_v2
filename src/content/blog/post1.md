@@ -21,8 +21,6 @@ Los arreglos son una estructura de datos homogeneos que se almacenan de forma co
 
 Conocer todos estos métodos te ayudará no sólo a programar más rápido sino que te sentirás más cómodo al momento de resolver un problema, ya que la mayoría de los datos que deberás tratar a lo largo de tus proyectos estará organizada en arreglos. Sin más rodeos empecemos ¡A programar!
 
-> Si eres de los que va directo al grano, te invito a que te saltes la explicación y vayas al final, que hay una tabla dónde puedes ver de manera resumida la respuesta a cada una de estas preguntas.
-
 > Yo haré la explicación usando Javascript pero en la mayoría de los lenguajes tienes las mismas opciones para trabajar con arreglos sólo debes buscar cómo es la sintaxis ya que esto es lo que cambia.
 
 # ¿Cómo crear un arreglo?
