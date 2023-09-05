@@ -22,4 +22,21 @@ const { Content } = await entry.render()
 
 <PostLayout title={post.title} description={post.description} publishDate={post.publishDate} image={post.image} tags={post.tags}>
   <Content />
+  <script
+    src="https://giscus.app/client.js"
+    data-repo="simoncra/portfolio_v2"
+    data-repo-id="R_kgDOKPAG8g"
+    data-category="General"
+    data-category-id="DIC_kwDOKPAG8s4CZFkZ"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme="dark"
+    data-lang="es"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+  ></script>
 </PostLayout>
