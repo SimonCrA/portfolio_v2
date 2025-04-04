@@ -1,23 +1,46 @@
-import { defineConfig } from 'astro/config'
-import tailwind from '@astrojs/tailwind'
-import mdx from '@astrojs/mdx'
+// @ts-check
+import { defineConfig } from 'astro/config';
+import tailwindcss from '@tailwindcss/vite';
+import mdx from '@astrojs/mdx';
+import svelte from '@astrojs/svelte';
 
-import sitemap from '@astrojs/sitemap'
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    mdx(),
-    sitemap({
-      i18n: {
-        defaultLocale: 'es',
-        locales: {
-          en: 'en-US',
-          es: 'es-ES',
-          fr: 'fr-CA',
+    site: 'https://www.simonctech.com',
+    markdown: {
+        shikiConfig: {
+            theme: 'catppuccin-frappe',
         },
-      },
-    }),
-    tailwind(),
-  ],
-})
+        syntaxHighlight: 'shiki',
+        gfm: false, // GitHub Flavored Markdown
+        smartypants: true // Better typography
+    },
+
+    vite: {
+        plugins: [tailwindcss()]
+    },
+
+    integrations: [
+        mdx(),
+        svelte(),
+        sitemap({
+            // Optional: Customize for blog posts
+            changefreq: 'weekly',
+            priority: 0.8,
+            lastmod: new Date(),
+            // Filter out non-blog pages if needed
+            filter: (page) => page.includes('/blog/'),
+            i18n: {
+                defaultLocale: 'es',
+                locales: {
+                    en: 'en-US',
+                    es: 'es-ES',
+                    fr: 'fr-CA',
+                },
+            },
+        })
+    ]
+
+});

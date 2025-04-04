@@ -1,3 +1,5 @@
+# Mi portafolio
 
+---
 
-## 👀 Este es mi portafolio
+Puedes ver mis proyectos, videos y blog posts 

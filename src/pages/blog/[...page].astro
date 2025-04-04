@@ -39,7 +39,7 @@ interface Post {
           <>
             <HorizontalCard
               title={post.data.title}
-              img={'/projects/patterns' + (Math.floor(Math.random() * 10) + 1) + '.png'}
+              img={post.data.image}
               desc={post.data.description}
               url={'/blog/' + post.slug}
               target="_self"

@@ -1,33 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import HorizontalCard from '../components/astro/HorizontalCard.astro'
-
-interface Project {
-  id: number
-  name: string
-  full_name: string
-  private: boolean
-  owner: Owner
-  html_url: string
-  description?: string
-}
-
-interface Owner {
-  login: string
-  id: number
-  node_id: string
-  avatar_url: string
-}
-
-var myHeaders = new Headers()
-myHeaders.append('Authorization', `Basic ${import.meta.env.GITHUB_API_SECRET_KEY}`)
-
-const API_CALL = await fetch(import.meta.env.GITHUB_API_URL + '?per_page=5&sort=-1', {
-  method: 'GET',
-  headers: myHeaders,
-})
-
-const API_DATA: Project[] = await API_CALL.json()
+import GhProjects from '../components/svelte/GhProjects.svelte'
 ---
 
 <BaseLayout title="Proyectos" sideBarActiveItemID="projects">
@@ -40,18 +13,6 @@ const API_DATA: Project[] = await API_CALL.json()
     <a class="btn btn-neutral" href="https://www.fiverr.com/simoncra" target="_blank">Contrátame 📋</a>
   </div>
   <div class="divider my-0"></div>
-  {
-    API_DATA.map((project: Project) => (
-      <>
-        <HorizontalCard
-          title={project.name}
-          img={'/projects/patterns' + (Math.floor(Math.random() * 10) + 1) + '.png'}
-          desc={project.description}
-          url={project.html_url}
-          target="default"
-        />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
-</BaseLayout>
+
+  <GhProjects client:load />
+  </BaseLayout>
