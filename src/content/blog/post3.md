@@ -86,7 +86,7 @@ El iterador en este caso pasa a adquirir el valor del key de cada valor del obje
 
 Si queremos imprimir los key del objeto pues imprimimos el la variable iteradora que en este caso es "i", pero si lo que nos interesa es el valor de la propiedad llamamos al objeto y lo ubicamos con el iterador (que será el key) en la posición exacta que queremos.
 
-# for...of i ¿Cómo puedo usarlo?
+# for...of y ¿Cómo puedo usarlo?
 
 El ciclo for...of va a través de los valores de un objeto que sea iterable incluyendo (Array, Map, Set...), la estructura es cómo sigue:
 
