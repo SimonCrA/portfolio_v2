@@ -34,7 +34,7 @@ Nos ubicamos en el directorio de la imagen y procedemos con la conversión.
 ### Windows
 
 ```powershell
-C:\libwebp\bin\cwebp.exe -q prueba.png -o prueba.webp
+C:\libwebp\bin\cwebp.exe -q 80 prueba.png -o prueba.webp
 ```
 
 ### Linux
