@@ -9,6 +9,7 @@ image: '/posts/post4.webp'
 
 # Introducción
 
+
 Al igual que todos en algún momentos de nuestra carrera profesional necesitamos actualizar nuestro curriculum, y esta he tenido que hacerla en varias ocasiones pero estaba cansado de tener que modificarlo y cambiar en todos los lugares dónde lo tenía también, quería algo más centralizado y dinámico, que me permitiera actualizarlo y además se reflejara en todos los lugares que me interesaban. 
 
 Hoy te enseñaré cómo hice para crear mi CV, subirlo a github y que al momento de subirlo me generara de una vez un link con el pdf y la posibilidad de poder descargarlo. Este link luego lo puedes poner en tu portafolio o cualquier lugar de interés.

@@ -1,3 +1,5 @@
+export const prerender = false;
+
 export async function GET() {
     const RAPID_API_URL = import.meta.env.RAPID_API_URL
     const RAPID_API_KEY = import.meta.env.RAPID_API_KEY
@@ -26,7 +28,6 @@ export async function GET() {
             }
         });
     } catch (error) {
-        console.log(error)
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: {

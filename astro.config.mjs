@@ -6,9 +6,12 @@ import svelte from '@astrojs/svelte';
 
 import sitemap from '@astrojs/sitemap';
 
+import vercel from '@astrojs/vercel';
+
 // https://astro.build/config
 export default defineConfig({
     site: 'https://www.simonctech.com',
+
     markdown: {
         shikiConfig: {
             theme: 'catppuccin-frappe',
@@ -41,6 +44,7 @@ export default defineConfig({
                 },
             },
         })
-    ]
+    ],
 
+    adapter: vercel()
 });

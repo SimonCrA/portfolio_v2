@@ -1,3 +1,5 @@
+export const prerender = false;
+
 export async function GET() {
     const GITHUB_API_URL = import.meta.env.GITHUB_API_URL
     const GITHUB_API_SECRET_KEY = import.meta.env.GITHUB_API_SECRET_KEY

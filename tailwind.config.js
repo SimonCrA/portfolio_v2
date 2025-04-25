@@ -4,13 +4,5 @@ export default {
 	theme: {
 		extend: {},
 	},
-	//plugins: [
-	//	require('@tailwindcss/typography'),
-	//	require('daisyui')
-	//],
-	//daisyui: {
-	//	themes: ['light', 'coffee', 'dracula', 'night'],
-	//	darkTheme: 'light',
-	//	logs: false,
-	//},
+
 }
