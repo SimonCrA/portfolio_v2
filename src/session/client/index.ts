@@ -5,6 +5,7 @@ import { bind, listen } from './keys'
 // The prompt module registers its bindings first so the help popup can shadow the page keys.
 import { message } from './prompt'
 import { go } from './navigation'
+import './search'
 
 export { go, message }
 
