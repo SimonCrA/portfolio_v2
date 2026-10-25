@@ -29,12 +29,12 @@ links:
   - { label: Linktree, href: 'https://linktr.ee/simonctech' }
 ---
 
-Empecé a programar por el hardware. Con un Arduino, y después con un ESP32, mi meta era automatizar mi casa: luces, sensores y todo lo que se pudiera conectar.
+Empecé a programar con hardware. Primero con un Arduino y después con un ESP32, quería automatizar mi casa: las luces, los sensores y todo lo que se pudiera conectar.
 
-Luego llegó la pandemia. Me quedé encerrado en la casa de mi padre, con mucho tiempo y la necesidad de reinventarme, así que me puse a estudiar desarrollo web. Me gustó tanto que me quedé.
+Luego llegó la pandemia y pasé el encierro en la casa de mi padre. Tenía tiempo y necesitaba reinventarme, así que me puse a estudiar desarrollo web. Me gustó, y desde entonces me dedico a eso.
 
-Lo que más disfruto es construir cosas que mejoran la vida de la gente. Saber que lo que programo ayuda a que los venezolanos tengan una mejor atención médica es lo que me sienta frente a la terminal cada día.
+Me gusta construir software que la gente usa en su día a día. Lo que hago ayuda a que los venezolanos reciban mejor atención médica, y eso es lo que más me motiva.
 
-Fuera del trabajo sigo experimentando. Estoy armando mi home lab y estudiando ingeniería de IA.
+Fuera del trabajo estoy armando un home lab y estudiando ingeniería de IA.
 
-Este sitio es donde comparto lo que aprendo. Pronto retomo el blog y los videos para hablar de mis perspectivas, las herramientas que uso, cómo programo en tiempos de IA y algunos consejos.
+Aquí escribo sobre lo que aprendo. Pronto retomo el blog y los videos con temas como las herramientas que uso, mi setup y cómo programo con agentes de IA.
