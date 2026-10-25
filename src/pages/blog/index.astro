@@ -1,0 +1,102 @@
+---
+import SessionLayout from '../../layouts/SessionLayout.astro'
+import PixelArt from '../../components/session/PixelArt.astro'
+import { KIND_ICON } from '../../session/icons'
+import { getCollection } from 'astro:content'
+
+const posts = (await getCollection('blog')).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+---
+
+<SessionLayout current="blog" title="Blog | Simonctech" description="Posts de Simón sobre lo que construye y aprende.">
+  <main class="window">
+    <section class="pane is-active" aria-labelledby="pane-blog">
+      <h2 class="pane-title" id="pane-blog">blog</h2>
+      <p class="prompt-line">
+        <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>ls -lt blog/</span>
+      </p>
+      <ol class="list" data-list>
+        {
+          posts.map((post) => (
+            <li data-search={[post.data.title, post.data.description, ...post.data.tags].join(' ')}>
+              <a class="row" href={`/blog/${post.slug}`}>
+                <PixelArt name={KIND_ICON.post} scale={2} />
+                <span class="main">
+                  <span class="title">{post.data.title}</span>
+                  <span class="summary">{post.data.description}</span>
+                  <span class="tags">{post.data.tags.map((t) => `#${t}`).join(' ')}</span>
+                </span>
+                <span class="meta">
+                  <span class="kind">post</span>
+                  <time datetime={post.data.publishDate.toISOString()}>{fmtDate(post.data.publishDate)}</time>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </main>
+</SessionLayout>
+
+<style>
+  .list {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    gap: 0 12px;
+    align-items: start;
+    padding: 10px 6px;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .row:hover,
+  .row:focus-visible {
+    border-left-color: var(--accent);
+    background: var(--bg-2);
+  }
+  .main {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .title {
+    font-weight: 700;
+  }
+  .row:hover .title {
+    color: var(--accent);
+  }
+  .summary {
+    color: var(--dim);
+    font-size: 13.5px;
+  }
+  .tags {
+    color: var(--blue);
+    font-size: 13px;
+  }
+  .meta {
+    display: grid;
+    justify-items: end;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .kind {
+    color: var(--aqua);
+  }
+  time {
+    color: var(--dim);
+  }
+  @media (max-width: 560px) {
+    .meta {
+      grid-column: 2;
+      grid-row: 2;
+      display: flex;
+      gap: 10px;
+    }
+  }
+</style>

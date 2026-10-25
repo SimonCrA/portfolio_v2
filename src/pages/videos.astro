@@ -1,14 +1,21 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import YtVideos from '../components/svelte/YtVideos.svelte'
+import SessionLayout from '../layouts/SessionLayout.astro'
 ---
 
-<BaseLayout title="Videos" sideBarActiveItemID="videos">
-  <div>
-    <div class="text-3xl w-full font-bold mb-5">Últimos Videos YT</div>
-    <p>Disfruta de los videos que comparto en mi canal.</p>
-  </div>
-  <div class="divider my-0"></div>
+<SessionLayout current="videos" title="Videos | Simonctech">
+  <main class="window">
+    <section class="pane is-active" aria-labelledby="pane-videos">
+      <h2 class="pane-title" id="pane-videos">videos</h2>
+      <p class="prompt-line">
+        <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>ls -lt videos/</span>
+      </p>
+      <p class="out empty" data-empty>Los Videos llegarán pronto: aparecerán solos desde el canal de YouTube.</p>
+    </section>
+  </main>
+</SessionLayout>
 
-  <YtVideos client:load />
-</BaseLayout>
+<style>
+  .empty {
+    margin-top: 12px;
+  }
+</style>
