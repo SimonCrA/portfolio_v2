@@ -1,6 +1,6 @@
 ---
 name: Simón Clemente
-intro: Ingeniero de software y desarrollador backend con habilidades en frontend. Escribo y grabo sobre programación, y también tengo experiencia en el desarrollo de hardware con IoT. Acompáñame mientras exploramos lo que construyo.
+intro: Ingeniero de software fullstack y geek de la tecnología. Trabajo en Nueve Once, donde digitalizamos y mejoramos los servicios de urgencias para los venezolanos.
 now: Rediseñando este sitio desde cero.
 uses:
   - { what: Editor, value: Neovim }
