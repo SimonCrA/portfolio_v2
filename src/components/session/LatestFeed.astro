@@ -2,6 +2,7 @@
 // The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only.
 // Videos link out to YouTube, so their rows open in a new tab.
 import { getSortedPosts } from '../../session/posts'
+import PromptLine from './PromptLine.astro'
 import { getSortedProjects } from '../../session/projects'
 import { getVideos } from '../../session/videos'
 import { fmtDate } from '../../session/date'
@@ -39,18 +40,17 @@ const videosSource: FeedSource = async () =>
 
 const feed = await buildFeed([postsSource, projectsSource, videosSource])
 const external = (href: string) => (href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})
-const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
 <section class="pane pane-latest" aria-label="Últimos">
   <h2 class="pane-title">últimos</h2>
   <div class="latest-scroll pane-scroll" data-latest-scroll data-scroll tabindex="0" aria-label="Lista de lo último">
-    <p class="prompt-line" set:html={prompt('ls -lt ultimos/')} />
-    <ol class="latest-list" data-list>
+    <PromptLine cmd="ls -lt ultimos/" />
+    <ol class="entry-list latest-list" data-list>
       {
         feed.map((item) => (
           <li>
-            <a class="latest-row" href={item.href} data-kind={item.kind} {...external(item.href)}>
+            <a class="entry-row latest-row" href={item.href} data-kind={item.kind} {...external(item.href)}>
               <PixelArt name={item.icon ?? KIND_ICON[item.kind]} scale={2} />
               <span class="main">
                 <span class="title">{item.title}</span>
@@ -69,51 +69,17 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 </section>
 
 <style>
-  .latest-scroll .prompt-line {
+  .latest-scroll :global(.prompt-line) {
     margin-top: 0;
   }
   .latest-list {
     margin: 0;
-    padding: 0;
-    list-style: none;
   }
-  .latest-row {
-    display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) auto;
-    gap: 0 12px;
-    align-items: start;
-    padding: 10px 6px;
-    border-left: 2px solid transparent;
-    text-decoration: none;
-  }
-  .latest-row:hover,
-  .latest-row:focus-visible {
-    border-left-color: var(--accent);
-    background: var(--bg-2);
-  }
-  .main {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-  }
-  .title {
-    font-weight: 700;
-  }
+  /* The feed is narrow: summaries stay on one line. */
   .summary {
-    color: var(--dim);
-    font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .meta {
-    display: grid;
-    justify-items: end;
-    font-size: 0.8667rem;
-    white-space: nowrap;
-  }
-  time {
-    color: var(--dim);
   }
   .kind-post {
     color: var(--aqua);
@@ -129,17 +95,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     .latest-scroll {
       max-height: 70vh;
       overflow-y: auto;
-    }
-  }
-  @media (max-width: 560px) {
-    .latest-row {
-      grid-template-columns: 32px minmax(0, 1fr);
-    }
-    .meta {
-      grid-column: 2;
-      grid-row: 2;
-      display: flex;
-      gap: 10px;
     }
   }
 </style>

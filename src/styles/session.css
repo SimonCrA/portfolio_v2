@@ -405,6 +405,70 @@ a {
   flex: none;
 }
 
+/* ---------- entry lists: Blog, Proyectos, Videos and the Latest feed ---------- */
+/* One row per entry: icon or thumbnail, the text, and the meta column on the right. Pages only
+   restyle what differs (colours, the icon column). */
+.entry-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.entry-row {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+  gap: 0 12px;
+  align-items: start;
+  padding: 10px 6px;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.entry-row:hover,
+.entry-row:focus-visible {
+  border-left-color: var(--accent);
+  background: var(--bg-2);
+}
+.entry-row .main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.entry-row .title {
+  font-weight: 700;
+}
+.entry-row:hover .title {
+  color: var(--accent);
+}
+.entry-row .summary {
+  color: var(--dim);
+  font-size: 0.9rem;
+}
+.entry-row .meta {
+  display: grid;
+  justify-items: end;
+  font-size: 0.8667rem;
+  white-space: nowrap;
+}
+.entry-row time {
+  color: var(--dim);
+}
+.entry-empty {
+  margin: 16px 0;
+  color: var(--dim);
+}
+@media (max-width: 560px) {
+  .entry-row {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+  }
+  .entry-row .meta {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 12px;
+  }
+}
+
 /* ---------- lists: selection cursor & scroll indicators ---------- */
 /* Doubled attribute selector: outranks the pages' scoped `.row` padding. */
 [data-list][data-list] > li > a {

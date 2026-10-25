@@ -1,6 +1,8 @@
 // Loads the single Sobre mí entry. Every page showing its name, intro or Now reads it from here.
 import { getEntry } from 'astro:content'
 import { assertNoPlaceholder } from './placeholder'
+// Loaded for its guard against test switches in a Vercel build.
+import './fixtures'
 
 export async function getAbout() {
   // The placeholder guard's own test swaps in a Sobre mí whose body repeats the intro.

@@ -22,8 +22,14 @@ const FIXTURE_VIDEOS: Video[] = [
   { id: 'fixture-short', title: 'Short de prueba (e2e-fixture)', url: 'https://www.youtube.com/shorts/fixture-short', date: new Date('2001-04-01'), views: 7, short: true, thumbnail: '/posts/post2.webp' },
 ]
 
-const decode = (s: string) =>
-  s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+const NAMED: Record<string, string> = { lt: '<', gt: '>', quot: '"', apos: "'", amp: '&' }
+/** XML entities to text in one pass, so `&amp;lt;` stays `&lt;` instead of becoming `<`. */
+export const decode = (s: string) =>
+  s.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, name: string) =>
+    name[0] === '#'
+      ? String.fromCodePoint(name[1].toLowerCase() === 'x' ? parseInt(name.slice(2), 16) : Number(name.slice(1)))
+      : (NAMED[name.toLowerCase()] ?? match),
+  )
 const tag = (xml: string, name: string) => xml.match(new RegExp(`<${name}>([^<]*)</${name}>`))?.[1] ?? ''
 
 /** The feed's entries, newest first. Hashtags are dropped from titles: on the site they are noise. */
@@ -47,9 +53,9 @@ export function parseFeed(xml: string): Video[] {
     .sort((a, b) => b.date.valueOf() - a.date.valueOf())
 }
 
-/** Read the feed now. Throws when YouTube does not answer. */
+/** Read the feed now. Throws when YouTube does not answer within 8 seconds. */
 export async function fetchVideos(): Promise<Video[]> {
-  const r = await fetch(FEED_URL)
+  const r = await fetch(FEED_URL, { signal: AbortSignal.timeout(8000) })
   if (!r.ok) throw new Error(`YouTube feed: HTTP ${r.status}`)
   return parseFeed(await r.text())
 }

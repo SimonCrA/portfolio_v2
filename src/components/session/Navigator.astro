@@ -2,6 +2,7 @@
 // The `eza --icons ~/` pane: one entry per section plus cv.pdf, with a `tree` preview of what the
 // hovered or focused entry holds (script below). Without JS the blog preview stays.
 import { getSortedPosts } from '../../session/posts'
+import PromptLine from './PromptLine.astro'
 import { getSortedProjects } from '../../session/projects'
 import { getVideos } from '../../session/videos'
 import { fmtDate } from '../../session/date'
@@ -57,7 +58,6 @@ const entries: Entry[] = [
   { key: 'sobre-mi', name: 'sobre-mi/', meta: 'quién soy', href: route('sobre-mi'), items: [{ a: 'ahora', b: about.now }] },
   { key: 'cv', name: 'cv.pdf', meta: 'descargar', href: CV_URL, file: true, items: [{ a: 'pdf', b: 'Mi CV, compilado desde LaTeX con GitHub Actions.' }] },
 ]
-const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
 <section class="pane pane-nav" aria-label="Navegador" data-navigator>
@@ -86,7 +86,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       {
         entries.map((e) => (
           <div data-preview={e.key} hidden={e.key !== 'blog'}>
-            <p class="prompt-line" set:html={prompt(`tree ${e.name}`)} />
+            <PromptLine cmd={`tree ${e.name}`} />
             <ul class="tree">
               {e.items.map((it, i) => (
                 <li>

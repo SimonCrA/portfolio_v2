@@ -3,9 +3,9 @@
 // The build renders the list (it works without JavaScript); after load, the script below swaps in the
 // fresh list from /api/videos.json when it differs (ADR 0003).
 import SessionLayout from '../layouts/SessionLayout.astro'
-import { fmtDate } from '../session/date'
+import PromptLine from '../components/session/PromptLine.astro'
+import VideoRow from '../components/session/VideoRow.astro'
 import { CHANNEL_URL, getVideos } from '../session/videos'
-import { viewsLabel } from '../session/videos-format'
 
 const videos = await getVideos()
 ---
@@ -14,36 +14,15 @@ const videos = await getVideos()
   <main class="window">
     <section class="pane is-active" aria-labelledby="pane-videos">
       <h2 class="pane-title" id="pane-videos">videos</h2>
-      <p class="prompt-line">
-        <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>ls -lt videos/</span>
-      </p>
+      <PromptLine cmd="ls -lt videos/" search />
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de videos">
-        {
-          videos.length > 0 ? (
-            <ol class="list" data-list data-videos>
-              {videos.map((v) => (
-                <li data-id={v.id}>
-                  <a class="row" href={v.url} target="_blank" rel="noopener">
-                    <img class="thumb" src={v.thumbnail} alt="" width="320" height="180" loading="lazy" decoding="async" />
-                    <span class="main">
-                      <span class="title">{v.title}</span>
-                      <span class="where">youtube.com/{v.short ? 'shorts' : 'watch'}</span>
-                    </span>
-                    <span class="meta">
-                      <span class="kind">{v.short ? 'short' : 'video'}</span>
-                      <span class="views">{viewsLabel(v.views)}</span>
-                      <time datetime={v.date.toISOString()}>{fmtDate(v.date)}</time>
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p class="out empty" data-empty>
-              No pude traer los videos esta vez. Míralos directamente en <a href={CHANNEL_URL} target="_blank" rel="noopener">el canal de YouTube</a>.
-            </p>
-          )
-        }
+        <ol class="entry-list" data-list data-videos>
+          {videos.map((video) => <VideoRow video={video} />)}
+        </ol>
+        <template data-video-row><VideoRow /></template>
+        <p class="out entry-empty" data-videos-empty hidden={videos.length > 0}>
+          No pude traer los videos esta vez. Míralos directamente en <a href={CHANNEL_URL} target="_blank" rel="noopener">el canal de YouTube</a>.
+        </p>
       </div>
     </section>
   </main>
@@ -64,17 +43,17 @@ const videos = await getVideos()
     thumbnail: string
   }
 
+  const signature = (v: Pick<Video, 'id' | 'title' | 'views'>) => `${v.id}|${v.title}|${v.views}`
+
   // Rebuild the rows from fresh data. Every value goes in through textContent or attributes.
-  function render(list: HTMLElement, videos: Video[]) {
-    const model = list.querySelector('li')
-    if (!model) return
+  function render(list: HTMLElement, model: HTMLElement, videos: Video[]) {
+    const selected = list.querySelector<HTMLElement>('a[aria-current="true"]')?.closest('li')?.dataset.id
     list.replaceChildren(
       ...videos.map((v) => {
         const li = model.cloneNode(true) as HTMLElement
         li.dataset.id = v.id
-        const a = li.querySelector('a')!
-        a.href = v.url
-        a.removeAttribute('aria-current')
+        li.dataset.signature = signature(v)
+        li.querySelector('a')!.href = v.url
         li.querySelector('img')!.src = v.thumbnail
         li.querySelector('.title')!.textContent = v.title
         li.querySelector('.where')!.textContent = `youtube.com/${v.short ? 'shorts' : 'watch'}`
@@ -86,100 +65,26 @@ const videos = await getVideos()
         return li
       }),
     )
+    // Keep the cursor on the same Video when it is still there.
+    const keep = [...list.querySelectorAll<HTMLElement>(':scope > li')].find((li) => li.dataset.id === selected)
+    keep?.querySelector('a')?.setAttribute('aria-current', 'true')
     refreshLists()
   }
 
   document.addEventListener('astro:page-load', async () => {
     const list = document.querySelector<HTMLElement>('[data-videos]')
-    if (!list) return
+    const model = document.querySelector<HTMLTemplateElement>('[data-video-row]')?.content.firstElementChild as HTMLElement | null
+    if (!list || !model) return
     try {
       const r = await fetch('/api/videos.json')
       if (!r.ok) return
       const videos: Video[] = await r.json()
-      const shown = [...list.querySelectorAll<HTMLElement>(':scope > li')].map((li) => li.dataset.id).join()
-      if (videos.length && videos.map((v) => v.id).join() !== shown) render(list, videos)
+      if (!videos.length) return
+      const shown = [...list.querySelectorAll<HTMLElement>(':scope > li')].map((li) => li.dataset.signature ?? '').join()
+      if (videos.map(signature).join() !== shown) render(list, model, videos)
+      document.querySelector<HTMLElement>('[data-videos-empty]')!.hidden = true
     } catch {
       // Offline or the endpoint failed: the list from the build stays.
     }
   })
 </script>
-
-<style>
-  .list {
-    margin: 8px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .empty {
-    margin: 16px 0;
-    color: var(--dim);
-  }
-  .row {
-    display: grid;
-    grid-template-columns: 9rem minmax(0, 1fr) auto;
-    gap: 0 12px;
-    align-items: start;
-    padding: 10px 6px;
-    border-left: 2px solid transparent;
-    text-decoration: none;
-  }
-  .row:hover,
-  .row:focus-visible {
-    border-left-color: var(--accent);
-    background: var(--bg-2);
-  }
-  .thumb {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    border: 1px solid var(--line);
-    background: var(--bg-2);
-  }
-  .row:hover .thumb,
-  .row:focus-visible .thumb {
-    border-color: var(--accent);
-  }
-  .main {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  .title {
-    font-weight: 700;
-  }
-  .row:hover .title {
-    color: var(--accent);
-  }
-  .where {
-    color: var(--dim);
-    font-size: 0.8667rem;
-  }
-  .meta {
-    display: grid;
-    justify-items: end;
-    font-size: 0.8667rem;
-    white-space: nowrap;
-  }
-  .kind {
-    color: var(--orange);
-  }
-  .views,
-  time {
-    color: var(--dim);
-  }
-  @media (max-width: 560px) {
-    .row {
-      grid-template-columns: 6rem minmax(0, 1fr);
-    }
-    .meta {
-      grid-column: 2;
-      grid-row: 2;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0 12px;
-    }
-  }
-</style>

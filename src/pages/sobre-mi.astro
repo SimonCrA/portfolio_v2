@@ -2,6 +2,7 @@
 // Window 4: Sobre mí, fed by src/content/about/sobre-mi.md. A `glow` reader holds the story; side
 // panes hold Now, the setup as a `tree`, and the links. On wide screens it splits like tmux.
 import SessionLayout from '../layouts/SessionLayout.astro'
+import PromptLine from '../components/session/PromptLine.astro'
 import PixelArt from '../components/session/PixelArt.astro'
 import Reader from '../components/session/Reader.astro'
 import { CV_URL } from '../session/windows'
@@ -12,7 +13,6 @@ const entry = await getAbout()
 const { name, intro, now, nowUpdated, uses, links } = entry.data
 const { Content } = await entry.render()
 
-const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
 <SessionLayout current="sobre-mi" title={`Sobre mí | ${name}`}>
@@ -26,7 +26,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     <div class="side">
       <section class="pane" aria-labelledby="about-now">
         <h2 class="pane-title" id="about-now">ahora</h2>
-        <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
+        <PromptLine cmd="cat ahora.txt" />
         <p class="out" data-now>{now}</p>
         <p class="stamp">
           actualizado el <time datetime={nowUpdated.toISOString().slice(0, 10)} data-now-updated>{fmtDate(nowUpdated)}</time>
@@ -36,7 +36,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       <section class="pane" aria-labelledby="about-uses">
         <h2 class="pane-title" id="about-uses">con qué trabajo</h2>
         <div class="pane-scroll" tabindex="0" aria-label="Setup">
-          <p class="prompt-line" set:html={prompt('tree setup/')} />
+          <PromptLine cmd="tree setup/" />
           <div class="tree">
             <p class="root">setup/</p>
             {
@@ -61,7 +61,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 
       <section class="pane" aria-labelledby="about-links">
         <h2 class="pane-title" id="about-links">dónde encontrarme</h2>
-        <p class="prompt-line" set:html={prompt('ls enlaces/')} />
+        <PromptLine cmd="ls enlaces/" />
         <ul class="links">
           {
             links.map((l) => (
@@ -123,7 +123,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     align-content: start;
     min-width: 0;
   }
-  .side .prompt-line {
+  .side :global(.prompt-line) {
     margin-top: 0;
   }
   .stamp {

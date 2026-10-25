@@ -7,6 +7,7 @@
 // otherwise the page itself scrolls and the position label is computed against the viewport.
 import { bind } from './keys'
 import { registerCommand, closePrompt, message } from './prompt'
+import { perFrame } from './frame'
 
 const LIST = '[data-list]'
 const ROW = 'li:not([hidden]) > a'
@@ -124,8 +125,9 @@ document.addEventListener('astro:page-load', () => {
   refreshLists()
 })
 // `scroll` does not bubble: the capture phase catches the window and every scroll box with one listener.
-document.addEventListener('scroll', refreshLists, { capture: true, passive: true })
-addEventListener('resize', refreshLists)
+const refreshSoon = perFrame(refreshLists)
+document.addEventListener('scroll', refreshSoon, { capture: true, passive: true })
+addEventListener('resize', refreshSoon)
 
 // `pointermove`, not `pointerover`: a row scrolling under a still mouse must not steal the cursor.
 document.addEventListener('pointermove', (e) => {

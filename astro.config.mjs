@@ -18,14 +18,14 @@ export default defineConfig({
                     // Wrap each code block so the reader can put its language in the border (like a
                     // pane title) and a copy button, outside the block's horizontal scroll.
                     root(root) {
-                        root.children = [
+                        root.children = /** @type {any} */ ([
                             {
                                 type: 'element',
                                 tagName: 'div',
                                 properties: { className: ['code-block'], dataLang: this.options.lang },
                                 children: root.children,
                             },
-                        ];
+                        ]);
                     },
                 },
             ],

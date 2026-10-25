@@ -1,10 +1,11 @@
 // Pane scrolling. On desktop the panes scroll, not the page (see `.pane-scroll` in session.css);
 // on phones the page does. Every `.pane-scroll` box that holds no list gets the "↓ más abajo" cue
 // the lists use (lists.ts counts rows instead, so it owns the cue in boxes with a `[data-list]`).
+import { perFrame } from './frame'
 
-/** What a Post's j/k and pager act on: its pane when the pane scrolls, else the page. */
-export function postScroller(): HTMLElement | Window {
-  const box = document.querySelector<HTMLElement>('[data-post] [data-scroll-box]')
+/** What a reader's j/k and pager act on (Post, Project, Sobre mí): its pane when it scrolls, else the page. */
+export function readerScroller(): HTMLElement | Window {
+  const box = document.querySelector<HTMLElement>('[data-scroll-box]')
   return box && box.scrollHeight > box.clientHeight + 1 ? box : window
 }
 
@@ -30,9 +31,10 @@ function refresh() {
   }
 }
 
+const refreshSoon = perFrame(refresh)
 document.addEventListener('astro:page-load', refresh)
-document.addEventListener('scroll', refresh, { capture: true, passive: true })
-addEventListener('resize', refresh)
+document.addEventListener('scroll', refreshSoon, { capture: true, passive: true })
+addEventListener('resize', refreshSoon)
 // The navigator preview changes height on hover and focus.
-document.addEventListener('pointerover', refresh, { passive: true })
-document.addEventListener('focusin', refresh)
+document.addEventListener('pointerover', refreshSoon, { passive: true })
+document.addEventListener('focusin', refreshSoon)

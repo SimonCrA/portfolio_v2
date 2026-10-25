@@ -9,7 +9,6 @@ interface Props {
 }
 
 const { current } = Astro.props
-const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
 
 const keys = [
   ['0 – 4', 'cambiar de ventana'],
@@ -49,7 +48,7 @@ const commands = [
       <button type="button" class="hint" data-open-prompt><kbd>:</kbd> comando</button>
       <button type="button" class="hint" data-open-help><kbd>?</kbd> ayuda</button>
       <a href={CV_URL} target="_blank" rel="noopener">cv.pdf</a>
-      <span class="date">{today}</span>
+      <span class="date" data-today></span>
     </span>
   </div>
   <form class="status-prompt" data-prompt hidden>

@@ -1,0 +1,15 @@
+---
+// One shell prompt line: `simon@simonctech:~$ <cmd>`. `search` marks the command that search rewrites
+// into `… | grep -i "q"`; `as="span"` puts it inline (the live prompt on the home page).
+interface Props {
+  cmd: string
+  search?: boolean
+  as?: 'p' | 'span'
+}
+
+const { cmd, search = false, as: Tag = 'p' } = Astro.props
+---
+
+<Tag class:list={[{ 'prompt-line': Tag === 'p' }]}
+  ><span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd={search ? '' : undefined}>{cmd}</span></Tag
+>

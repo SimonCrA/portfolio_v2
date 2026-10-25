@@ -16,7 +16,15 @@ const { name, scale = 3, fluid = false, class: className, label } = Astro.props
 const rows: readonly string[] = ICONS[name]
 const width = Math.max(...rows.map((r) => r.length))
 const height = rows.length
-const pixels = rows.flatMap((row, y) => [...row].flatMap((c, x) => (c === '.' ? [] : [{ x, y, role: c }])))
+// One path per colour role, with each horizontal run of same-role pixels as one rectangle: a 24x31
+// avatar is a dozen paths instead of hundreds of <rect>s.
+const paths = new Map<string, string>()
+rows.forEach((row, y) => {
+  for (const run of row.matchAll(/([^.])\1*/g)) {
+    const [text, role] = run
+    paths.set(role, `${paths.get(role) ?? ''}M${run.index} ${y}h${text.length}v1h-${text.length}z`)
+  }
+})
 ---
 
 <svg
@@ -32,5 +40,5 @@ const pixels = rows.flatMap((row, y) => [...row].flatMap((c, x) => (c === '.' ? 
   aria-hidden={label ? undefined : 'true'}
   focusable="false"
 >
-  {pixels.map((p) => <rect x={p.x} y={p.y} width="1" height="1" style={`fill:var(--px-${p.role})`} />)}
+  {[...paths].map(([role, d]) => <path d={d} style={`fill:var(--px-${role})`} />)}
 </svg>

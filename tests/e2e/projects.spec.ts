@@ -76,6 +76,11 @@ test.describe('project page', () => {
     await expect(page.getByRole('navigation', { name: 'Ventanas' }).locator('[aria-current="page"]')).toHaveAccessibleName('1: Proyectos')
   })
 
+  test('a technical word like "stub" is not mistaken for placeholder text', async ({ page }) => {
+    await page.goto('/projects/fixture-software')
+    await expect(page.locator('.prose')).toContainText('Usa un stub para el cliente HTTP')
+  })
+
   test('omits repo, demo and actualizado when they are not set', async ({ page }) => {
     await page.goto(`/projects/${software.slug}`)
     const fm = page.locator('.frontmatter')

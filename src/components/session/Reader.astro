@@ -72,17 +72,18 @@ const hasMedia = Astro.slots.has('media')
 </Tag>
 
 <script>
-  import { postScroller } from '../../session/client/scroll'
+  import { readerScroller } from '../../session/client/scroll'
+  import { perFrame } from '../../session/client/frame'
   // The pager shows how far the reader has scrolled: the pane on desktop, the page on phones.
   const update = () => {
     const pct = document.querySelector('[data-pct]')
     if (!pct) return
-    const el = postScroller()
+    const el = readerScroller()
     const [top, max] =
       el instanceof HTMLElement ? [el.scrollTop, el.scrollHeight - el.clientHeight] : [scrollY, document.documentElement.scrollHeight - innerHeight]
     pct.textContent = `${max > 0 ? Math.round((top / max) * 100) : 100}%`
   }
-  document.addEventListener('scroll', update, { capture: true, passive: true })
+  document.addEventListener('scroll', perFrame(update), { capture: true, passive: true })
   document.addEventListener('astro:page-load', update)
   // The module can load after the first `astro:page-load` of a client navigation.
   update()

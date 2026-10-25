@@ -1,0 +1,62 @@
+---
+// One Video row. Without `video` it renders the empty row the Videos page keeps in a <template>, which
+// the browser fills in when it swaps in the fresh list.
+import { fmtDate } from '../../session/date'
+import { viewsLabel } from '../../session/videos-format'
+import type { Video } from '../../session/videos'
+
+interface Props {
+  video?: Video
+}
+
+const { video: v } = Astro.props
+---
+
+<li data-id={v?.id} data-signature={v && `${v.id}|${v.title}|${v.views}`}>
+  <a class="entry-row video-row" href={v?.url} target="_blank" rel="noopener">
+    <img class="thumb" src={v?.thumbnail} alt="" width="320" height="180" loading="lazy" decoding="async" />
+    <span class="main">
+      <span class="title">{v?.title}</span>
+      <span class="where">{v && `youtube.com/${v.short ? 'shorts' : 'watch'}`}</span>
+    </span>
+    <span class="meta">
+      <span class="kind">{v && (v.short ? 'short' : 'video')}</span>
+      <span class="views">{v && viewsLabel(v.views)}</span>
+      <time datetime={v?.date.toISOString()}>{v && fmtDate(v.date)}</time>
+    </span>
+  </a>
+</li>
+
+<style>
+  .video-row {
+    grid-template-columns: 9rem minmax(0, 1fr) auto;
+  }
+  .thumb {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+  .video-row:hover .thumb,
+  .video-row:focus-visible .thumb {
+    border-color: var(--accent);
+  }
+  .where,
+  .views {
+    color: var(--dim);
+  }
+  .where {
+    font-size: 0.8667rem;
+  }
+  .kind {
+    color: var(--orange);
+  }
+  @media (max-width: 560px) {
+    .video-row {
+      grid-template-columns: 6rem minmax(0, 1fr);
+    }
+  }
+</style>

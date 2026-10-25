@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "test:no-fixtures": "astro build && ! grep -rqs e2e-fixture .vercel/output/static"
   },
   "dependencies": {

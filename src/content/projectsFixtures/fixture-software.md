@@ -8,4 +8,4 @@ tags: [fixture, web]
 stack: [Go]
 ---
 
-Cuerpo del segundo Proyecto de prueba.
+Cuerpo del segundo Proyecto de prueba. Usa un stub para el cliente HTTP: la palabra no es texto de relleno.
