@@ -19,16 +19,18 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
   <main class="window reader-window about-window">
     <section class="pane is-active reader" aria-labelledby="about-name">
       <h2 class="pane-title">glow sobre-mi.md</h2>
-      <div class="head">
-        <PixelArt name="avatar" scale={6} class="pixel-avatar" label="Avatar pixel de Simón" />
-        <div class="intro">
-          <h1 class="reader-title" id="about-name">{name}</h1>
-          <p class="reader-lead">{intro}</p>
-          <p><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
+      <div class="pane-scroll" tabindex="0" aria-label="Historia">
+        <div class="head">
+          <PixelArt name="avatar" scale={6} class="pixel-avatar" label="Avatar pixel de Simón" />
+          <div class="intro">
+            <h1 class="reader-title" id="about-name">{name}</h1>
+            <p class="reader-lead">{intro}</p>
+            <p><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
+          </div>
         </div>
-      </div>
-      <div class="prose">
-        <Content />
+        <div class="prose">
+          <Content />
+        </div>
       </div>
     </section>
 
@@ -44,24 +46,26 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 
       <section class="pane" aria-labelledby="about-uses">
         <h2 class="pane-title" id="about-uses">con qué trabajo</h2>
-        <p class="prompt-line" set:html={prompt('tree setup/')} />
-        <div class="tree">
-          <p class="root">setup/</p>
-          {
-            uses.map((g) => (
-              <div class="group">
-                <h3>{g.group}</h3>
-                <ul>
-                  {g.items.map((u) => (
-                    <li>
-                      <span class="what">{u.what}</span>
-                      <span class="value">{u.value}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          }
+        <div class="pane-scroll" tabindex="0" aria-label="Setup">
+          <p class="prompt-line" set:html={prompt('tree setup/')} />
+          <div class="tree">
+            <p class="root">setup/</p>
+            {
+              uses.map((g) => (
+                <div class="group">
+                  <h3>{g.group}</h3>
+                  <ul>
+                    {g.items.map((u) => (
+                      <li>
+                        <span class="what">{u.what}</span>
+                        <span class="value">{u.value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
         </div>
       </section>
 
@@ -218,14 +222,45 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     text-decoration: underline;
   }
 
-  /* Wide screens split the window like tmux: the story on the left, the side panes on the right. */
+  /* Wide screens split the window like tmux: the story on the left, the side panes on the right.
+     The window is the viewport, so the story and the setup scroll inside their panes. The scroll
+     box sits inside the pane because clipping the pane itself would cut its border title. */
   @media (min-width: 1100px) {
     .about-window {
+      flex: none;
+      box-sizing: border-box;
+      height: calc(100dvh - var(--status-h));
       grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-      align-items: start;
+      grid-template-rows: minmax(0, 1fr);
     }
     .about-window .reader {
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
       max-width: none;
+      min-height: 0;
+      padding-right: 8px;
+    }
+    .side {
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      min-height: 0;
+    }
+    .side .pane:nth-child(2) {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .pane-scroll {
+      flex: 1;
+      min-height: 0;
+      margin: -4px;
+      padding: 4px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line) transparent;
+    }
+    .reader .pane-scroll {
+      padding-right: clamp(14px, 3vw, 36px);
     }
   }
 </style>

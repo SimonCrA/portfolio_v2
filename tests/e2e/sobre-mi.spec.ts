@@ -89,4 +89,18 @@ test.describe('sobre mí window', () => {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBeLessThanOrEqual(0)
   })
+
+  for (const height of [900, 640]) {
+    test(`on desktop the panes scroll, not the page, at ${height}px`, async ({ page, isMobile }) => {
+      test.skip(!!isMobile, 'phones scroll the page')
+      await page.setViewportSize({ width: 1440, height })
+      await page.goto('/sobre-mi')
+      const overflow = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight)
+      expect(overflow, 'page scroll').toBeLessThanOrEqual(0)
+      const lastParagraph = page.locator('.prose p').last()
+      await lastParagraph.scrollIntoViewIfNeeded()
+      await expect(lastParagraph).toBeInViewport()
+      expect(await page.evaluate(() => window.scrollY), 'the page itself never moved').toBe(0)
+    })
+  }
 })
