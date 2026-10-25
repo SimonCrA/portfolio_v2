@@ -51,9 +51,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.0)
-      daisyui:
-        specifier: ^5.0.9
-        version: 5.0.9
       prettier-plugin-astro:
         specifier: ^0.14.1
         version: 0.14.1
@@ -946,9 +943,6 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
-
-  daisyui@5.0.9:
-    resolution: {integrity: sha512-RsaehHh45f+0shWgZZaOY09/8eOae2voRsqJCD71j9yrnYgcke0Nj5ys0ZxrW4SPcc4+q96kWyJu0Z8P1zZdoA==}
 
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
@@ -3124,8 +3118,6 @@ snapshots:
       uncrypto: 0.1.3
 
   cssesc@3.0.0: {}
-
-  daisyui@5.0.9: {}
 
   dayjs@1.11.13: {}
 
