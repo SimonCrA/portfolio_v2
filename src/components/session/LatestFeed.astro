@@ -22,9 +22,9 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 
 <section class="pane pane-latest" aria-label="Últimos">
   <h2 class="pane-title">últimos</h2>
-  <div class="latest-scroll" data-latest-scroll tabindex="0" aria-label="Lista de lo último">
+  <div class="latest-scroll" data-latest-scroll data-scroll tabindex="0" aria-label="Lista de lo último">
     <p class="prompt-line" set:html={prompt('ls -lt ultimos/')} />
-    <ol class="latest-list">
+    <ol class="latest-list" data-list>
       {
         feed.map((item) => (
           <li>

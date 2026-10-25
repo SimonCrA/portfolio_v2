@@ -6,8 +6,9 @@ import { bind, listen } from './keys'
 import { message } from './prompt'
 import { go } from './navigation'
 import './search'
+import { refreshLists } from './lists'
 
-export { go, message }
+export { go, message, refreshLists }
 
 /** Pages that are a Post mark their `<main>` with `data-post`. */
 export const onPost = () => !!document.querySelector('[data-post]')

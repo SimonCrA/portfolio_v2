@@ -6,7 +6,7 @@ export interface Binding {
   /** `event.key` values this binding answers to. */
   keys: readonly string[]
   /** Optional page predicate, evaluated on every press so it follows client navigations. */
-  when?: () => boolean
+  when?: (event: KeyboardEvent) => boolean
   run: (event: KeyboardEvent) => void
 }
 
@@ -24,7 +24,7 @@ export function isTyping(target: EventTarget | null): boolean {
 function onKeydown(event: KeyboardEvent) {
   if (event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return
   if (isTyping(event.target)) return
-  const hit = bindings.find((b) => b.keys.includes(event.key) && (!b.when || b.when()))
+  const hit = bindings.find((b) => b.keys.includes(event.key) && (!b.when || b.when(event)))
   if (!hit) return
   event.preventDefault()
   hit.run(event)
