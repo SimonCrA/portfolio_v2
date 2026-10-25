@@ -35,11 +35,6 @@ test.describe('blog window', () => {
   })
 })
 
-test('projects shows its empty state', async ({ page }) => {
-  await page.goto('/projects')
-  await expect(page.getByText('eza -l --icons proyectos/')).toBeVisible()
-  await expect(page.getByText('Los Proyectos llegarán pronto.')).toBeVisible()
-})
 
 test('videos shows its empty state', async ({ page }) => {
   await page.goto('/videos')

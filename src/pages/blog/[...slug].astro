@@ -65,19 +65,3 @@ const file = `~/blog/${entry.slug}.md`
     </Reader>
   </main>
 </SessionLayout>
-
-<script>
-  import { postScroller } from '../../session/client/scroll'
-  // The pager shows how far the reader has scrolled: the pane on desktop, the page on phones.
-  const update = () => {
-    const pct = document.querySelector('[data-pct]')
-    if (!pct) return
-    const el = postScroller()
-    const [top, max] = el === window ? [scrollY, document.documentElement.scrollHeight - innerHeight] : [(el as HTMLElement).scrollTop, (el as HTMLElement).scrollHeight - (el as HTMLElement).clientHeight]
-    pct.textContent = `${max > 0 ? Math.round((top / max) * 100) : 100}%`
-  }
-  document.addEventListener('scroll', update, { capture: true, passive: true })
-  document.addEventListener('astro:page-load', update)
-  // The module can load after the first `astro:page-load` of a client navigation.
-  update()
-</script>

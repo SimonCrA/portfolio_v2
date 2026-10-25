@@ -165,6 +165,24 @@ export const ICONS = {
     '..KAAAWAAWAAAK..',
     '..KKKKKKKKKKKK..',
   ],
+  code: [
+    '................',
+    'KKKKKKKKKKKKKKKK',
+    'KDRDADLDDDDDDDDK',
+    'KKKKKKKKKKKKKKKK',
+    'KMMMMMMMMMMMMMMK',
+    'KMMMMMMMMMWMMMMK',
+    'KMMMAMMMMWMAMMMK',
+    'KMMAMMMMWMMMAMMK',
+    'KMMMAMMWMMMAMMMK',
+    'KMMMMMWMMMMMMMMK',
+    'KMMMMMMMMMMMMMMK',
+    'KKKKKKKKKKKKKKKK',
+    '................',
+    '................',
+    '................',
+    '................',
+  ],
 } as const satisfies Record<string, readonly string[]>
 
 export type IconName = keyof typeof ICONS
@@ -179,3 +197,6 @@ export const SECTION_ICON = {
 } as const satisfies Record<string, IconName>
 
 export const KIND_ICON = { post: 'page', video: 'crt', project: 'chip' } as const satisfies Record<string, IconName>
+
+// A Project's icon says what kind of work it is.
+export const PROJECT_ICON = { software: 'code', hardware: 'chip' } as const satisfies Record<string, IconName>

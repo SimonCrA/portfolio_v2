@@ -5,7 +5,8 @@
 // the pager bar stays at its bottom.
 import '../../styles/reader.css'
 
-type FrontmatterValue = string | { text: string; datetime: string } | { label: string; href: string }[]
+type Link = { label: string; href: string }
+type FrontmatterValue = string | { text: string; datetime: string } | Link | Link[]
 
 interface Props {
   as?: 'article' | 'section'
@@ -31,7 +32,7 @@ const hasMedia = Astro.slots.has('media')
         <div class="frontmatter">
           <div>{'---'}</div>
           {frontmatter.map(({ key, value }) => (
-            <div><span class="k">{key}</span>: {typeof value === 'string' ? value : Array.isArray(value) ? <span>[{value.map((l, i) => <span><a href={l.href}>{l.label}</a>{i < value.length - 1 ? ', ' : null}</span>)}]</span> : <time datetime={value.datetime}>{value.text}</time>}</div>
+            <div><span class="k">{key}</span>: {typeof value === 'string' ? value : Array.isArray(value) ? <span>[{value.map((l, i) => <span><a href={l.href}>{l.label}</a>{i < value.length - 1 ? ', ' : null}</span>)}]</span> : 'href' in value ? <a href={value.href} target="_blank" rel="noopener">{value.label}</a> : <time datetime={value.datetime}>{value.text}</time>}</div>
           ))}
           <div>{'---'}</div>
         </div>
@@ -69,3 +70,20 @@ const hasMedia = Astro.slots.has('media')
     )
   }
 </Tag>
+
+<script>
+  import { postScroller } from '../../session/client/scroll'
+  // The pager shows how far the reader has scrolled: the pane on desktop, the page on phones.
+  const update = () => {
+    const pct = document.querySelector('[data-pct]')
+    if (!pct) return
+    const el = postScroller()
+    const [top, max] =
+      el instanceof HTMLElement ? [el.scrollTop, el.scrollHeight - el.clientHeight] : [scrollY, document.documentElement.scrollHeight - innerHeight]
+    pct.textContent = `${max > 0 ? Math.round((top / max) * 100) : 100}%`
+  }
+  document.addEventListener('scroll', update, { capture: true, passive: true })
+  document.addEventListener('astro:page-load', update)
+  // The module can load after the first `astro:page-load` of a client navigation.
+  update()
+</script>

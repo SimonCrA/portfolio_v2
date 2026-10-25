@@ -8,7 +8,7 @@ export type MessageKind = 'info' | 'error'
 
 const MESSAGE_MS = 3500
 
-const status = document.querySelector<HTMLElement>('.status')!
+const status = document.querySelector<HTMLElement>('footer.status')!
 const line = status.querySelector<HTMLElement>('[data-status-line]')!
 const form = status.querySelector<HTMLFormElement>('[data-prompt]')!
 const input = form.querySelector('input')!

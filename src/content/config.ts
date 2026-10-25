@@ -34,9 +34,30 @@ const aboutSchema = z.object({
 
 const aboutCollection = defineCollection({ type: 'content', schema: aboutSchema })
 
+// Projects (spec #20): one Markdown entry per Project; the body is the write-up. Files starting with
+// `_` (the template) are not part of the collection.
+const projectSchema = z.object({
+    title: z.string(),
+    summary: z.string().refine((s) => !s.includes('\n'), 'summary must be a single line'),
+    kind: z.enum(['software', 'hardware']),
+    status: z.enum(['activo', 'terminado', 'archivado']),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    tags: z.array(z.string()),
+    stack: z.array(z.string()).nonempty(),
+    repo: z.string().url().optional(),
+    demo: z.string().url().optional(),
+    image: z.string().optional(),
+    featured: z.boolean().default(false),
+})
+
+export type ProjectSchema = z.infer<typeof projectSchema>
+
 export const collections = {
     blog: blogCollection,
     // Fixture Posts for the E2E build only (see src/session/fixtures.ts).
     blogFixtures: defineCollection({ type: 'content', schema: blogSchema }),
+    projects: defineCollection({ type: 'content', schema: projectSchema }),
+    projectsFixtures: defineCollection({ type: 'content', schema: projectSchema }),
     about: aboutCollection,
 }

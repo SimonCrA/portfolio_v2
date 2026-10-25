@@ -26,7 +26,7 @@ bind({ keys: ['q'], when: onPost, run: () => go('/') })
 // the new document (`body[data-window]`) after every swap.
 function syncStatus() {
   const current = document.body.dataset.window
-  document.querySelectorAll<HTMLAnchorElement>('.status nav a').forEach((a, i) => {
+  document.querySelectorAll<HTMLAnchorElement>('footer.status nav a').forEach((a, i) => {
     if (WINDOWS[i].key === current) a.setAttribute('aria-current', 'page')
     else a.removeAttribute('aria-current')
   })

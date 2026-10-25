@@ -1,0 +1,56 @@
+---
+// A Project in the shared `glow` reader. Like a Post, it marks `<main>` with `data-post`, so j/k
+// scroll it and q goes home.
+import type { CollectionEntry } from 'astro:content'
+import SessionLayout from '../../layouts/SessionLayout.astro'
+import Reader from '../../components/session/Reader.astro'
+import PixelArt from '../../components/session/PixelArt.astro'
+import { PROJECT_ICON } from '../../session/icons'
+import { fmtDate } from '../../session/date'
+import { getSortedProjects } from '../../session/projects'
+
+export async function getStaticPaths() {
+  return (await getSortedProjects()).map((entry) => ({ params: { slug: entry.slug }, props: { entry } }))
+}
+
+interface Props {
+  entry: CollectionEntry<'projects'>
+}
+
+const { entry } = Astro.props
+const p = entry.data
+const { Content } = await entry.render()
+const words = (entry.body ?? '').split(/\s+/).filter(Boolean).length
+const minutes = Math.max(1, Math.ceil(words / 200))
+const day = (d: Date) => ({ text: fmtDate(d), datetime: d.toISOString().slice(0, 10) })
+const host = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+
+const frontmatter = [
+  { key: 'estado', value: p.status },
+  { key: 'tipo', value: p.kind },
+  { key: 'fecha', value: day(p.date) },
+  ...(p.updated ? [{ key: 'actualizado', value: day(p.updated) }] : []),
+  { key: 'stack', value: `[${p.stack.join(', ')}]` },
+  { key: 'tags', value: p.tags.map((tag) => ({ label: tag, href: `/projects?q=${encodeURIComponent(tag)}` })) },
+  ...(p.repo ? [{ key: 'repo', value: { label: host(p.repo), href: p.repo } }] : []),
+  ...(p.demo ? [{ key: 'demo', value: { label: host(p.demo), href: p.demo } }] : []),
+]
+---
+
+<SessionLayout current="proyectos" title={`${p.title} | Proyectos`} description={p.summary} image={p.image}>
+  <main class="window reader-window" data-post>
+    <Reader
+      file={`~/proyectos/${entry.slug}.md`}
+      title={p.title}
+      titleId="project-title"
+      lead={p.summary}
+      image={p.image}
+      scrollLabel="Texto del proyecto"
+      frontmatter={frontmatter}
+      pager={{ href: '/projects', label: '← proyectos', info: `${minutes} min de lectura` }}
+    >
+      <PixelArt slot="media" name={PROJECT_ICON[p.kind]} scale={5} class="project-glyph" />
+      <Content />
+    </Reader>
+  </main>
+</SessionLayout>

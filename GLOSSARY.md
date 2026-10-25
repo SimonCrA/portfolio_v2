@@ -19,6 +19,10 @@ _Avoid_: Clip, episode
 **Featured Project**:
 A Project Simón marked to be shown first.
 
+**Project status**:
+Where a Project stands: `activo` (Simón still works on it), `terminado` (done, it works as intended) or `archivado` (no longer maintained, kept to show).
+_Avoid_: State, phase
+
 **Tag**:
 A topic label shared by Posts and Projects, so one topic gathers both.
 _Avoid_: Category, label
