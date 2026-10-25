@@ -67,8 +67,12 @@ test.describe('sobre mí window', () => {
     for (const g of about.uses) {
       const heading = page.getByRole('heading', { level: 3, name: g.group })
       await expect(heading).toBeVisible()
-      const list = heading.locator('xpath=following-sibling::ul[1]')
-      await expect(list.getByRole('listitem')).toHaveText(g.items.map((i) => `${i.what}: ${i.value}`))
+      const items = heading.locator('xpath=following-sibling::ul[1]').getByRole('listitem')
+      await expect(items).toHaveCount(g.items.length)
+      for (const [n, i] of g.items.entries()) {
+        await expect(items.nth(n)).toContainText(i.what)
+        await expect(items.nth(n)).toContainText(i.value)
+      }
     }
   })
 

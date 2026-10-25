@@ -1,5 +1,6 @@
 ---
-// Window 4: Sobre mí, a `glow`-style reader fed by src/content/about/sobre-mi.md.
+// Window 4: Sobre mí, fed by src/content/about/sobre-mi.md. A `glow` reader holds the story; side
+// panes hold Now, the setup as a `tree`, and the links. On wide screens it splits like tmux.
 import SessionLayout from '../layouts/SessionLayout.astro'
 import PixelArt from '../components/session/PixelArt.astro'
 import '../styles/reader.css'
@@ -10,10 +11,12 @@ import { fmtDate } from '../session/date'
 const entry = await getAbout()
 const { name, intro, now, nowUpdated, uses, links } = entry.data
 const { Content } = await entry.render()
+
+const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
 <SessionLayout current="sobre-mi" title={`Sobre mí | ${name}`}>
-  <main class="window reader-window">
+  <main class="window reader-window about-window">
     <section class="pane is-active reader" aria-labelledby="about-name">
       <h2 class="pane-title">glow sobre-mi.md</h2>
       <div class="head">
@@ -24,36 +27,60 @@ const { Content } = await entry.render()
           <p><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
         </div>
       </div>
-
       <div class="prose">
         <Content />
-
-        <h2>Ahora</h2>
-        <p data-now>{now}</p>
-        <p class="stamp">actualizado el <time datetime={nowUpdated.toISOString().slice(0, 10)} data-now-updated>{fmtDate(nowUpdated)}</time></p>
-
-        <h2>Con qué trabajo</h2>
-        {
-          uses.map((g) => (
-            <>
-              <h3>{g.group}</h3>
-              <ul>
-                {g.items.map((u) => (
-                  <li>
-                    <strong>{u.what}:</strong> {u.value}
-                  </li>
-                ))}
-              </ul>
-            </>
-          ))
-        }
-
-        <h2>Dónde encontrarme</h2>
-        <ul>
-          {links.map((l) => <li><a href={l.href} target="_blank" rel="noopener">{l.label}</a></li>)}
-        </ul>
       </div>
     </section>
+
+    <div class="side">
+      <section class="pane" aria-labelledby="about-now">
+        <h2 class="pane-title" id="about-now">ahora</h2>
+        <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
+        <p class="out" data-now>{now}</p>
+        <p class="stamp">
+          actualizado el <time datetime={nowUpdated.toISOString().slice(0, 10)} data-now-updated>{fmtDate(nowUpdated)}</time>
+        </p>
+      </section>
+
+      <section class="pane" aria-labelledby="about-uses">
+        <h2 class="pane-title" id="about-uses">con qué trabajo</h2>
+        <p class="prompt-line" set:html={prompt('tree setup/')} />
+        <div class="tree">
+          <p class="root">setup/</p>
+          {
+            uses.map((g) => (
+              <div class="group">
+                <h3>{g.group}</h3>
+                <ul>
+                  {g.items.map((u) => (
+                    <li>
+                      <span class="what">{u.what}</span>
+                      <span class="value">{u.value}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="pane" aria-labelledby="about-links">
+        <h2 class="pane-title" id="about-links">dónde encontrarme</h2>
+        <p class="prompt-line" set:html={prompt('ls enlaces/')} />
+        <ul class="links">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href} target="_blank" rel="noopener">
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
   </main>
 </SessionLayout>
 
@@ -75,10 +102,6 @@ const { Content } = await entry.render()
   .reader-lead {
     margin: 0 0 16px;
   }
-  .stamp {
-    color: var(--dim);
-    font-size: 13px;
-  }
   .button {
     display: inline-block;
     padding: 4px 12px;
@@ -90,5 +113,119 @@ const { Content } = await entry.render()
   .button:hover,
   .button:focus-visible {
     background: var(--fg-bright);
+  }
+
+  .side {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    min-width: 0;
+  }
+  .side .prompt-line {
+    margin-top: 0;
+  }
+  .stamp {
+    margin: 8px 0 0;
+    color: var(--dim);
+    font-size: 13px;
+  }
+
+  /* The setup reads as `tree` output: the branches are drawn in CSS so the text stays plain. */
+  .tree {
+    font-size: 14px;
+  }
+  .tree p,
+  .tree h3,
+  .tree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .root,
+  .tree h3 {
+    color: var(--blue);
+    font-size: inherit;
+    font-weight: 700;
+  }
+  .tree h3::before,
+  .tree li::before {
+    color: var(--line);
+    font-weight: 400;
+    white-space: pre;
+  }
+  .tree h3::before {
+    content: '├── ';
+  }
+  .tree h3::after {
+    content: '/';
+  }
+  .group:last-child h3::before {
+    content: '└── ';
+  }
+  .tree li {
+    display: grid;
+    grid-template-columns: 8ch minmax(0, 1fr);
+  }
+  .tree li::before {
+    content: '│   ├── ';
+  }
+  .tree li:last-child::before {
+    content: '│   └── ';
+  }
+  .group:last-child li::before {
+    content: '    ├── ';
+  }
+  .group:last-child li:last-child::before {
+    content: '    └── ';
+  }
+  .tree li > span:first-of-type {
+    grid-column: 2;
+  }
+  .what {
+    color: var(--dim);
+  }
+  .value {
+    grid-column: 2;
+    color: var(--fg);
+  }
+  @media (min-width: 640px) {
+    .tree li {
+      grid-template-columns: 8ch 19ch minmax(0, 1fr);
+      gap: 0 8px;
+    }
+    .tree li > span:first-of-type,
+    .value {
+      grid-column: auto;
+    }
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .links a {
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .links a:hover,
+  .links a:focus-visible {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  /* Wide screens split the window like tmux: the story on the left, the side panes on the right. */
+  @media (min-width: 1100px) {
+    .about-window {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      align-items: start;
+    }
+    .about-window .reader {
+      max-width: none;
+    }
   }
 </style>
