@@ -1,6 +1,6 @@
 ---
 name: Simón Clemente
-intro: Ingeniero de software fullstack y geek de la tecnología. Hoy en Nueve Once, construyendo la plataforma digital de los servicios de urgencias en Venezuela.
+intro: Ingeniero de software fullstack y geek de la tecnología. Hoy trabajo en Nueve Once, donde construyo la plataforma digital de los servicios de urgencias en Venezuela.
 now: Estudiando para ser ingeniero de IA y terminando mi home lab con Proxmox, Terraform y agentes en sandboxes.
 nowUpdated: 2026-10-25
 uses:
