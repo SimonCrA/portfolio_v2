@@ -22,7 +22,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 
 <section class="pane pane-latest" aria-label="Últimos">
   <h2 class="pane-title">últimos</h2>
-  <div class="latest-scroll" data-latest-scroll data-scroll tabindex="0" aria-label="Lista de lo último">
+  <div class="latest-scroll pane-scroll" data-latest-scroll data-scroll tabindex="0" aria-label="Lista de lo último">
     <p class="prompt-line" set:html={prompt('ls -lt ultimos/')} />
     <ol class="latest-list" data-list>
       {
@@ -47,11 +47,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 </section>
 
 <style>
-  .latest-scroll {
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--line) transparent;
-  }
   .latest-scroll .prompt-line {
     margin-top: 0;
   }
@@ -107,15 +102,11 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
   .kind-project {
     color: var(--purple);
   }
-  @media (min-width: 900px) {
-    .latest-scroll {
-      position: absolute;
-      inset: 14px 6px 8px 18px;
-    }
-  }
+  /* On phones the page scrolls, but the feed stays a short scrolling box under the zsh pane. */
   @media (max-width: 899px) {
     .latest-scroll {
       max-height: 70vh;
+      overflow-y: auto;
     }
   }
   @media (max-width: 560px) {

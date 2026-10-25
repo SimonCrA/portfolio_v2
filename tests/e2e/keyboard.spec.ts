@@ -1,5 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
 
+// How far the reader has scrolled: its pane on desktop, the page on phones.
+const readerScroll = (page: Page) => page.evaluate(() => Math.max(scrollY, document.querySelector('[data-scroll-box]')?.scrollTop ?? 0))
+
 const WINDOWS = [
   { route: '/', name: '0: Inicio' },
   { route: '/projects', name: '1: Proyectos' },
@@ -76,12 +79,12 @@ test.describe('keyboard', () => {
   test('on a Post j/k scroll and q returns home', async ({ page }) => {
     await page.goto(POST)
     await page.keyboard.press('j')
-    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0)
+    await expect.poll(() => readerScroll(page)).toBeGreaterThan(0)
     await page.keyboard.press('j')
     await page.waitForTimeout(500)
-    const down = await page.evaluate(() => scrollY)
+    const down = await readerScroll(page)
     await page.keyboard.press('k')
-    await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(down)
+    await expect.poll(() => readerScroll(page)).toBeLessThan(down)
     await page.keyboard.press('q')
     await expect(page).toHaveURL('/')
   })
@@ -134,8 +137,14 @@ test.describe('keyboard', () => {
     expect(await page.evaluate(() => (document.body as any).__tag)).toBeUndefined()
     const pct = page.locator('[data-pct]')
     await expect(pct).toHaveText('0%')
-    await page.mouse.wheel(0, 100000)
-    await expect(pct).toHaveText('100%')
+    await page.mouse.move(600, 400)
+    // A wheel during the page transition is lost, so keep scrolling until the pane responds.
+    await expect
+      .poll(async () => {
+        await page.mouse.wheel(0, 100000)
+        return pct.textContent()
+      })
+      .toBe('100%')
     await expect(current(page)).toHaveAccessibleName('2: Blog')
   })
 

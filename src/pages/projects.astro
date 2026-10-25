@@ -9,8 +9,10 @@ import SessionLayout from '../layouts/SessionLayout.astro'
       <p class="prompt-line">
         <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>eza -l --icons proyectos/</span>
       </p>
-      <p class="out empty" data-empty>Los Proyectos llegarán pronto.</p>
-      <p class="out note"># Simón los está escribiendo, uno por uno.</p>
+      <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de proyectos">
+        <p class="out empty" data-empty>Los Proyectos llegarán pronto.</p>
+        <p class="out note"># Simón los está escribiendo, uno por uno.</p>
+      </div>
     </section>
   </main>
 </SessionLayout>

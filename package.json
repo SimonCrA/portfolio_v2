@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:no-fixtures": "astro build && ! grep -rqs e2e-fixture .vercel/output/static"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.3",

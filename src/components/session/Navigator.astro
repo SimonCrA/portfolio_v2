@@ -40,7 +40,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 
 <section class="pane pane-nav" aria-label="Navegador" data-navigator>
   <h2 class="pane-title">eza --icons ~/</h2>
-  <div class="nav-scroll">
+  <div class="pane-scroll">
     <ul class="nav-list">
       {
         entries.map((e) => (
@@ -99,24 +99,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 </script>
 
 <style>
-  /* On the desktop home the window is the viewport, so the pane scrolls instead of growing. The
-     padding keeps link focus rings inside the scroll box. */
-  @media (min-width: 900px) {
-    .pane-nav {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-    .nav-scroll {
-      flex: 1;
-      min-height: 0;
-      margin: -4px;
-      padding: 4px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--line) transparent;
-    }
-  }
   .nav-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(7.8667rem, 1fr));

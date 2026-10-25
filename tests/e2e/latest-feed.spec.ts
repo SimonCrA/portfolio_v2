@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
+import { POSTS as ALL_POSTS } from './content'
 
-// The fixture has five Posts, so the feed has five rows.
-const POSTS = 5
+const POSTS = ALL_POSTS.length
 
 test.describe('latest feed', () => {
   test('is a named region listing every Post newest first, each linked', async ({ page }) => {

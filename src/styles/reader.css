@@ -3,16 +3,32 @@
   grid-template-columns: minmax(0, 1fr);
 }
 .reader {
+  --reader-pad-x: clamp(14px, 4vw, 44px);
   width: 100%;
-  align-self: start;
-  padding: 26px clamp(14px, 4vw, 44px) 40px;
+  padding: 26px var(--reader-pad-x) 40px;
+}
+.reader:has(.pagerbar) {
+  padding-bottom: 0;
+}
+.reader-head.has-media {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.reader-intro {
+  min-width: 0;
+}
+@media (max-width: 560px) {
+  .reader-head.has-media {
+    flex-direction: column;
+  }
 }
 .frontmatter {
   margin: 0 0 26px;
   color: var(--dim);
   font-family: var(--mono);
   font-size: 0.9333rem;
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .frontmatter .k {
@@ -115,12 +131,15 @@
   overflow-x: auto;
 }
 
+/* The pager bar is the last line of the reader pane, like `less`. On phones it sticks above the
+   status line while the page scrolls. */
 .pagerbar {
   position: sticky;
   bottom: var(--status-h);
   z-index: 20;
   display: flex;
   gap: 18px;
+  margin: 24px calc(-1 * var(--reader-pad-x)) 0;
   padding: 4px 12px;
   background: var(--bg-2);
   border-top: 1px solid var(--line);

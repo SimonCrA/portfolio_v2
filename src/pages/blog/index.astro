@@ -19,31 +19,33 @@ const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) 
       <p class="prompt-line">
         <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>ls -lt blog/</span>
       </p>
-      <ol class="list" data-list data-searchable>
-        {
-          posts.map((post) => (
-            <li data-search={[post.data.title, post.data.description, ...post.data.tags].join(' ')}>
-              <a class="row" href={`/blog/${post.slug}`}>
-                <PixelArt name={KIND_ICON.post} scale={2} />
-                <span class="main">
-                  <span class="title">{post.data.title}</span>
-                  <span class="summary">{post.data.description}</span>
-                  <span class="tags">{post.data.tags.map((t) => `#${t}`).join(' ')}</span>
-                </span>
-                <span class="meta">
-                  <span class="kind">post</span>
-                  <time datetime={post.data.publishDate.toISOString()}>{fmtDate(post.data.publishDate)}</time>
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ol>
-      <p class="empty" data-empty hidden>
-        Ningún post coincide con «<span data-empty-q></span>». Prueba con un tema como
-        {topTags.map((t, i) => (<><code>{t}</code>{i < topTags.length - 2 ? ', ' : i === topTags.length - 2 ? ' o ' : ''}</>))},
-        o escribe <code>:buscar</code> sin texto para ver todos.
-      </p>
+      <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de posts">
+        <ol class="list" data-list data-searchable>
+          {
+            posts.map((post) => (
+              <li data-search={[post.data.title, post.data.description, ...post.data.tags].join(' ')}>
+                <a class="row" href={`/blog/${post.slug}`}>
+                  <PixelArt name={KIND_ICON.post} scale={2} />
+                  <span class="main">
+                    <span class="title">{post.data.title}</span>
+                    <span class="summary">{post.data.description}</span>
+                    <span class="tags">{post.data.tags.map((t) => `#${t}`).join(' ')}</span>
+                  </span>
+                  <span class="meta">
+                    <span class="kind">post</span>
+                    <time datetime={post.data.publishDate.toISOString()}>{fmtDate(post.data.publishDate)}</time>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="empty" data-empty hidden>
+          Ningún post coincide con «<span data-empty-q></span>». Prueba con un tema como
+          {topTags.map((t, i) => (<><code>{t}</code>{i < topTags.length - 2 ? ', ' : i === topTags.length - 2 ? ' o ' : ''}</>))},
+          o escribe <code>:buscar</code> sin texto para ver todos.
+        </p>
+      </div>
     </section>
   </main>
 </SessionLayout>

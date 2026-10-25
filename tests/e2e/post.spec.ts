@@ -39,6 +39,7 @@ for (const post of POSTS) {
       await expect(bar).toContainText(/\d+ min de lectura/)
       const pct = bar.locator('[data-pct]')
       await expect(pct).toHaveText('0%')
+      await page.mouse.move(200, 400)
       await page.mouse.wheel(0, 1500)
       await expect(pct).not.toHaveText('0%')
     })

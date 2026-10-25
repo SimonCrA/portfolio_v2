@@ -1,11 +1,12 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
 import type { BlogSchema } from '../../content/config'
 import SessionLayout from '../../layouts/SessionLayout.astro'
-import '../../styles/reader.css'
+import Reader from '../../components/session/Reader.astro'
+import { getSortedPosts } from '../../session/posts'
 
 export async function getStaticPaths() {
-  const postEntries = await getCollection('blog')
+  const postEntries = await getSortedPosts()
   return postEntries.map((entry) => ({
     params: { slug: entry.slug },
     props: { entry },
@@ -27,24 +28,23 @@ const file = `~/blog/${entry.slug}.md`
 
 <SessionLayout current="blog" title={post.title} description={post.description} image={post.image}>
   <main class="window reader-window" data-post>
-    <article class="pane is-active reader" aria-labelledby="post-title">
-      <h2 class="pane-title">glow {file}</h2>
-      <pre class="frontmatter">---
-<span class="k">fecha</span>: <time datetime={post.publishDate.toISOString()}>{fecha}</time>
-<span class="k">lectura</span>: {minutes} min
-<span class="k">tags</span>: [{post.tags.map((tag, i) => <><a href={`/blog?q=${encodeURIComponent(tag)}`}>{tag}</a>{i < post.tags.length - 1 ? ', ' : ''}</>)}]
----</pre>
-      <h1 class="reader-title" id="post-title">{post.title}</h1>
-      <p class="reader-lead">{post.description}</p>
-      {post.image && (
-        <figure>
-          <img src={post.image} alt="" loading="lazy" />
-        </figure>
-      )}
-      <div class="prose">
-        <Content />
-      </div>
+    <Reader
+      file={file}
+      title={post.title}
+      titleId="post-title"
+      lead={post.description}
+      image={post.image}
+      scrollLabel="Texto del post"
+      frontmatter={[
+        { key: 'fecha', value: { text: fecha, datetime: post.publishDate.toISOString() } },
+        { key: 'lectura', value: `${minutes} min` },
+        { key: 'tags', value: post.tags.map((tag) => ({ label: tag, href: `/blog?q=${encodeURIComponent(tag)}` })) },
+      ]}
+      pager={{ href: '/blog', label: '← blog', info: `${minutes} min de lectura` }}
+    >
+      <Content />
       <script
+        slot="after"
         src="https://giscus.app/client.js"
         data-repo="simoncra/portfolio_v2"
         data-repo-id="R_kgDOKPAG8g"
@@ -62,23 +62,22 @@ const file = `~/blog/${entry.slug}.md`
         async
         data-astro-rerun
       ></script>
-    </article>
+    </Reader>
   </main>
-  <div class="pagerbar">
-    <a href="/blog">← blog</a>
-    <span>{minutes} min de lectura</span>
-    <span class="pct" data-pct>0%</span>
-  </div>
 </SessionLayout>
 
 <script>
-  // The scroll listener binds once on window; each page load re-reads the new page's counter.
+  import { postScroller } from '../../session/client/scroll'
+  // The pager shows how far the reader has scrolled: the pane on desktop, the page on phones.
   const update = () => {
     const pct = document.querySelector('[data-pct]')
     if (!pct) return
-    const max = document.documentElement.scrollHeight - innerHeight
-    pct.textContent = `${max > 0 ? Math.round((scrollY / max) * 100) : 100}%`
+    const el = postScroller()
+    const [top, max] = el === window ? [scrollY, document.documentElement.scrollHeight - innerHeight] : [(el as HTMLElement).scrollTop, (el as HTMLElement).scrollHeight - (el as HTMLElement).clientHeight]
+    pct.textContent = `${max > 0 ? Math.round((top / max) * 100) : 100}%`
   }
-  addEventListener('scroll', update, { passive: true })
+  document.addEventListener('scroll', update, { capture: true, passive: true })
   document.addEventListener('astro:page-load', update)
+  // The module can load after the first `astro:page-load` of a client navigation.
+  update()
 </script>

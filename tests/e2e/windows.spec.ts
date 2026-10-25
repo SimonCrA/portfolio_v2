@@ -1,16 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
-
-const dir = join(process.cwd(), 'src/content/blog')
-const posts = readdirSync(dir)
-  .filter((f) => /\.mdx?$/.test(f))
-  .map((f) => {
-    const fm = readFileSync(join(dir, f), 'utf8').split('---')[1]
-    const get = (k: string) => fm.match(new RegExp(`^${k}:\\s*(.+)$`, 'm'))?.[1].trim().replace(/^['"]|['"]$/g, '') ?? ''
-    return { slug: get('slug') || f.replace(/\.mdx?$/, ''), date: new Date(get('publishDate')).valueOf() }
-  })
-  .sort((a, b) => b.date - a.date)
+import { POSTS as posts } from './content'
 
 const WINDOWS = [
   { route: '/projects', name: '1: Proyectos' },

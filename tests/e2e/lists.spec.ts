@@ -1,4 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
+import { POSTS } from './content'
+
+// How far the reader has scrolled: its pane on desktop, the page on phones.
+const readerScroll = (page: Page) => page.evaluate(() => Math.max(scrollY, document.querySelector('[data-scroll-box]')?.scrollTop ?? 0))
 
 const promptInput = (page: Page) => page.getByRole('textbox', { name: 'Comando' })
 const message = (page: Page) => page.locator('.status output')
@@ -68,7 +72,7 @@ test.describe('lists (keys)', () => {
   test(':abrir out of range shows the range error', async ({ page }) => {
     await page.goto('/')
     await run(page, 'abrir 99')
-    await expect(message(page)).toHaveText('Escribe un número del 1 al 5: por ejemplo :abrir 1')
+    await expect(message(page)).toHaveText(`Escribe un número del 1 al ${POSTS.length}: por ejemplo :abrir 1`)
     await expect(page).toHaveURL('/')
   })
 
@@ -80,7 +84,7 @@ test.describe('lists (keys)', () => {
 
   test('the feed position label and cue follow the feed scroll', async ({ page }) => {
     await page.goto('/')
-    // The fixture's five Posts fit the pane at any desktop height, so grow the feed until it overflows.
+    // The Posts fit the pane at any desktop height, so grow the feed (4x) until it overflows.
     await page.locator('[data-list]').evaluate((ol) => {
       const rows = [...ol.children]
       for (let i = 0; i < 3; i++) rows.forEach((li) => ol.append(li.cloneNode(true)))
@@ -89,23 +93,23 @@ test.describe('lists (keys)', () => {
     const pos = feedPane(page).locator('[data-list-pos]')
     const more = feedPane(page).locator('[data-list-more] > span')
     await expect(pos).toHaveAttribute('aria-hidden', 'true')
-    await expect(pos).toHaveText(/^\[1-\d+\/20\]$/)
+    await expect(pos).toHaveText(new RegExp(`^\\[1-\\d+/${POSTS.length * 4}\\]$`))
     const before = await pos.textContent()
     await expect(more).toBeVisible()
     await expect(more).toContainText('más abajo')
     await page.locator('[data-latest-scroll]').evaluate((el) => (el.scrollTop = el.scrollHeight))
-    await expect(pos).toHaveText(/^\[\d+-20\/20\]$/)
+    await expect(pos).toHaveText(new RegExp(`^\\[\\d+-${POSTS.length * 4}/${POSTS.length * 4}\\]$`))
     await expect(pos).not.toHaveText(before!)
     await expect(more).toBeHidden()
   })
 
-  test('on a Post, j still scrolls the page', async ({ page }) => {
+  test('on a Post, j still scrolls the reader', async ({ page }) => {
     await page.goto('/')
     const href = await feedRows(page).first().getAttribute('href')
     await page.goto(href!)
     await page.setViewportSize({ width: 1440, height: 300 })
     await page.keyboard.press('j')
-    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0)
+    await expect.poll(() => readerScroll(page)).toBeGreaterThan(0)
   })
 })
 
@@ -121,12 +125,12 @@ test.describe('lists on /blog', () => {
     await page.keyboard.press('j')
     await expect(rows.nth(1)).toHaveAttribute('aria-current', 'true')
     const pos = page.locator('[data-list-pos]')
-    await expect(pos).toHaveText(/^\[1-\d+\/5\]$/)
+    await expect(pos).toHaveText(new RegExp(`^\\[1-\\d+/${POSTS.length}\\]$`))
     // Hiding a row (what search does) updates the total and moves a hidden cursor off it.
     await page.locator('[data-list] > li').nth(1).evaluate((li) => li.setAttribute('hidden', ''))
-    await expect(pos).toHaveText(/^\[1-\d+\/4\]$/)
+    await expect(pos).toHaveText(new RegExp(`^\\[1-\\d+/${POSTS.length - 1}\\]$`))
     await expect(selected(page)).toHaveCount(1)
-    await expect(rows).toHaveCount(4)
+    await expect(rows).toHaveCount(POSTS.length - 1)
   })
 
   test(':abrir uses only the visible rows', async ({ page }) => {

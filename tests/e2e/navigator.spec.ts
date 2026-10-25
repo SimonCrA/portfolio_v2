@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test'
+import { POSTS as ALL_POSTS } from './content'
 import { readFileSync } from 'node:fs'
 import { parse } from 'yaml'
 
 const { now } = parse(readFileSync('src/content/about/sobre-mi.md', 'utf8').split(/^---$/m)[1]) as { now: string }
 
-// Post count comes from the blog collection; the fixture has five Posts.
-const POSTS = 5
+const POSTS = ALL_POSTS.length
 
 test.describe('home navigator', () => {
   test('lists every section and the CV with real summaries', async ({ page }) => {

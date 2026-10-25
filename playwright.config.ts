@@ -17,7 +17,8 @@ export default defineConfig({
     { name: 'phone', use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } } },
   ],
   webServer: {
-    command: `pnpm build && pnpm exec sirv .vercel/output/static --port ${PORT} --quiet`,
+    // E2E_FIXTURES adds the test-only content entries to the build.
+    command: `E2E_FIXTURES=1 pnpm build && pnpm exec sirv .vercel/output/static --port ${PORT} --quiet`,
     url: `http://localhost:${PORT}`,
     // Always serve a fresh build: reusing a server can test another checkout's stale output.
     reuseExistingServer: false,

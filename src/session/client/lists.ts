@@ -91,8 +91,9 @@ function refreshIndicators(list: HTMLElement) {
     // Rows below the visible area; the cue is hidden once the box is scrolled to its end.
     const left = items.length - 1 - last
     const atEnd = box!.scrollTop + box!.clientHeight >= box!.scrollHeight - 2
-    more.hidden = left === 0 || atEnd
-    more.firstElementChild!.textContent = `↓ ${left} más abajo`
+    // A partly visible last row still needs the cue, without a count.
+    more.hidden = atEnd
+    more.firstElementChild!.textContent = left ? `↓ ${left} más abajo` : '↓ más abajo'
   }
 }
 

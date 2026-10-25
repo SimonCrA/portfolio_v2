@@ -1,0 +1,71 @@
+---
+// The `glow`-style reader pane shared by Posts, Sobre mí and Projects. Slots: `media` sits beside
+// the title (an avatar), `actions` follows the lead (a button), the default slot is the prose body
+// and `after` follows it outside the prose styles (comments). The content scrolls inside the pane;
+// the pager bar stays at its bottom.
+import '../../styles/reader.css'
+
+type FrontmatterValue = string | { text: string; datetime: string } | { label: string; href: string }[]
+
+interface Props {
+  as?: 'article' | 'section'
+  file: string
+  title: string
+  titleId: string
+  lead?: string
+  frontmatter?: { key: string; value: FrontmatterValue }[]
+  image?: string
+  scrollLabel: string
+  pager?: { href: string; label: string; info: string }
+}
+
+const { as: Tag = 'article', file, title, titleId, lead, frontmatter, image, scrollLabel, pager } = Astro.props
+const hasMedia = Astro.slots.has('media')
+---
+
+<Tag class="pane is-active reader" aria-labelledby={titleId}>
+  <h2 class="pane-title">glow {file}</h2>
+  <div class="pane-scroll" data-scroll-box tabindex="0" aria-label={scrollLabel}>
+    {
+      frontmatter && (
+        <div class="frontmatter">
+          <div>{'---'}</div>
+          {frontmatter.map(({ key, value }) => (
+            <div><span class="k">{key}</span>: {typeof value === 'string' ? value : Array.isArray(value) ? <span>[{value.map((l, i) => <span><a href={l.href}>{l.label}</a>{i < value.length - 1 ? ', ' : null}</span>)}]</span> : <time datetime={value.datetime}>{value.text}</time>}</div>
+          ))}
+          <div>{'---'}</div>
+        </div>
+      )
+    }
+    <div class:list={['reader-head', { 'has-media': hasMedia }]}>
+      <slot name="media" />
+      <div class="reader-intro">
+        <h1 class="reader-title" id={titleId}>{title}</h1>
+        {lead && <p class="reader-lead">{lead}</p>}
+        <slot name="actions" />
+      </div>
+    </div>
+    {
+      image && (
+        <figure>
+          <img src={image} alt="" loading="lazy" />
+        </figure>
+      )
+    }
+    <div class="prose">
+      <slot />
+    </div>
+    <slot name="after" />
+  </div>
+  {
+    pager && (
+      <div class="pagerbar">
+        <a href={pager.href}>{pager.label}</a>
+        <span>{pager.info}</span>
+        <span class="pct" data-pct>
+          0%
+        </span>
+      </div>
+    )
+  }
+</Tag>

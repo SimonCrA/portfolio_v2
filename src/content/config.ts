@@ -36,5 +36,7 @@ const aboutCollection = defineCollection({ type: 'content', schema: aboutSchema 
 
 export const collections = {
     blog: blogCollection,
+    // Fixture Posts for the E2E build only (see src/session/fixtures.ts).
+    blogFixtures: defineCollection({ type: 'content', schema: blogSchema }),
     about: aboutCollection,
 }

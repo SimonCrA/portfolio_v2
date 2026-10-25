@@ -104,6 +104,32 @@ a {
 .pane.is-active {
   border-color: var(--active);
 }
+/* On desktop the session is the viewport, like a terminal: windows never scroll the page, the
+   panes do. A pane's scrolling content goes in a `.pane-scroll` box inside it, because clipping
+   the pane itself would cut the title in its border. Phones keep the normal page scroll. */
+@media (min-width: 900px) {
+  .window {
+    flex: none;
+    box-sizing: border-box;
+    height: calc(100dvh - var(--status-h));
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .pane:has(> .pane-scroll) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .pane-scroll {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin: -4px;
+    padding: 4px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+}
 .pane-title {
   position: absolute;
   top: -0.8em;
