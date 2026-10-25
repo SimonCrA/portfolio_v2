@@ -59,5 +59,8 @@ export const collections = {
     blogFixtures: defineCollection({ type: 'content', schema: blogSchema }),
     projects: defineCollection({ type: 'content', schema: projectSchema }),
     projectsFixtures: defineCollection({ type: 'content', schema: projectSchema }),
+    // Placeholder content that only the guard's own test loads (E2E_PLACEHOLDER).
+    placeholderFixtures: defineCollection({ type: 'content', schema: projectSchema }),
+    aboutFixtures: defineCollection({ type: 'content', schema: aboutSchema }),
     about: aboutCollection,
 }
