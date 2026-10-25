@@ -1,6 +1,7 @@
 ---
 import SessionLayout from '../layouts/SessionLayout.astro'
 import Navigator from '../components/session/Navigator.astro'
+import LatestFeed from '../components/session/LatestFeed.astro'
 import Banner from '../components/session/Banner.astro'
 import { INTRO, NOW } from '../session/about'
 
@@ -20,6 +21,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     </section>
 
     <Navigator />
+    <LatestFeed />
   </main>
 </SessionLayout>
 
@@ -36,6 +38,19 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     .window-home :global(.pane-zsh),
     .window-home :global(.pane-nav) {
       grid-column: 1;
+    }
+    .window-home :global(.pane-latest) {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+  @media (max-width: 899px) {
+    /* Phone order: zsh, últimos, navigator. */
+    .window-home :global(.pane-latest) {
+      order: 1;
+    }
+    .window-home :global(.pane-nav) {
+      order: 2;
     }
   }
   .name {
