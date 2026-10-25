@@ -18,7 +18,6 @@
     "@fontsource/atkinson-hyperlegible-mono": "^5.3.0",
     "@tailwindcss/vite": "^4.1.0",
     "astro": "^5.5.6",
-    "dayjs": "^1.11.13",
     "svelte": "^5.25.6",
     "tailwindcss": "^4.1.0",
     "typescript": "^5.8.2"
