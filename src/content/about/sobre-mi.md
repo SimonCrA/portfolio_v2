@@ -1,6 +1,6 @@
 ---
 name: Simón Clemente
-intro: Ingeniero de software fullstack y geek de la tecnología. Actualmente en Nueve Once, ayudando a mejorar la atención médica en Venezuela.
+intro: Ingeniero de software fullstack y geek de la tecnología. Hoy en Nueve Once, construyendo la plataforma digital de los servicios de urgencias en Venezuela.
 now: Rediseñando este sitio desde cero.
 uses:
   - { what: Editor, value: Neovim }
