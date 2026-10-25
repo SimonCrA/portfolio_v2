@@ -1,18 +1,26 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import GhProjects from '../components/svelte/GhProjects.svelte'
+import SessionLayout from '../layouts/SessionLayout.astro'
 ---
 
-<BaseLayout title="Proyectos" sideBarActiveItemID="projects">
-  <div>
-    <div class="text-3xl w-full font-bold mb-5">Últimos Proyectos</div>
-    <p>listado de proyectos en los que he estado trabajando recientemente.</p>
-    <p>Si tienes pensado algún proyecto que quieras realizar, hablemos... ☎</p>
-  </div>
-  <div class="m-8">
-    <a class="btn btn-neutral" href="https://www.fiverr.com/simoncra" target="_blank">Contrátame 📋</a>
-  </div>
-  <div class="divider my-0"></div>
+<SessionLayout current="proyectos" title="Proyectos | Simonctech">
+  <main class="window">
+    <section class="pane is-active" aria-labelledby="pane-proyectos">
+      <h2 class="pane-title" id="pane-proyectos">proyectos</h2>
+      <p class="prompt-line">
+        <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>eza -l --icons proyectos/</span>
+      </p>
+      <p class="out empty" data-empty>Los Proyectos llegarán pronto.</p>
+      <p class="out note"># Simón los está escribiendo, uno por uno.</p>
+    </section>
+  </main>
+</SessionLayout>
 
-  <GhProjects client:load />
-  </BaseLayout>
+<style>
+  .empty {
+    margin-top: 12px;
+  }
+  .note {
+    color: var(--dim);
+    font-size: 13.5px;
+  }
+</style>
