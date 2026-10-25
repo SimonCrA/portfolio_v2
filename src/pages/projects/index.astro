@@ -6,6 +6,7 @@ import PixelArt from '../../components/session/PixelArt.astro'
 import { PROJECT_ICON } from '../../session/icons'
 import { fmtDate } from '../../session/date'
 import { getSortedProjects } from '../../session/projects'
+import { projectSearchText } from '../../session/search-index'
 
 const projects = await getSortedProjects()
 ---
@@ -20,26 +21,26 @@ const projects = await getSortedProjects()
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de proyectos">
         {
           projects.length > 0 && (
-            <ol class="list" data-list data-searchable>
-              {projects.map(({ slug, data: p }) => (
-                <li data-search={[p.title, p.summary, p.kind, p.status, ...p.tags, ...p.stack].join(' ')}>
-                  <a class="row" href={`/projects/${slug}`} data-featured={p.featured ? '' : undefined}>
-                    <PixelArt name={PROJECT_ICON[p.kind]} scale={2} />
+            <ol class="list" data-list data-searchable="projects">
+              {projects.map((entry) => (
+                <li data-search={projectSearchText(entry)}>
+                  <a class="row" href={`/projects/${entry.slug}`} data-featured={entry.data.featured ? '' : undefined}>
+                    <PixelArt name={PROJECT_ICON[entry.data.kind]} scale={2} />
                     <span class="main">
                       <span class="title">
-                        {p.featured && (
+                        {entry.data.featured && (
                           <span class="star" aria-label="Destacado">
                             ★
                           </span>
                         )}
-                        {p.title}</span>
-                      <span class="summary">{p.summary}</span>
-                      <span class="stack">{p.stack.join('  ')}</span>
+                        {entry.data.title}</span>
+                      <span class="summary">{entry.data.summary}</span>
+                      <span class="stack">{entry.data.stack.join('  ')}</span>
                     </span>
                     <span class="meta">
-                      <span class={`state state-${p.status}`}>{p.status}</span>
-                      <span class="kind">{p.kind}</span>
-                      <time datetime={p.date.toISOString()}>{fmtDate(p.date)}</time>
+                      <span class={`state state-${entry.data.status}`}>{entry.data.status}</span>
+                      <span class="kind">{entry.data.kind}</span>
+                      <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
                     </span>
                   </a>
                 </li>
@@ -52,6 +53,7 @@ const projects = await getSortedProjects()
             projects.length > 0 ? (
               <>
                 Ningún proyecto coincide con «<span data-empty-q />». Escribe <code>:buscar</code> sin texto para verlos todos.
+                <span data-other hidden><br /><a data-other-link /></span>
               </>
             ) : (
               <>Todavía no hay proyectos publicados. Mientras tanto, el blog tiene lo último que he escrito.</>

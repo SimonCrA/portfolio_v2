@@ -23,6 +23,6 @@ test.describe('fixture content (E2E_FIXTURES=1)', () => {
   test('the fixture Post renders in the reader', async ({ page }) => {
     await page.goto(href)
     await expect(page.getByRole('heading', { level: 1, name: FIXTURE_POST.title })).toBeVisible()
-    await expect(page.locator('.frontmatter')).toContainText('tags: [fixture, pruebas]')
+    await expect(page.locator('.frontmatter')).toContainText('tags: [fixture, e2e-solo-post]')
   })
 })

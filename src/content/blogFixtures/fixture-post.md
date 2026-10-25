@@ -2,7 +2,7 @@
 title: 'Post de prueba (e2e-fixture)'
 description: 'Un Post que solo existe en el build de los tests E2E.'
 publishDate: 'Jan 01 2001'
-tags: ['fixture', 'pruebas']
+tags: ['fixture', 'e2e-solo-post']
 slug: 'e2e/fixture-post'
 ---
 

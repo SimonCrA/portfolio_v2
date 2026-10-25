@@ -1,6 +1,8 @@
 // Latest feed (spec #7, #10): a pure aggregation over sources. Adding Videos or Projects later
 // means writing a source and adding it to the list passed in; the home page does not change.
 
+import type { IconName } from './icons'
+
 export type FeedKind = 'post' | 'video' | 'project'
 
 export interface FeedItem {
@@ -9,6 +11,8 @@ export interface FeedItem {
   summary: string
   date: Date
   href: string
+  /** Overrides the kind's icon, e.g. a software Project. */
+  icon?: IconName
 }
 
 export type FeedSource = () => FeedItem[] | Promise<FeedItem[]>

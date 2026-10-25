@@ -280,6 +280,11 @@ a {
 .status-msg[data-kind='error'] {
   background: var(--red);
 }
+.status-msg-link {
+  margin-left: 1ch;
+  color: inherit;
+  text-underline-offset: 3px;
+}
 .status .hint {
   padding: 0;
   border: 0;

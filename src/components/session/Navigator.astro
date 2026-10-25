@@ -2,6 +2,7 @@
 // The `eza --icons ~/` pane: one entry per section plus cv.pdf, with a `tree` preview of what the
 // hovered or focused entry holds (script below). Without JS the blog preview stays.
 import { getSortedPosts } from '../../session/posts'
+import { getSortedProjects } from '../../session/projects'
 import { fmtDate } from '../../session/date'
 import PixelArt from './PixelArt.astro'
 import { SECTION_ICON } from '../../session/icons'
@@ -13,6 +14,8 @@ const route = (key: string) => WINDOWS.find((w) => w.key === key)!.route
 const number = (key: string) => WINDOWS.findIndex((w) => w.key === key)
 
 const posts = await getSortedPosts()
+const projects = await getSortedProjects()
+const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 
 interface Entry {
   key: 'proyectos' | 'blog' | 'videos' | 'sobre-mi' | 'cv'
@@ -23,11 +26,20 @@ interface Entry {
   items: { a: string; b: string; href?: string }[]
 }
 const entries: Entry[] = [
-  { key: 'proyectos', name: 'proyectos/', meta: 'pronto', href: route('proyectos'), items: [{ a: 'pronto', b: 'Los Proyectos llegarán pronto.' }] },
+  {
+    key: 'proyectos',
+    name: 'proyectos/',
+    meta: count(projects.length, 'proyecto', 'proyectos'),
+    href: route('proyectos'),
+    // Featured first, then newest (the collection's order).
+    items: projects.length
+      ? projects.slice(0, 4).map((p) => ({ a: fmtDate(p.data.date), b: `${p.data.featured ? '★ ' : ''}${p.data.title}`, href: `/projects/${p.slug}` }))
+      : [{ a: 'vacío', b: 'Todavía no hay proyectos publicados.' }],
+  },
   {
     key: 'blog',
     name: 'blog/',
-    meta: `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`,
+    meta: count(posts.length, 'post', 'posts'),
     href: route('blog'),
     items: posts.slice(0, 4).map((p) => ({ a: fmtDate(p.data.publishDate), b: p.data.title, href: `/blog/${p.slug}` })),
   },

@@ -1,16 +1,21 @@
 import { test, expect } from '@playwright/test'
-import { POSTS as ALL_POSTS } from './content'
+import { POSTS, PROJECTS } from './content'
 
-const POSTS = ALL_POSTS.length
+// The feed mixes Posts and Projects, newest first.
+const FEED = [
+  ...POSTS.map((p) => ({ href: `/blog/${p.slug}` })),
+  ...PROJECTS.map((p) => ({ href: `/projects/${p.slug}` })),
+]
 
 test.describe('latest feed', () => {
-  test('is a named region listing every Post newest first, each linked', async ({ page }) => {
+  test('is a named region listing every Post and Project newest first, each linked', async ({ page }) => {
     await page.goto('/')
     const pane = page.getByRole('region', { name: 'Últimos' })
     await expect(pane.getByText('ls -lt ultimos/')).toBeVisible()
     const rows = pane.getByRole('link')
-    await expect(rows).toHaveCount(POSTS)
-    for (const row of await rows.all()) await expect(row).toHaveAttribute('href', /^\/blog\/.+/)
+    await expect(rows).toHaveCount(FEED.length)
+    const hrefs = await rows.evaluateAll((els) => els.map((e) => e.getAttribute('href')))
+    expect([...hrefs].sort()).toEqual(FEED.map((f) => f.href).sort())
     const dates = await pane.locator('time').evaluateAll((els) => els.map((e) => e.getAttribute('datetime')!))
     expect(dates).toEqual([...dates].sort().reverse())
   })
@@ -21,7 +26,7 @@ test.describe('latest feed', () => {
     await expect(row.locator('svg')).toHaveAttribute('aria-hidden', 'true')
     await expect(row.locator('.title')).not.toBeEmpty()
     await expect(row.locator('.summary')).not.toBeEmpty()
-    await expect(row).toContainText('post')
+    await expect(row.locator('.kind')).toHaveText(/^(post|proyecto)$/)
     await expect(row.locator('time')).toContainText(/\d{4}/)
   })
 
@@ -53,5 +58,14 @@ test.describe('latest feed', () => {
     await page.goto('/')
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBeLessThanOrEqual(0)
+  })
+
+  test('a Project row links to its page with the proyecto kind and its icon', async ({ page }) => {
+    await page.goto('/')
+    for (const p of PROJECTS) {
+      const row = page.locator(`[data-latest-scroll] a[href="/projects/${p.slug}"]`)
+      await expect(row.locator('.kind')).toHaveText('proyecto')
+      await expect(row.locator(`svg.pixel-${p.kind === 'hardware' ? 'chip' : 'code'}`)).toHaveCount(1)
+    }
   })
 })

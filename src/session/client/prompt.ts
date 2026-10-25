@@ -23,17 +23,26 @@ export const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').to
 let timer: number | undefined
 
 /** Replace the status line with a message for ~3.5s, like tmux `display-message`. */
-export function message(text: string, kind: MessageKind = 'info') {
+/** Show a message in the status line. An optional link (e.g. to the other search results) follows the text. */
+export function message(text: string, kind: MessageKind = 'info', link?: { label: string; href: string }) {
   closePrompt()
   clearTimeout(timer)
   output.textContent = text
+  if (link) {
+    const a = document.createElement('a')
+    a.href = link.href
+    a.textContent = link.label
+    a.className = 'status-msg-link'
+    output.append(' ', a)
+  }
   output.dataset.kind = kind
   line.hidden = true
   output.hidden = false
+  // A message with a link stays longer, so there is time to follow it.
   timer = window.setTimeout(() => {
     output.hidden = true
     line.hidden = false
-  }, MESSAGE_MS)
+  }, link ? MESSAGE_MS * 2 : MESSAGE_MS)
 }
 
 /* ---------- prompt ---------- */

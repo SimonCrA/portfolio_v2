@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { POSTS as ALL_POSTS } from './content'
+import { POSTS as ALL_POSTS, PROJECTS } from './content'
 import { readFileSync } from 'node:fs'
 import { parse } from 'yaml'
 
@@ -17,7 +17,7 @@ test.describe('home navigator', () => {
     await expect(nav.getByRole('link', { name: /sobre-mi\// })).toHaveAttribute('href', '/sobre-mi')
     await expect(nav.getByRole('link', { name: /cv\.pdf/ })).toHaveAttribute('href', /resume_es\.pdf$/)
     await expect(nav.getByRole('link', { name: /blog\// })).toContainText(`${POSTS} posts`)
-    await expect(nav.getByRole('link', { name: /proyectos\// })).toContainText('pronto')
+    await expect(nav.getByRole('link', { name: /proyectos\// })).toContainText(`${PROJECTS.length} proyectos`)
     await expect(nav.getByRole('link', { name: /sobre-mi\// })).toContainText('quién soy')
   })
 
@@ -67,7 +67,7 @@ test.describe('home navigator', () => {
     await page.goto('/')
     const nav = page.getByRole('region', { name: 'Navegador' })
     await nav.getByRole('link', { name: /proyectos\// }).focus()
-    await expect(nav.getByText('Los Proyectos llegarán pronto.')).toBeVisible()
+    await expect(nav.getByText('tree proyectos/')).toBeVisible()
     await expect(nav.getByText('tree blog/')).toBeHidden()
     await page.keyboard.press('Tab')
     await expect(nav.getByText('tree blog/')).toBeVisible()
@@ -100,5 +100,19 @@ test.describe('navigator on desktop', () => {
     await page.goto('/')
     const nav = page.getByRole('region', { name: 'Navegador' })
     await expect(nav.locator('kbd')).toHaveText(['1', '2', '3', '4'])
+  })
+
+  test('previews Projects Featured first, then newest, linked', async ({ page, isMobile }) => {
+    test.skip(!!isMobile, 'preview is hidden on phones')
+    await page.goto('/')
+    const nav = page.getByRole('region', { name: 'Navegador' })
+    await nav.getByRole('link', { name: /proyectos\// }).hover()
+    const links = nav.locator('[data-preview="proyectos"] .tree a')
+    await expect(links).toHaveCount(Math.min(4, PROJECTS.length))
+    const expected = PROJECTS.slice(0, 4)
+    for (const [i, p] of expected.entries()) {
+      await expect(links.nth(i)).toHaveAttribute('href', `/projects/${p.slug}`)
+      await expect(links.nth(i)).toHaveText(`${p.featured ? '★ ' : ''}${p.title}`)
+    }
   })
 })

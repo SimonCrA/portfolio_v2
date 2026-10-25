@@ -1,5 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
-import { POSTS } from './content'
+import { POSTS, PROJECTS } from './content'
+
+// The home feed mixes Posts and Projects.
+const FEED = POSTS.length + PROJECTS.length
 
 // How far the reader has scrolled: its pane on desktop, the page on phones.
 const readerScroll = (page: Page) => page.evaluate(() => Math.max(scrollY, document.querySelector('[data-scroll-box]')?.scrollTop ?? 0))
@@ -65,14 +68,15 @@ test.describe('lists (keys)', () => {
     await run(page, 'abrir 2')
     await expect(page).toHaveURL(href!)
     await page.goto('/')
+    const first = await feedRows(page).first().getAttribute('href')
     await run(page, 'open 1')
-    await expect(page).toHaveURL(/\/blog\/.+/)
+    await expect(page).toHaveURL(first!)
   })
 
   test(':abrir out of range shows the range error', async ({ page }) => {
     await page.goto('/')
     await run(page, 'abrir 99')
-    await expect(message(page)).toHaveText(`Escribe un número del 1 al ${POSTS.length}: por ejemplo :abrir 1`)
+    await expect(message(page)).toHaveText(`Escribe un número del 1 al ${FEED}: por ejemplo :abrir 1`)
     await expect(page).toHaveURL('/')
   })
 
@@ -93,12 +97,12 @@ test.describe('lists (keys)', () => {
     const pos = feedPane(page).locator('[data-list-pos]')
     const more = feedPane(page).locator('[data-list-more] > span')
     await expect(pos).toHaveAttribute('aria-hidden', 'true')
-    await expect(pos).toHaveText(new RegExp(`^\\[1-\\d+/${POSTS.length * 4}\\]$`))
+    await expect(pos).toHaveText(new RegExp(`^\\[1-\\d+/${FEED * 4}\\]$`))
     const before = await pos.textContent()
     await expect(more).toBeVisible()
     await expect(more).toContainText('más abajo')
     await page.locator('[data-latest-scroll]').evaluate((el) => (el.scrollTop = el.scrollHeight))
-    await expect(pos).toHaveText(new RegExp(`^\\[\\d+-${POSTS.length * 4}/${POSTS.length * 4}\\]$`))
+    await expect(pos).toHaveText(new RegExp(`^\\[\\d+-${FEED * 4}/${FEED * 4}\\]$`))
     await expect(pos).not.toHaveText(before!)
     await expect(more).toBeHidden()
   })

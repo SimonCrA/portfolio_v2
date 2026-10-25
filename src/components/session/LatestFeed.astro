@@ -1,10 +1,11 @@
 ---
 // The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only;
-// Video and Project sources join this array when their collections exist.
+// the Video source joins this array when its collection exists.
 import { getSortedPosts } from '../../session/posts'
+import { getSortedProjects } from '../../session/projects'
 import { fmtDate } from '../../session/date'
 import PixelArt from './PixelArt.astro'
-import { KIND_ICON } from '../../session/icons'
+import { KIND_ICON, PROJECT_ICON } from '../../session/icons'
 import { buildFeed, KIND_LABEL, type FeedSource } from '../../session/feed'
 
 const postsSource: FeedSource = async () =>
@@ -16,7 +17,17 @@ const postsSource: FeedSource = async () =>
     href: `/blog/${p.slug}`,
   }))
 
-const feed = await buildFeed([postsSource])
+const projectsSource: FeedSource = async () =>
+  (await getSortedProjects()).map((p) => ({
+    kind: 'project' as const,
+    title: p.data.title,
+    summary: p.data.summary,
+    date: p.data.date,
+    href: `/projects/${p.slug}`,
+    icon: PROJECT_ICON[p.data.kind],
+  }))
+
+const feed = await buildFeed([postsSource, projectsSource])
 const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
@@ -29,7 +40,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
         feed.map((item) => (
           <li>
             <a class="latest-row" href={item.href} data-kind={item.kind}>
-              <PixelArt name={KIND_ICON[item.kind]} scale={2} />
+              <PixelArt name={item.icon ?? KIND_ICON[item.kind]} scale={2} />
               <span class="main">
                 <span class="title">{item.title}</span>
                 <span class="summary">{item.summary}</span>
