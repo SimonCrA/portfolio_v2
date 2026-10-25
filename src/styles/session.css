@@ -28,6 +28,19 @@
   --session-fg: var(--bg);
   --active-win: var(--yellow);
 
+  /* pixel-art roles (see src/session/icons.ts): icons recolour when the tokens above change */
+  --px-K: var(--bg);
+  --px-W: var(--fg-bright);
+  --px-L: var(--fg);
+  --px-D: var(--dim);
+  --px-M: var(--line);
+  --px-A: var(--accent);
+  --px-C: var(--blue);
+  --px-F: var(--blue);
+  --px-R: var(--red);
+  --px-S: var(--yellow);
+  --px-H: var(--dim);
+
   --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
   --status-h: 30px;
 }
@@ -190,4 +203,13 @@ a {
   .status nav a {
     padding: 0 9px;
   }
+}
+
+/* ---------- pixel art ---------- */
+.pixel-art {
+  flex: none;
+}
+/* Sobre mí gets an aqua shirt, like the avatar. */
+.pixel-avatar {
+  --px-A: var(--aqua);
 }

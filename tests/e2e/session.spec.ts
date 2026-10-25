@@ -32,7 +32,7 @@ test.describe('home in the session layout', () => {
 
   test('status line carries the CV link', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('link', { name: 'cv.pdf' })).toHaveAttribute('href', /resume_es\.pdf$/)
+    await expect(page.getByRole('link', { name: 'cv.pdf', exact: true })).toHaveAttribute('href', /resume_es\.pdf$/)
   })
 
   test('decorative banner is hidden from assistive tech', async ({ page }) => {

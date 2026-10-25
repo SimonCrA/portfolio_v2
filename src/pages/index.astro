@@ -1,5 +1,6 @@
 ---
 import SessionLayout from '../layouts/SessionLayout.astro'
+import Navigator from '../components/session/Navigator.astro'
 import Banner from '../components/session/Banner.astro'
 import { INTRO, NOW } from '../session/about'
 
@@ -17,6 +18,8 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
       <p class="out" data-now>{NOW}</p>
     </section>
+
+    <Navigator />
   </main>
 </SessionLayout>
 
@@ -27,6 +30,12 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
   @media (min-width: 900px) {
     .window-home {
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+    }
+    /* Left column: zsh, then the navigator. The right column is reserved for the Latest feed (#10). */
+    .window-home :global(.pane-zsh),
+    .window-home :global(.pane-nav) {
+      grid-column: 1;
     }
   }
   .name {
