@@ -10,10 +10,10 @@ import { CHANNEL_URL, getVideos } from '../session/videos'
 const videos = await getVideos()
 ---
 
-<SessionLayout current="videos" title="Videos | Simonctech" description="Los últimos videos del canal de YouTube de Simón.">
+<SessionLayout current="videos" title="Videos | Simón Clemente" description="Los últimos videos del canal de YouTube de Simón Clemente sobre programación, backend y la terminal." markdown="/videos.md">
   <main class="window">
     <section class="pane is-active" aria-labelledby="pane-videos">
-      <h2 class="pane-title" id="pane-videos">videos</h2>
+      <h1 class="pane-title" id="pane-videos">videos</h1>
       <PromptLine cmd="ls -lt videos/" search />
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de videos">
         <ol class="entry-list" data-list data-videos>

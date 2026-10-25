@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 import vercel from '@astrojs/vercel';
+import rehypeDemoteHeadings from './src/session/rehype-demote-headings.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -30,6 +31,7 @@ export default defineConfig({
                 },
             ],
         },
+        rehypePlugins: [rehypeDemoteHeadings],
         syntaxHighlight: 'shiki',
         gfm: false, // GitHub Flavored Markdown
         smartypants: true // Better typography

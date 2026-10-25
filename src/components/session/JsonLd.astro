@@ -1,0 +1,10 @@
+---
+// Structured data as JSON-LD. `<` is escaped so a value can never close the script element.
+interface Props {
+  data: object
+}
+
+const json = JSON.stringify(Astro.props.data).replace(/</g, '\\u003c')
+---
+
+<script type="application/ld+json" set:html={json} />

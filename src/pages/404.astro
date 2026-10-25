@@ -1,0 +1,63 @@
+---
+// Not found: a shell error and the ways back. Search engines get a real 404 status from Vercel.
+import SessionLayout from '../layouts/SessionLayout.astro'
+import PromptLine from '../components/session/PromptLine.astro'
+import { WINDOWS } from '../session/windows'
+---
+
+<SessionLayout current="inicio" title="Página no encontrada | Simón Clemente" description="Esta página no existe en simonctech.com." noindex>
+  <main class="window">
+    <section class="pane is-active" aria-labelledby="pane-404">
+      <h1 class="pane-title" id="pane-404">404</h1>
+      <PromptLine cmd="cd" />
+      <p class="out error">cd: no existe el archivo o el directorio: <span data-missing-path>esta página</span></p>
+      <p class="out">Puede que el enlace esté roto o que la página se haya movido. Estas sí existen:</p>
+      <ul class="ways">
+        {
+          WINDOWS.map((w, i) => (
+            <li>
+              <a href={w.route}>
+                <span class="n">{i}</span> {w.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</SessionLayout>
+
+<script>
+  // Name the path that was asked for; textContent keeps it literal.
+  document.addEventListener('astro:page-load', () => {
+    const slot = document.querySelector('[data-missing-path]')
+    if (slot) slot.textContent = location.pathname
+  })
+</script>
+
+<style>
+  .error {
+    margin-top: 4px;
+    color: var(--red);
+  }
+  .ways {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ways a {
+    display: inline-block;
+    padding: 4px 0;
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .ways a:hover,
+  .ways a:focus-visible {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .n {
+    color: var(--accent);
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import SessionLayout from '../../layouts/SessionLayout.astro'
+import { blogPosting, graph, website } from '../../session/schema'
 import PromptLine from '../../components/session/PromptLine.astro'
 import { fmtDate } from '../../session/date'
 import PixelArt from '../../components/session/PixelArt.astro'
@@ -14,10 +15,16 @@ for (const t of posts.flatMap((p) => p.data.tags)) tagCount.set(t, (tagCount.get
 const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t)
 ---
 
-<SessionLayout current="blog" title="Blog | Simonctech" description="Posts de Simón sobre lo que construye y aprende.">
+<SessionLayout
+  current="blog"
+  title="Blog | Simón Clemente"
+  description={`Posts de Simón Clemente sobre programación y las herramientas que usa: ${topTags.join(', ')} y más.`}
+  jsonLd={graph(website(), { '@type': 'Blog', url: 'https://www.simonctech.com/blog/', name: 'Blog de Simón Clemente', blogPost: posts.map(blogPosting) })}
+  markdown="/blog.md"
+>
   <main class="window">
     <section class="pane is-active" aria-labelledby="pane-blog">
-      <h2 class="pane-title" id="pane-blog">blog</h2>
+      <h1 class="pane-title" id="pane-blog">blog</h1>
       <PromptLine cmd="ls -lt blog/" search />
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de posts">
         <ol class="entry-list" data-list data-searchable="blog">

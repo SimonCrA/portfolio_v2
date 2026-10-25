@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { blogPosting, graph, website } from '../../session/schema'
 import type { BlogSchema } from '../../content/config'
 import SessionLayout from '../../layouts/SessionLayout.astro'
 import Reader from '../../components/session/Reader.astro'
@@ -27,7 +28,16 @@ const fecha = fmtLongDate(post.publishDate)
 const file = `~/blog/${entry.slug}.md`
 ---
 
-<SessionLayout current="blog" title={post.title} description={post.description} image={post.image}>
+<SessionLayout
+  current="blog"
+  title={`${post.title} | Simón Clemente`}
+  description={post.description}
+  image={post.image}
+  type="article"
+  publishedTime={post.publishDate}
+  jsonLd={graph(website(), blogPosting(entry))}
+  markdown={`/blog/${entry.slug}.md`}
+>
   <main class="window reader-window" data-post>
     <Reader
       file={file}

@@ -1,0 +1,9 @@
+# Simonctech (https://www.simonctech.com)
+# Guide for language models: https://www.simonctech.com/llms.txt
+# Map of the site's Markdown pages: https://www.simonctech.com/sitemap.md
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://www.simonctech.com/sitemap-index.xml

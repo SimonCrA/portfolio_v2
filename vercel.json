@@ -1,0 +1,24 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)\\.md",
+      "headers": [{ "key": "Content-Type", "value": "text/markdown; charset=utf-8" }]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
+    },
+    {
+      "source": "/index.md",
+      "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/>; rel=\"canonical\"" }]
+    },
+    {
+      "source": "/:page(sobre-mi|blog|projects|videos)\\.md",
+      "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/:page/>; rel=\"canonical\"" }]
+    },
+    {
+      "source": "/:section(blog|projects)/:slug(.+)\\.md",
+      "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/:section/:slug/>; rel=\"canonical\"" }]
+    }
+  ]
+}

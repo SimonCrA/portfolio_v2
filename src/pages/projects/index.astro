@@ -2,6 +2,7 @@
 // Window 1: the Projects as an `eza -l --icons` listing. Featured first, then newest (see
 // src/session/projects.ts). The status reads like `systemctl status`: a coloured dot and a word.
 import SessionLayout from '../../layouts/SessionLayout.astro'
+import { graph, project, website } from '../../session/schema'
 import PromptLine from '../../components/session/PromptLine.astro'
 import PixelArt from '../../components/session/PixelArt.astro'
 import { PROJECT_ICON } from '../../session/icons'
@@ -12,10 +13,16 @@ import { projectSearchText } from '../../session/search-index'
 const projects = await getSortedProjects()
 ---
 
-<SessionLayout current="proyectos" title="Proyectos | Simonctech" description="Lo que Simón ha construido, software y hardware.">
+<SessionLayout
+  current="proyectos"
+  title="Proyectos | Simón Clemente"
+  description={projects.length ? `Proyectos de Simón Clemente: ${projects.map((p) => p.data.title).join(', ')}. Qué hace cada uno, su stack y cómo está hecho.` : 'Proyectos de Simón Clemente, software y hardware.'}
+  jsonLd={graph(website(), { '@type': 'CollectionPage', url: 'https://www.simonctech.com/projects/', name: 'Proyectos de Simón Clemente', hasPart: projects.map(project) })}
+  markdown="/projects.md"
+>
   <main class="window">
     <section class="pane is-active" aria-labelledby="pane-proyectos">
-      <h2 class="pane-title" id="pane-proyectos">proyectos</h2>
+      <h1 class="pane-title" id="pane-proyectos">proyectos</h1>
       <PromptLine cmd="eza -l --icons proyectos/" search />
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de proyectos">
         {
