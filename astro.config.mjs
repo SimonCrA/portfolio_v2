@@ -15,6 +15,22 @@ export default defineConfig({
     markdown: {
         shikiConfig: {
             theme: 'gruvbox-dark-hard',
+            transformers: [
+                {
+                    // Wrap each code block so the reader can put its language in the border (like a
+                    // pane title) and a copy button, outside the block's horizontal scroll.
+                    root(root) {
+                        root.children = [
+                            {
+                                type: 'element',
+                                tagName: 'div',
+                                properties: { className: ['code-block'], dataLang: this.options.lang },
+                                children: root.children,
+                            },
+                        ];
+                    },
+                },
+            ],
         },
         syntaxHighlight: 'shiki',
         gfm: false, // GitHub Flavored Markdown

@@ -112,15 +112,95 @@
   content: '### ';
   color: var(--dim);
 }
+/* Code blocks are small panes: the language sits in the top border like a pane title and the
+   copy button (added by the reader's script) on the right, like the list position label. */
+.reader .prose .code-block {
+  position: relative;
+  margin: 2.2em 0 1.8em;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+}
+.reader .prose .code-block[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: -0.8em;
+  left: 12px;
+  padding: 0 6px;
+  background: var(--bg);
+  color: var(--dim);
+  font-size: 0.8667rem;
+  line-height: 1.5;
+}
+.reader .prose .code-block:is([data-lang='plaintext'], [data-lang='text'], [data-lang=''])::before {
+  content: none;
+}
+.reader .prose .code-copy {
+  position: absolute;
+  top: -0.8em;
+  right: 12px;
+  padding: 0 6px;
+  border: 0;
+  background: var(--bg);
+  color: var(--dim);
+  font: inherit;
+  font-size: 0.8667rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.reader .prose .code-copy:hover,
+.reader .prose .code-copy:focus-visible,
+.reader .prose .code-copy[data-copied] {
+  color: var(--accent);
+}
 .reader .prose pre {
   max-width: 100%;
+  margin: 0;
+  padding: 1.1em 1.3em;
   overflow-x: auto;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 0;
+  /* Shiki paints the page colour inline; the block keeps its own lifted background. */
+  background: transparent !important;
+  font-size: 0.9em;
+  line-height: 1.6;
   overflow-wrap: normal;
 }
 .reader .prose pre code {
   overflow-wrap: normal;
+}
+/* Inline code: a lifted chip, without the backticks Tailwind Typography adds. */
+.reader .prose :not(pre) > code {
+  padding: 0.1em 0.4em;
+  background: var(--bg-2);
+  font-weight: 400;
+  font-size: 0.9em;
+}
+.reader .prose :not(pre) > code::before,
+.reader .prose :not(pre) > code::after {
+  content: none;
+}
+/* Quotes read like glow draws them: a bar on the left, the text in its normal style. */
+.reader .prose blockquote {
+  margin: 1.8em 0;
+  padding: 0.4em 1.2em;
+  border-left: 3px solid var(--aqua);
+  background: var(--bg-2);
+  color: var(--fg);
+  font-style: normal;
+  font-weight: 400;
+}
+.reader .prose blockquote p::before,
+.reader .prose blockquote p::after {
+  content: none;
+}
+.reader .prose a {
+  text-underline-offset: 3px;
+}
+.reader .prose a:hover {
+  color: var(--accent);
+}
+.reader .prose hr {
+  border-top-style: dashed;
 }
 .reader .prose img {
   max-width: 100%;

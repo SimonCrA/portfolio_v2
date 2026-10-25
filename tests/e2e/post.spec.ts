@@ -57,3 +57,29 @@ for (const post of POSTS) {
     })
   })
 }
+
+test.describe('reader body', () => {
+  const route = '/blog/cv/github-latex'
+
+  test('code blocks name their language and copy their code', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+    await page.goto(route)
+    const block = page.locator('.code-block[data-lang="bash"]').first()
+    await expect(block).toBeAttached()
+    const copy = block.locator('button.code-copy')
+    await expect(copy).toHaveText('[copiar]')
+    await copy.click()
+    await expect(copy).toHaveText('[copiado]')
+    const code = await block.locator('pre').innerText()
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(code)
+  })
+
+  test('inline code and quotes have no typographic decorations', async ({ page }) => {
+    await page.goto(route)
+    const inline = page.locator('.prose :not(pre) > code').first()
+    expect(await inline.evaluate((el) => getComputedStyle(el, '::before').content)).toBe('none')
+    const quote = page.locator('.prose blockquote p').first()
+    expect(await quote.evaluate((el) => getComputedStyle(el, '::before').content)).toBe('none')
+    expect(await quote.evaluate((el) => getComputedStyle(el.closest('blockquote')!).fontStyle)).toBe('normal')
+  })
+})

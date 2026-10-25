@@ -86,4 +86,27 @@ const hasMedia = Astro.slots.has('media')
   document.addEventListener('astro:page-load', update)
   // The module can load after the first `astro:page-load` of a client navigation.
   update()
+
+  // Copy buttons on code blocks. Without JavaScript the code is still selectable.
+  const addCopyButtons = () => {
+    for (const block of document.querySelectorAll<HTMLElement>('.reader .code-block')) {
+      if (block.querySelector('.code-copy')) continue
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.className = 'code-copy'
+      button.textContent = '[copiar]'
+      button.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(block.querySelector('pre')?.innerText ?? '')
+        button.textContent = '[copiado]'
+        button.dataset.copied = ''
+        setTimeout(() => {
+          button.textContent = '[copiar]'
+          delete button.dataset.copied
+        }, 1500)
+      })
+      block.append(button)
+    }
+  }
+  document.addEventListener('astro:page-load', addCopyButtons)
+  addCopyButtons()
 </script>
