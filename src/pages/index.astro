@@ -4,6 +4,7 @@ import Navigator from '../components/session/Navigator.astro'
 import LatestFeed from '../components/session/LatestFeed.astro'
 import Banner from '../components/session/Banner.astro'
 import { getAbout } from '../session/getAbout'
+import { fmtDate } from '../session/date'
 
 const about = (await getAbout()).data
 
@@ -18,7 +19,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       <p class="prompt-line" set:html={prompt('whoami')} />
       <div class="out"><h1 class="name">{about.name}</h1>. {about.intro}</div>
       <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
-      <p class="out" data-now>{about.now}</p>
+      <p class="out"><span data-now>{about.now}</span> <time class="stamp" datetime={about.nowUpdated.toISOString().slice(0, 10)} data-now-updated>({fmtDate(about.nowUpdated)})</time></p>
       <button type="button" class="prompt-line live" data-open-prompt aria-label="Abrir el prompt de comandos">
         <span set:html={prompt('')} /><span class="cursor" aria-hidden="true"></span>
         <span class="live-hint">pulsa <kbd>:</kbd> para escribir un comando o <kbd>?</kbd> para la ayuda</span>
@@ -61,6 +62,9 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     .window-home :global(.pane-nav) {
       order: 2;
     }
+  }
+  .stamp {
+    color: var(--dim);
   }
   /* The page heading reads as the first words of the whoami output. */
   .name {

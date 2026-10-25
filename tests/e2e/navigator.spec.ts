@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import { parse } from 'yaml'
+
+const { now } = parse(readFileSync('src/content/about/sobre-mi.md', 'utf8').split(/^---$/m)[1]) as { now: string }
 
 // Post count comes from the blog collection; the fixture has five Posts.
 const POSTS = 5
@@ -14,7 +18,7 @@ test.describe('home navigator', () => {
     await expect(nav.getByRole('link', { name: /cv\.pdf/ })).toHaveAttribute('href', /resume_es\.pdf$/)
     await expect(nav.getByRole('link', { name: /blog\// })).toContainText(`${POSTS} posts`)
     await expect(nav.getByRole('link', { name: /proyectos\// })).toContainText('pronto')
-    await expect(nav.getByRole('link', { name: /sobre-mi\// })).toContainText('uses y ahora')
+    await expect(nav.getByRole('link', { name: /sobre-mi\// })).toContainText('quién soy')
   })
 
   test('sits in the left column under the zsh pane on desktop', async ({ page, isMobile }) => {
@@ -50,7 +54,7 @@ test.describe('home navigator', () => {
     const nav = page.getByRole('region', { name: 'Navegador' })
     await nav.getByRole('link', { name: /sobre-mi\// }).hover()
     await expect(nav.getByText('tree sobre-mi/')).toBeVisible()
-    await expect(nav.getByText('Rediseñando este sitio desde cero.')).toBeVisible()
+    await expect(nav.getByText(now)).toBeVisible()
     await expect(nav.getByText('tree blog/')).toBeHidden()
     await nav.getByRole('link', { name: /videos\// }).hover()
     await expect(nav.getByText('Los Videos llegarán pronto.')).toBeVisible()

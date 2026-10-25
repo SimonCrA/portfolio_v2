@@ -28,7 +28,7 @@ The mix of the newest Post, Video and Project shown on the home page.
 _Avoid_: Timeline, activity
 
 **Uses**:
-The part of "Sobre mí" listing Simón's setup, gear and tools.
+The part of "Sobre mí" listing Simón's setup, gear and tools, grouped. Shown to visitors as "Con qué trabajo".
 _Avoid_: Stack, setup page
 
 **Now**:

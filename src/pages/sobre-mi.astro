@@ -5,9 +5,10 @@ import PixelArt from '../components/session/PixelArt.astro'
 import '../styles/reader.css'
 import { CV_URL } from '../session/windows'
 import { getAbout } from '../session/getAbout'
+import { fmtDate } from '../session/date'
 
 const entry = await getAbout()
-const { name, now, uses, links } = entry.data
+const { name, intro, now, nowUpdated, uses, links } = entry.data
 const { Content } = await entry.render()
 ---
 
@@ -19,19 +20,33 @@ const { Content } = await entry.render()
         <PixelArt name="avatar" scale={6} class="pixel-avatar" label="Avatar pixel de Simón" />
         <div class="intro">
           <h1 class="reader-title" id="about-name">{name}</h1>
-          <div class="reader-lead"><Content /></div>
+          <p class="reader-lead">{intro}</p>
           <p><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
         </div>
       </div>
 
       <div class="prose">
+        <Content />
+
         <h2>Ahora</h2>
         <p data-now>{now}</p>
+        <p class="stamp">actualizado el <time datetime={nowUpdated.toISOString().slice(0, 10)} data-now-updated>{fmtDate(nowUpdated)}</time></p>
 
-        <h2>Uses</h2>
-        <ul>
-          {uses.map((u) => <li><strong>{u.what}:</strong> {u.value}</li>)}
-        </ul>
+        <h2>Con qué trabajo</h2>
+        {
+          uses.map((g) => (
+            <>
+              <h3>{g.group}</h3>
+              <ul>
+                {g.items.map((u) => (
+                  <li>
+                    <strong>{u.what}:</strong> {u.value}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ))
+        }
 
         <h2>Dónde encontrarme</h2>
         <ul>
@@ -47,7 +62,7 @@ const { Content } = await entry.render()
     display: flex;
     gap: 24px;
     align-items: flex-start;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
   }
   .intro {
     min-width: 0;
@@ -57,8 +72,12 @@ const { Content } = await entry.render()
       flex-direction: column;
     }
   }
-  .reader-lead :global(p) {
+  .reader-lead {
     margin: 0 0 16px;
+  }
+  .stamp {
+    color: var(--dim);
+    font-size: 13px;
   }
   .button {
     display: inline-block;

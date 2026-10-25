@@ -1,4 +1,15 @@
 import { test, expect } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import { parse } from 'yaml'
+
+const [, frontmatter, body] = readFileSync('src/content/about/sobre-mi.md', 'utf8').split(/^---$/m)
+const about = parse(frontmatter) as {
+  intro: string
+  now: string
+  nowUpdated: Date | string
+  uses: { group: string; items: { what: string; value: string }[] }[]
+}
+const updated = new Date(about.nowUpdated).toISOString().slice(0, 10)
 
 const LINKS = [
   ['GitHub', 'https://github.com/simoncra'],
@@ -11,7 +22,7 @@ test.describe('sobre mí window', () => {
   test('renders the heading, the sections, every link and the CV', async ({ page }) => {
     await page.goto('/sobre-mi')
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-    for (const h of ['Ahora', 'Uses', 'Dónde encontrarme']) {
+    for (const h of ['Ahora', 'Con qué trabajo', 'Dónde encontrarme']) {
       await expect(page.getByRole('heading', { level: 2, name: h })).toBeVisible()
     }
     for (const [label, href] of LINKS) {
@@ -41,6 +52,31 @@ test.describe('sobre mí window', () => {
     expect(home.length).toBeGreaterThan(0)
     await page.goto('/sobre-mi')
     await expect(page.locator('[data-now]')).toHaveText(home)
+  })
+
+  test('Now shows its updated date here and on the home page', async ({ page }) => {
+    for (const path of ['/', '/sobre-mi']) {
+      await page.goto(path)
+      await expect(page.locator('[data-now]')).toHaveText(about.now)
+      await expect(page.locator('[data-now-updated]')).toHaveAttribute('datetime', updated)
+    }
+  })
+
+  test('Con qué trabajo renders every group and item from the content file', async ({ page }) => {
+    await page.goto('/sobre-mi')
+    for (const g of about.uses) {
+      const heading = page.getByRole('heading', { level: 3, name: g.group })
+      await expect(heading).toBeVisible()
+      const list = heading.locator('xpath=following-sibling::ul[1]')
+      await expect(list.getByRole('listitem')).toHaveText(g.items.map((i) => `${i.what}: ${i.value}`))
+    }
+  })
+
+  test('the story is the body, not a copy of the intro', async ({ page }) => {
+    await page.goto('/sobre-mi')
+    const firstParagraph = body.trim().split('\n')[0]
+    await expect(page.locator('.prose').getByText(firstParagraph)).toBeVisible()
+    expect(body.trim()).not.toBe(about.intro)
   })
 
   test('has no horizontal overflow', async ({ page }) => {
