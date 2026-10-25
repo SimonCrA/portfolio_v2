@@ -40,43 +40,45 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 
 <section class="pane pane-nav" aria-label="Navegador" data-navigator>
   <h2 class="pane-title">eza --icons ~/</h2>
-  <ul class="nav-list">
-    {
-      entries.map((e) => (
-        <li>
-          <a href={e.href} class:list={{ 'is-file': e.file }} data-preview-key={e.key} target={e.file ? '_blank' : undefined} rel={e.file ? 'noopener' : undefined}>
-            {!e.file && (
-              <kbd class="key" aria-hidden="true" title={`Pulsa ${number(e.key)}`}>
-                {number(e.key)}
-              </kbd>
-            )}
-            <PixelArt name={SECTION_ICON[e.key]} scale={4} class={e.key === 'sobre-mi' ? 'pixel-avatar' : undefined} />
-            <span class="name">{e.name}</span>
-            <span class="meta">{e.meta}</span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-  <div class="nav-preview">
-    {
-      entries.map((e) => (
-        <div data-preview={e.key} hidden={e.key !== 'blog'}>
-          <p class="prompt-line" set:html={prompt(`tree ${e.name}`)} />
-          <ul class="tree">
-            {e.items.map((it, i) => (
-              <li>
-                <span class="branch" aria-hidden="true">
-                  {i === e.items.length - 1 ? '└──' : '├──'}
-                </span>
-                <span class="a">{it.a}</span>
-                {it.href ? <a href={it.href}>{it.b}</a> : <span>{it.b}</span>}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
+  <div class="nav-scroll">
+    <ul class="nav-list">
+      {
+        entries.map((e) => (
+          <li>
+            <a href={e.href} class:list={{ 'is-file': e.file }} data-preview-key={e.key} target={e.file ? '_blank' : undefined} rel={e.file ? 'noopener' : undefined}>
+              {!e.file && (
+                <kbd class="key" aria-hidden="true" title={`Pulsa ${number(e.key)}`}>
+                  {number(e.key)}
+                </kbd>
+              )}
+              <PixelArt name={SECTION_ICON[e.key]} scale={4} class={e.key === 'sobre-mi' ? 'pixel-avatar' : undefined} />
+              <span class="name">{e.name}</span>
+              <span class="meta">{e.meta}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="nav-preview">
+      {
+        entries.map((e) => (
+          <div data-preview={e.key} hidden={e.key !== 'blog'}>
+            <p class="prompt-line" set:html={prompt(`tree ${e.name}`)} />
+            <ul class="tree">
+              {e.items.map((it, i) => (
+                <li>
+                  <span class="branch" aria-hidden="true">
+                    {i === e.items.length - 1 ? '└──' : '├──'}
+                  </span>
+                  <span class="a">{it.a}</span>
+                  {it.href ? <a href={it.href}>{it.b}</a> : <span>{it.b}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
   </div>
 </section>
 
@@ -97,6 +99,24 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 </script>
 
 <style>
+  /* On the desktop home the window is the viewport, so the pane scrolls instead of growing. The
+     padding keeps link focus rings inside the scroll box. */
+  @media (min-width: 900px) {
+    .pane-nav {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .nav-scroll {
+      flex: 1;
+      min-height: 0;
+      margin: -4px;
+      padding: 4px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line) transparent;
+    }
+  }
   .nav-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));

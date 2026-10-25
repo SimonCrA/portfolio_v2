@@ -36,9 +36,13 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     align-content: start;
   }
   @media (min-width: 900px) {
+    /* The home window fills the viewport exactly; long content scrolls inside its pane. */
     .window-home {
+      flex: none;
+      box-sizing: border-box;
+      height: calc(100dvh - var(--status-h));
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-      grid-template-rows: auto 1fr;
+      grid-template-rows: auto minmax(0, 1fr);
     }
     /* Left column: zsh, then the navigator. The right column is reserved for the Latest feed (#10). */
     .window-home :global(.pane-zsh),
