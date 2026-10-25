@@ -5,8 +5,9 @@ import { bind, listen } from './keys'
 // The prompt module registers its bindings first so the help popup can shadow the page keys.
 import { message } from './prompt'
 import { go } from './navigation'
+import { refreshLists } from './lists'
 
-export { go, message }
+export { go, message, refreshLists }
 
 /** Pages that are a Post mark their `<main>` with `data-post`. */
 export const onPost = () => !!document.querySelector('[data-post]')
