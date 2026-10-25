@@ -1,8 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import mdx from '@astrojs/mdx';
-import svelte from '@astrojs/svelte';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -41,26 +39,8 @@ export default defineConfig({
         plugins: [tailwindcss()]
     },
 
-    integrations: [
-        mdx(),
-        svelte(),
-        sitemap({
-            // Optional: Customize for blog posts
-            changefreq: 'weekly',
-            priority: 0.8,
-            lastmod: new Date(),
-            // Filter out non-blog pages if needed
-            filter: (page) => page.includes('/blog/'),
-            i18n: {
-                defaultLocale: 'es',
-                locales: {
-                    en: 'en-US',
-                    es: 'es-ES',
-                    fr: 'fr-CA',
-                },
-            },
-        })
-    ],
+    // Every page goes in the sitemap; the API route and search.json are not pages.
+    integrations: [sitemap()],
 
     adapter: vercel()
 });

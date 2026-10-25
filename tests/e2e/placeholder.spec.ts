@@ -6,7 +6,7 @@ import { join } from 'node:path'
 
 // No stubs ship (#28). Each case builds a copy of the site in a temp folder, so it never touches the
 // output the rest of the suite is serving, with E2E_PLACEHOLDER adding the offending entry.
-const FILES = ['src', 'public', 'astro.config.mjs', 'svelte.config.js', 'package.json', 'pnpm-lock.yaml', 'tsconfig.json']
+const FILES = ['src', 'public', 'astro.config.mjs', 'package.json', 'pnpm-lock.yaml', 'tsconfig.json']
 
 function buildWith(placeholder: string) {
   const dir = mkdtempSync(join(tmpdir(), 'simonctech-guard-'))

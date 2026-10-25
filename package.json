@@ -11,15 +11,12 @@
     "test:no-fixtures": "astro build && ! grep -rqs e2e-fixture .vercel/output/static"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.2.3",
     "@astrojs/sitemap": "^3.3.0",
-    "@astrojs/svelte": "^7.0.9",
     "@astrojs/ts-plugin": "^1.10.4",
     "@astrojs/vercel": "^8.1.4",
     "@fontsource/atkinson-hyperlegible-mono": "^5.3.0",
     "@tailwindcss/vite": "^4.1.0",
     "astro": "^5.5.6",
-    "svelte": "^5.25.6",
     "tailwindcss": "^4.1.0",
     "typescript": "^5.8.2"
   },
