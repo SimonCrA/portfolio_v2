@@ -13,8 +13,12 @@
       "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/>; rel=\"canonical\"" }]
     },
     {
-      "source": "/:path((?!index$|sitemap$).+)\\.md",
-      "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/:path/>; rel=\"canonical\"" }]
+      "source": "/:page(sobre-mi|blog|projects|videos)\\.md",
+      "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/:page/>; rel=\"canonical\"" }]
+    },
+    {
+      "source": "/:section(blog|projects)/:slug(.+)\\.md",
+      "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/:section/:slug/>; rel=\"canonical\"" }]
     }
   ]
 }
