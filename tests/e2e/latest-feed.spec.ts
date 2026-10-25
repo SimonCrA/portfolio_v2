@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test'
-import { POSTS, PROJECTS } from './content'
+import { POSTS, PROJECTS, VIDEOS } from './content'
 
-// The feed mixes Posts and Projects, newest first.
+// The feed mixes Posts, Projects and Videos, newest first.
 const FEED = [
   ...POSTS.map((p) => ({ href: `/blog/${p.slug}` })),
   ...PROJECTS.map((p) => ({ href: `/projects/${p.slug}` })),
+  ...VIDEOS.map((v) => ({ href: v.url })),
 ]
 
 test.describe('latest feed', () => {
@@ -26,7 +27,7 @@ test.describe('latest feed', () => {
     await expect(row.locator('svg')).toHaveAttribute('aria-hidden', 'true')
     await expect(row.locator('.title')).not.toBeEmpty()
     await expect(row.locator('.summary')).not.toBeEmpty()
-    await expect(row.locator('.kind')).toHaveText(/^(post|proyecto)$/)
+    await expect(row.locator('.kind')).toHaveText(/^(post|proyecto|video)$/)
     await expect(row.locator('time')).toContainText(/\d{4}/)
   })
 

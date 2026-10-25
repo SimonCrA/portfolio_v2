@@ -47,3 +47,9 @@ function readProjects(dir: string): (ProjectEntry & { id: string })[] {
 export const PROJECTS = [...readProjects('src/content/projects'), ...readProjects('src/content/projectsFixtures')].sort(
   (a, b) => Number(b.featured) - Number(a.featured) || b.date.valueOf() - a.date.valueOf() || b.id.localeCompare(a.id),
 )
+
+// The fixture Videos the E2E build uses instead of the YouTube feed (src/session/videos.ts), newest first.
+export const VIDEOS = [
+  { title: 'Video de prueba (e2e-fixture)', url: 'https://www.youtube.com/watch?v=fixture-video', short: false, views: '120 vistas' },
+  { title: 'Short de prueba (e2e-fixture)', url: 'https://www.youtube.com/shorts/fixture-short', short: true, views: '7 vistas' },
+]

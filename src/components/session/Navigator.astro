@@ -3,6 +3,7 @@
 // hovered or focused entry holds (script below). Without JS the blog preview stays.
 import { getSortedPosts } from '../../session/posts'
 import { getSortedProjects } from '../../session/projects'
+import { getVideos } from '../../session/videos'
 import { fmtDate } from '../../session/date'
 import PixelArt from './PixelArt.astro'
 import { SECTION_ICON } from '../../session/icons'
@@ -15,6 +16,7 @@ const number = (key: string) => WINDOWS.findIndex((w) => w.key === key)
 
 const posts = await getSortedPosts()
 const projects = await getSortedProjects()
+const videos = await getVideos()
 const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 
 interface Entry {
@@ -43,7 +45,15 @@ const entries: Entry[] = [
     href: route('blog'),
     items: posts.slice(0, 4).map((p) => ({ a: fmtDate(p.data.publishDate), b: p.data.title, href: `/blog/${p.slug}` })),
   },
-  { key: 'videos', name: 'videos/', meta: 'pronto', href: route('videos'), items: [{ a: 'pronto', b: 'Los Videos llegarán pronto.' }] },
+  {
+    key: 'videos',
+    name: 'videos/',
+    meta: count(videos.length, 'video', 'videos'),
+    href: route('videos'),
+    items: videos.length
+      ? videos.slice(0, 4).map((v) => ({ a: fmtDate(v.date), b: v.title, href: v.url }))
+      : [{ a: 'vacío', b: 'No se pudieron traer los videos de YouTube.' }],
+  },
   { key: 'sobre-mi', name: 'sobre-mi/', meta: 'quién soy', href: route('sobre-mi'), items: [{ a: 'ahora', b: about.now }] },
   { key: 'cv', name: 'cv.pdf', meta: 'descargar', href: CV_URL, file: true, items: [{ a: 'pdf', b: 'Mi CV, compilado desde LaTeX con GitHub Actions.' }] },
 ]
@@ -83,7 +93,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
                     {i === e.items.length - 1 ? '└──' : '├──'}
                   </span>
                   <span class="a">{it.a}</span>
-                  {it.href ? <a href={it.href}>{it.b}</a> : <span>{it.b}</span>}
+                  {it.href ? <a href={it.href} target={it.href.startsWith('http') ? '_blank' : undefined} rel={it.href.startsWith('http') ? 'noopener' : undefined}>{it.b}</a> : <span>{it.b}</span>}
                 </li>
               ))}
             </ul>

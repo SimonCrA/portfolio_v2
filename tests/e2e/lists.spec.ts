@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
-import { POSTS, PROJECTS } from './content'
+import { POSTS, PROJECTS, VIDEOS } from './content'
 
-// The home feed mixes Posts and Projects.
-const FEED = POSTS.length + PROJECTS.length
+// The home feed mixes Posts, Projects and Videos.
+const FEED = POSTS.length + PROJECTS.length + VIDEOS.length
 
 // How far the reader has scrolled: its pane on desktop, the page on phones.
 const readerScroll = (page: Page) => page.evaluate(() => Math.max(scrollY, document.querySelector('[data-scroll-box]')?.scrollTop ?? 0))

@@ -1,8 +1,15 @@
 ---
+// Window 3: the latest Videos from the YouTube channel, as a list. Each row opens the Video on YouTube.
 import SessionLayout from '../layouts/SessionLayout.astro'
+import PixelArt from '../components/session/PixelArt.astro'
+import { fmtDate } from '../session/date'
+import { CHANNEL_URL, getVideos } from '../session/videos'
+
+const videos = await getVideos()
+const views = (n: number) => `${n.toLocaleString('es-ES')} ${n === 1 ? 'vista' : 'vistas'}`
 ---
 
-<SessionLayout current="videos" title="Videos | Simonctech">
+<SessionLayout current="videos" title="Videos | Simonctech" description="Los últimos videos del canal de YouTube de Simón.">
   <main class="window">
     <section class="pane is-active" aria-labelledby="pane-videos">
       <h2 class="pane-title" id="pane-videos">videos</h2>
@@ -10,14 +17,97 @@ import SessionLayout from '../layouts/SessionLayout.astro'
         <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>ls -lt videos/</span>
       </p>
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de videos">
-        <p class="out empty" data-empty>Los Videos llegarán pronto: aparecerán solos desde el canal de YouTube.</p>
+        {
+          videos.length > 0 ? (
+            <ol class="list" data-list>
+              {videos.map((v) => (
+                <li>
+                  <a class="row" href={v.url} target="_blank" rel="noopener">
+                    <PixelArt name="crt" scale={2} />
+                    <span class="main">
+                      <span class="title">{v.title}</span>
+                      <span class="where">youtube.com/{v.short ? 'shorts' : 'watch'}</span>
+                    </span>
+                    <span class="meta">
+                      <span class="kind">{v.short ? 'short' : 'video'}</span>
+                      <span class="views">{views(v.views)}</span>
+                      <time datetime={v.date.toISOString()}>{fmtDate(v.date)}</time>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p class="out empty" data-empty>
+              No pude traer los videos esta vez. Míralos directamente en <a href={CHANNEL_URL} target="_blank" rel="noopener">el canal de YouTube</a>.
+            </p>
+          )
+        }
       </div>
     </section>
   </main>
 </SessionLayout>
 
 <style>
+  .list {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .empty {
-    margin-top: 12px;
+    margin: 16px 0;
+    color: var(--dim);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+    gap: 0 12px;
+    align-items: start;
+    padding: 10px 6px;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .row:hover,
+  .row:focus-visible {
+    border-left-color: var(--accent);
+    background: var(--bg-2);
+  }
+  .main {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .title {
+    font-weight: 700;
+  }
+  .row:hover .title {
+    color: var(--accent);
+  }
+  .where {
+    color: var(--dim);
+    font-size: 0.8667rem;
+  }
+  .meta {
+    display: grid;
+    justify-items: end;
+    font-size: 0.8667rem;
+    white-space: nowrap;
+  }
+  .kind {
+    color: var(--orange);
+  }
+  .views,
+  time {
+    color: var(--dim);
+  }
+  @media (max-width: 560px) {
+    .meta {
+      grid-column: 2;
+      grid-row: 2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 12px;
+    }
   }
 </style>

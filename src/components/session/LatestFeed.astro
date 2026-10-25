@@ -1,8 +1,9 @@
 ---
-// The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only;
-// the Video source joins this array when its collection exists.
+// The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only.
+// Videos link out to YouTube, so their rows open in a new tab.
 import { getSortedPosts } from '../../session/posts'
 import { getSortedProjects } from '../../session/projects'
+import { getVideos } from '../../session/videos'
 import { fmtDate } from '../../session/date'
 import PixelArt from './PixelArt.astro'
 import { KIND_ICON, PROJECT_ICON } from '../../session/icons'
@@ -27,7 +28,17 @@ const projectsSource: FeedSource = async () =>
     icon: PROJECT_ICON[p.data.kind],
   }))
 
-const feed = await buildFeed([postsSource, projectsSource])
+const videosSource: FeedSource = async () =>
+  (await getVideos()).map((v) => ({
+    kind: 'video' as const,
+    title: v.title,
+    summary: v.short ? 'Short en YouTube' : 'Video en YouTube',
+    date: v.date,
+    href: v.url,
+  }))
+
+const feed = await buildFeed([postsSource, projectsSource, videosSource])
+const external = (href: string) => (href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})
 const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
@@ -39,7 +50,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       {
         feed.map((item) => (
           <li>
-            <a class="latest-row" href={item.href} data-kind={item.kind}>
+            <a class="latest-row" href={item.href} data-kind={item.kind} {...external(item.href)}>
               <PixelArt name={item.icon ?? KIND_ICON[item.kind]} scale={2} />
               <span class="main">
                 <span class="title">{item.title}</span>

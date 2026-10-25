@@ -36,11 +36,6 @@ test.describe('blog window', () => {
 })
 
 
-test('videos shows its empty state', async ({ page }) => {
-  await page.goto('/videos')
-  await expect(page.getByText('ls -lt videos/')).toBeVisible()
-  await expect(page.getByText(/Los Videos llegarán pronto/)).toBeVisible()
-})
 
 for (const w of WINDOWS) {
   test.describe(w.route, () => {

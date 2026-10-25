@@ -57,7 +57,7 @@ test.describe('home navigator', () => {
     await expect(nav.getByText(now)).toBeVisible()
     await expect(nav.getByText('tree blog/')).toBeHidden()
     await nav.getByRole('link', { name: /videos\// }).hover()
-    await expect(nav.getByText('Los Videos llegarán pronto.')).toBeVisible()
+    await expect(nav.getByText('tree videos/')).toBeVisible()
     await nav.getByRole('link', { name: /cv\.pdf/ }).hover()
     await expect(nav.getByText('tree cv.pdf')).toBeVisible()
   })
