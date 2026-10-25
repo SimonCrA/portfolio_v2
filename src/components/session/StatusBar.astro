@@ -10,7 +10,7 @@ const { current } = Astro.props
 const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
 ---
 
-<footer class="status">
+<footer class="status" transition:persist="status-line">
   <a class="session" href="/">[simonctech]</a>
   <nav aria-label="Ventanas">
     {

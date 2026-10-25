@@ -1,6 +1,7 @@
 ---
 // Every page of the redesigned site renders inside this layout: one tmux session with a status line.
 import '../styles/session.css'
+import { ClientRouter } from 'astro:transitions'
 import StatusBar from '../components/session/StatusBar.astro'
 import { SITE_TITLE, SITE_DESCRIPTION } from '../config'
 import type { WindowKey } from '../session/windows'
@@ -23,6 +24,7 @@ const { current, title = SITE_TITLE, description = SITE_DESCRIPTION, image = '/p
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ClientRouter />
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <meta property="og:type" content="website" />
@@ -31,8 +33,11 @@ const { current, title = SITE_TITLE, description = SITE_DESCRIPTION, image = '/p
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.url)} />
   </head>
-  <body>
+  <body data-window={current}>
     <slot />
     <StatusBar current={current} />
+    <script>
+      import '../session/client'
+    </script>
   </body>
 </html>

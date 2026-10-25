@@ -83,15 +83,17 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 <script>
   // Hover and keyboard focus on an entry switch the tree preview. Listeners live on the pane itself,
   // so re-running this after a navigation never stacks duplicates.
-  for (const nav of document.querySelectorAll<HTMLElement>('[data-navigator]')) {
-    const show = (e: Event) => {
-      const key = (e.target as HTMLElement).closest<HTMLElement>('[data-preview-key]')?.dataset.previewKey
-      if (!key) return
-      nav.querySelectorAll<HTMLElement>('[data-preview]').forEach((p) => (p.hidden = p.dataset.preview !== key))
+  document.addEventListener('astro:page-load', () => {
+    for (const nav of document.querySelectorAll<HTMLElement>('[data-navigator]')) {
+      const show = (e: Event) => {
+        const key = (e.target as HTMLElement).closest<HTMLElement>('[data-preview-key]')?.dataset.previewKey
+        if (!key) return
+        nav.querySelectorAll<HTMLElement>('[data-preview]').forEach((p) => (p.hidden = p.dataset.preview !== key))
+      }
+      nav.addEventListener('pointerover', show)
+      nav.addEventListener('focusin', show)
     }
-    nav.addEventListener('pointerover', show)
-    nav.addEventListener('focusin', show)
-  }
+  })
 </script>
 
 <style>
