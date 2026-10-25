@@ -2,6 +2,7 @@
 // A Project in the shared `glow` reader. Like a Post, it marks `<main>` with `data-post`, so j/k
 // scroll it and q goes home.
 import type { CollectionEntry } from 'astro:content'
+import { graph, project, website } from '../../session/schema'
 import SessionLayout from '../../layouts/SessionLayout.astro'
 import Reader from '../../components/session/Reader.astro'
 import PixelArt from '../../components/session/PixelArt.astro'
@@ -37,7 +38,15 @@ const frontmatter = [
 ]
 ---
 
-<SessionLayout current="proyectos" title={`${p.title} | Proyectos`} description={p.summary} image={p.image}>
+<SessionLayout
+  current="proyectos"
+  title={`${p.title} | Proyectos de Simón Clemente`}
+  description={p.summary}
+  image={p.image}
+  type="article"
+  jsonLd={graph(website(), project(entry))}
+  markdown={`/projects/${entry.slug}.md`}
+>
   <main class="window reader-window" data-post>
     <Reader
       file={`~/proyectos/${entry.slug}.md`}

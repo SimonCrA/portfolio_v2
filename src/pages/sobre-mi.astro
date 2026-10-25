@@ -2,6 +2,7 @@
 // Window 4: Sobre mí, fed by src/content/about/sobre-mi.md. A `glow` reader holds the story; side
 // panes hold Now, the setup as a `tree`, and the links. On wide screens it splits like tmux.
 import SessionLayout from '../layouts/SessionLayout.astro'
+import { graph, person, website } from '../session/schema'
 import PromptLine from '../components/session/PromptLine.astro'
 import PixelArt from '../components/session/PixelArt.astro'
 import Reader from '../components/session/Reader.astro'
@@ -15,7 +16,14 @@ const { Content } = await entry.render()
 
 ---
 
-<SessionLayout current="sobre-mi" title={`Sobre mí | ${name}`}>
+<SessionLayout
+  current="sobre-mi"
+  title={`Sobre mí | ${name}`}
+  description={`${intro} Mi historia, en qué estoy ahora y con qué trabajo.`}
+  type="profile"
+  jsonLd={graph(website(), { '@type': 'ProfilePage', url: 'https://www.simonctech.com/sobre-mi/', mainEntity: person(entry.data) })}
+  markdown="/sobre-mi.md"
+>
   <main class="window reader-window about-window">
     <Reader as="section" file="sobre-mi.md" title={name} titleId="about-name" lead={intro} scrollLabel="Historia">
       <div slot="media" class="about-avatar"><PixelArt name="avatar" fluid label="Avatar pixel de Simón" /></div>

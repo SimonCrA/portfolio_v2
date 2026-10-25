@@ -1,5 +1,6 @@
 ---
 import SessionLayout from '../layouts/SessionLayout.astro'
+import { graph, person, website } from '../session/schema'
 import PromptLine from '../components/session/PromptLine.astro'
 import Navigator from '../components/session/Navigator.astro'
 import LatestFeed from '../components/session/LatestFeed.astro'
@@ -11,7 +12,7 @@ const about = (await getAbout()).data
 
 ---
 
-<SessionLayout current="inicio">
+<SessionLayout current="inicio" jsonLd={graph(website(), person(about))} markdown="/index.md">
   <main class="window window-home">
     <section class="pane pane-zsh is-active" aria-label="Simonctech: quién soy">
       <h2 class="pane-title">zsh</h2>
