@@ -2,7 +2,7 @@
 // PixelArt.astro as a crisp SVG. To redraw an icon, edit its grid; no layout code changes.
 // Roles: K outline, F fill, L light, D dark, A accent, W white, M mid body, C screen, R red.
 // The avatar has its own: S skin, V skin light, U skin shadow, H hair, G hair highlight, E brows and eyes,
-// P lips, B stubble, N shirt, O shirt shade, Q chain.
+// P lips, N shirt, O shirt shade, Q chain.
 // '.' is transparent. Roles resolve to CSS variables (--px-<role>, defined in session.css),
 // so icons recolour when the palette tokens change.
 
@@ -77,8 +77,8 @@ export const ICONS = {
     'KFWWWWWWWWWWWWFK',
     'KKKKKKKKKKKKKKKK',
   ],
-  // Simón, drawn from a photo: curly hair, defined cheekbones and jaw, stubble, a thick neck, navy shirt
-  // and a silver chain.
+  // Simón, drawn from a photo: curly hair, defined cheekbones and jaw, a thick neck, navy shirt and a
+  // silver chain. The nose and mouth stay a few pixels on purpose.
   avatar: [
     '........GHHGHGHG........',
     '......HGHHGHHHGHHG......',
@@ -92,16 +92,16 @@ export const ICONS = {
     '.....HSSSSSSSSSSSSH.....',
     '.....SEEEESSSSEEEES.....',
     '....USSSSSSSSSSSSSSU....',
-    '....USWEESSUSSEEWSSU....',
+    '....USWEESSSSSEEWSSU....',
     '....UUSVSSSUSSSSVSUU....',
     '.....USSSSSUSSSSSSU.....',
-    '.....UUSSSUSSUSSSUU.....',
-    '......USSSSUUSSSSU......',
-    '......UUSSBSSBSSUU......',
-    '......USSSPPPPSSSU......',
-    '.......USSBPPBSSU.......',
-    '.......UUSBBBBSUU.......',
-    '........UUSBBSUU........',
+    '.....UUSSSSUUSSSSUU.....',
+    '......USSSSSSSSSSU......',
+    '......UUSSPPPPSSUU......',
+    '......USSSSSSSSSSU......',
+    '.......USSSSSSSSU.......',
+    '.......UUSSSSSSUU.......',
+    '........UUSSSSUU........',
     '.........UUUUUU.........',
     '........USUUUUSU........',
     '........USSSSSSU........',
