@@ -2,9 +2,9 @@
 import SessionLayout from '../../layouts/SessionLayout.astro'
 import PixelArt from '../../components/session/PixelArt.astro'
 import { KIND_ICON } from '../../session/icons'
-import { getCollection } from 'astro:content'
+import { getSortedPosts } from '../../session/posts'
 
-const posts = (await getCollection('blog')).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+const posts = await getSortedPosts()
 const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 ---
 

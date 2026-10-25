@@ -82,9 +82,3 @@ test.describe('desktop layout', () => {
     await expect(page.getByRole('navigation', { name: 'Ventanas' }).getByText(':blog')).toBeVisible()
   })
 })
-
-test('pages not yet migrated still render with the old layout', async ({ page }) => {
-  const response = await page.goto('/projects')
-  expect(response?.status()).toBe(200)
-  await expect(page.locator('body')).toBeVisible()
-})

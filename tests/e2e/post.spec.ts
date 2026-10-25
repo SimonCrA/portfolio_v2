@@ -17,7 +17,7 @@ for (const post of POSTS) {
       await expect(fm).toContainText(/lectura: \d+ min/)
       await expect(fm).toContainText('tags: [')
       await expect(pane.getByRole('heading', { level: 1, name: post.title })).toBeVisible()
-      await expect(pane.locator('.post-desc')).toBeVisible()
+      await expect(pane.locator('.reader-lead')).toBeVisible()
     })
 
     test('tags link to the blog filter', async ({ page }) => {

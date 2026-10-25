@@ -1,13 +1,13 @@
 ---
 // The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only;
 // Video and Project sources join this array when their collections exist.
-import { getCollection } from 'astro:content'
+import { getSortedPosts } from '../../session/posts'
 import PixelArt from './PixelArt.astro'
 import { KIND_ICON } from '../../session/icons'
 import { buildFeed, KIND_LABEL, type FeedSource } from '../../session/feed'
 
 const postsSource: FeedSource = async () =>
-  (await getCollection('blog')).map((p) => ({
+  (await getSortedPosts()).map((p) => ({
     kind: 'post' as const,
     title: p.data.title,
     summary: p.data.description,

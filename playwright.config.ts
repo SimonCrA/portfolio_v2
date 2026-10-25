@@ -19,7 +19,8 @@ export default defineConfig({
   webServer: {
     command: `pnpm build && pnpm exec sirv .vercel/output/static --port ${PORT} --quiet`,
     url: `http://localhost:${PORT}`,
-    reuseExistingServer: !process.env.CI,
+    // Always serve a fresh build: reusing a server can test another checkout's stale output.
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 })

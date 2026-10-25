@@ -13,7 +13,7 @@ export interface FeedItem {
 
 export type FeedSource = () => FeedItem[] | Promise<FeedItem[]>
 
-export const KIND_LABEL: Record<FeedKind, string> = { post: 'Post', video: 'Video', project: 'Project' }
+export const KIND_LABEL: Record<FeedKind, string> = { post: 'post', video: 'video', project: 'proyecto' }
 
 /** Merge every source, newest first. Ties keep source order (stable sort). */
 export async function buildFeed(sources: FeedSource[]): Promise<FeedItem[]> {

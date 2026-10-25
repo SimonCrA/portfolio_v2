@@ -34,8 +34,8 @@ const file = `~/blog/${entry.slug}.md`
 <span class="k">lectura</span>: {minutes} min
 <span class="k">tags</span>: [{post.tags.map((tag, i) => <><a href={`/blog?q=${encodeURIComponent(tag)}`}>{tag}</a>{i < post.tags.length - 1 ? ', ' : ''}</>)}]
 ---</pre>
-      <h1 class="post-title" id="post-title">{post.title}</h1>
-      <p class="post-desc">{post.description}</p>
+      <h1 class="reader-title" id="post-title">{post.title}</h1>
+      <p class="reader-lead">{post.description}</p>
       {post.image && (
         <figure>
           <img src={post.image} alt="" loading="lazy" />

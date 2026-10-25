@@ -21,7 +21,7 @@ test.describe('latest feed', () => {
     await expect(row.locator('svg')).toHaveAttribute('aria-hidden', 'true')
     await expect(row.locator('.title')).not.toBeEmpty()
     await expect(row.locator('.summary')).not.toBeEmpty()
-    await expect(row).toContainText('Post')
+    await expect(row).toContainText('post')
     await expect(row.locator('time')).toContainText(/\d{4}/)
   })
 

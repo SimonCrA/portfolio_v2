@@ -1,4 +1,4 @@
-/* Post reader: a glow-style pager. Tokens only, see session.css. */
+/* glow-style reader for Posts and Sobre mí. Tokens only, see session.css. */
 .reader-window {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -27,18 +27,18 @@
 .frontmatter a:hover {
   text-decoration: underline;
 }
-.post-title {
+.reader-title {
   margin: 0 0 8px;
   color: var(--accent);
   font-size: clamp(24px, 4vw, 32px);
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
-.post-title::before {
+.reader-title::before {
   content: '# ';
   color: var(--dim);
 }
-.post-desc {
+.reader-lead {
   margin: 0 0 24px;
   color: var(--aqua);
 }

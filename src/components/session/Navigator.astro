@@ -1,7 +1,7 @@
 ---
 // The `eza --icons ~/` pane: one entry per section plus cv.pdf, with a `tree` preview of what the
 // hovered or focused entry holds (script below). Without JS the blog preview stays.
-import { getCollection } from 'astro:content'
+import { getSortedPosts } from '../../session/posts'
 import PixelArt from './PixelArt.astro'
 import { SECTION_ICON } from '../../session/icons'
 import { CV_URL, WINDOWS } from '../../session/windows'
@@ -11,7 +11,7 @@ const about = (await getAbout()).data
 const route = (key: string) => WINDOWS.find((w) => w.key === key)!.route
 const number = (key: string) => WINDOWS.findIndex((w) => w.key === key)
 
-const posts = (await getCollection('blog')).sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+const posts = await getSortedPosts()
 const fmtDate = (d: Date) => d.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 interface Entry {
