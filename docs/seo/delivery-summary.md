@@ -15,6 +15,7 @@
 ## Estados separados
 
 1. `implemented-locally`: sí.
+1b. Vista previa de Vercel (2026-10-25, commit 12ed0e9): `robots.txt`, `llms.txt`, íconos y cada `.md` responden 200 con el `Content-Type` esperado; el `Link` canónico de cada `.md` apunta a su página (corregido en 12ed0e9: la primera regla mandaba `index.md` y `sitemap.md` a URLs inexistentes); una URL inexistente devuelve 404 real.
 2. `delivered-and-verified`: pendiente. Al mergear, verificar en producción: robots, íconos, cada `.md` (200, `text/markdown`, `Link` canónico) y el `<head>` de cada tipo de página.
 3. `provider-outcome-pending`: indexación, aparición del favicon en Google y cualquier efecto en búsquedas o asistentes de IA. Tardan semanas y no están garantizados.
 
