@@ -5,6 +5,10 @@ import { KIND_ICON } from '../../session/icons'
 import { getSortedPosts } from '../../session/posts'
 
 const posts = await getSortedPosts()
+// Suggested topics for the empty state: the 3 most common Tags.
+const tagCount = new Map<string, number>()
+for (const t of posts.flatMap((p) => p.data.tags)) tagCount.set(t, (tagCount.get(t) ?? 0) + 1)
+const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t)
 const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 ---
 
@@ -15,7 +19,7 @@ const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', mon
       <p class="prompt-line">
         <span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd" data-cmd>ls -lt blog/</span>
       </p>
-      <ol class="list" data-list>
+      <ol class="list" data-list data-searchable>
         {
           posts.map((post) => (
             <li data-search={[post.data.title, post.data.description, ...post.data.tags].join(' ')}>
@@ -35,6 +39,11 @@ const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', mon
           ))
         }
       </ol>
+      <p class="empty" data-empty hidden>
+        Ningún post coincide con «<span data-empty-q></span>». Prueba con un tema como
+        {topTags.map((t, i) => (<><code>{t}</code>{i < topTags.length - 2 ? ', ' : i === topTags.length - 2 ? ' o ' : ''}</>))},
+        o escribe <code>:buscar</code> sin texto para ver todos.
+      </p>
     </section>
   </main>
 </SessionLayout>
@@ -44,6 +53,10 @@ const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', mon
     margin: 8px 0 0;
     padding: 0;
     list-style: none;
+  }
+  .empty {
+    color: var(--dim);
+    margin: 16px 0;
   }
   .row {
     display: grid;

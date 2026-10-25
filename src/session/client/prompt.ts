@@ -106,6 +106,8 @@ registerCommand(['q', 'salir', 'exit'], () => message('Aquí no hay nada que cer
 export function run(raw: string) {
   const text = raw.trim()
   if (!text) return closePrompt()
+  // `/texto` is a search, with no space needed after the slash.
+  if (text.startsWith('/')) return commands.get('/')?.(text.slice(1))
   const [first, ...rest] = text.split(/\s+/)
   const handler = commands.get(fold(first))
   if (handler) return handler(rest.join(' '))
