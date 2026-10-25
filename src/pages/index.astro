@@ -51,11 +51,11 @@ const about = (await getAbout()).data
     }
   }
   @media (max-width: 899px) {
-    /* Phone order: zsh, últimos, navigator. */
-    .window-home :global(.pane-latest) {
+    /* Phone order: zsh, the navigator, then últimos. */
+    .window-home :global(.pane-nav) {
       order: 1;
     }
-    .window-home :global(.pane-nav) {
+    .window-home :global(.pane-latest) {
       order: 2;
     }
   }

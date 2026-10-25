@@ -217,7 +217,8 @@
    status line while the page scrolls. */
 .pagerbar {
   position: sticky;
-  bottom: var(--status-h);
+  /* One pixel of overlap: a fractional status height otherwise lets a line of text show between them. */
+  bottom: calc(var(--status-total) - 1px);
   z-index: 20;
   display: flex;
   gap: 18px;

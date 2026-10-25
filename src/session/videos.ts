@@ -53,11 +53,19 @@ export function parseFeed(xml: string): Video[] {
     .sort((a, b) => b.date.valueOf() - a.date.valueOf())
 }
 
-/** Read the feed now. Throws when YouTube does not answer within 8 seconds. */
-export async function fetchVideos(): Promise<Video[]> {
-  const r = await fetch(FEED_URL, { signal: AbortSignal.timeout(8000) })
-  if (!r.ok) throw new Error(`YouTube feed: HTTP ${r.status}`)
-  return parseFeed(await r.text())
+/** Read the feed now. YouTube's feed fails now and then (404s, stalls), so try three times, each
+ * with an 8-second limit, before throwing. */
+export async function fetchVideos(attempts = 3): Promise<Video[]> {
+  for (let i = 1; ; i++) {
+    try {
+      const r = await fetch(FEED_URL, { signal: AbortSignal.timeout(8000) })
+      if (!r.ok) throw new Error(`YouTube feed: HTTP ${r.status}`)
+      return parseFeed(await r.text())
+    } catch (error) {
+      if (i >= attempts) throw error
+      await new Promise((resolve) => setTimeout(resolve, 500 * i))
+    }
+  }
 }
 
 let cache: Promise<Video[]> | undefined
