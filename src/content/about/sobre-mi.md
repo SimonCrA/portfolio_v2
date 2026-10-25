@@ -37,4 +37,4 @@ Me gusta construir software que la gente usa en su día a día. Lo que hago ayud
 
 Fuera del trabajo estoy armando un home lab y estudiando ingeniería de IA.
 
-Aquí escribo sobre lo que aprendo. Pronto retomo el blog y los videos con temas como las herramientas que uso, mi setup y cómo programo con agentes de IA.
+Aquí comparto lo que aprendo en distintos formatos: posts, videos y proyectos.
