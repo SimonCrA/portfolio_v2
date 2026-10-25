@@ -1,0 +1,48 @@
+---
+// figlet banners: ANSI Shadow on wide screens, Calvin S on phones. Decorative; the pane carries the name.
+const wide = `███████╗██╗███╗   ███╗ ██████╗ ███╗   ██╗████████╗███████╗ ██████╗██╗  ██╗
+██╔════╝██║████╗ ████║██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝██╔════╝██║  ██║
+███████╗██║██╔████╔██║██║   ██║██╔██╗ ██║   ██║   █████╗  ██║     ███████║
+╚════██║██║██║╚██╔╝██║██║   ██║██║╚██╗██║   ██║   ██╔══╝  ██║     ██╔══██║
+███████║██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║   ██║   ███████╗╚██████╗██║  ██║
+╚══════╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝`
+const narrow = `┌─┐┬┌┬┐┌─┐┌┐┌┌┬┐┌─┐┌─┐┬ ┬
+└─┐│││││ ││││ │ ├┤ │  ├─┤
+└─┘┴┴ ┴└─┘┘└┘ ┴ └─┘└─┘┴ ┴`
+
+// Solid blocks take the accent colour, shadow strokes stay muted.
+const runs = wide.match(/█+|[^█]+/g)!.map((text) => ({ text, solid: text[0] === '█' }))
+---
+
+<pre class="banner banner-wide" aria-hidden="true">{runs.map((r) => (r.solid ? <b>{r.text}</b> : r.text))}</pre>
+<pre class="banner banner-narrow" aria-hidden="true">{narrow}</pre>
+
+<style>
+  .banner {
+    margin: 4px 0 6px;
+    color: var(--dim);
+    /* Atkinson has no box-drawing glyphs; use a system mono that does. */
+    font-family: ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+    font-size: clamp(6px, 0.78vw, 0.7333rem);
+    line-height: 1.05;
+    white-space: pre;
+    overflow: hidden;
+  }
+  .banner b {
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .banner-narrow {
+    display: none;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+  @media (max-width: 560px) {
+    .banner-wide {
+      display: none;
+    }
+    .banner-narrow {
+      display: block;
+    }
+  }
+</style>

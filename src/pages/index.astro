@@ -1,23 +1,73 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import SessionLayout from '../layouts/SessionLayout.astro'
+import PromptLine from '../components/session/PromptLine.astro'
+import Navigator from '../components/session/Navigator.astro'
+import LatestFeed from '../components/session/LatestFeed.astro'
+import Banner from '../components/session/Banner.astro'
+import { getAbout } from '../session/getAbout'
+import { fmtDate } from '../session/date'
+
+const about = (await getAbout()).data
+
 ---
 
-<BaseLayout sideBarActiveItemID="home">
-  <div class="pb-12 mt-30">
-    <div class="text-xl py-1">Holaa 👋</div>
-    <div class="text-5xl font-bold">Soy Simón Clemente</div>
-    <div class="text-3xl py-3 font-bold"><b>¡Bienvenido a mi portafolio!</b></div>
-    <div class="py-2">
-      <text class="text-lg">
-        Soy un <b>ingeniero de software y desarrollador web backend</b> con habilidades en <b>frontend</b>. Me apasiona crear contenido relacionado
-        con la programación y también tengo experiencia en el <b> desarrollo de hardware con IoT</b>. Acompáñame mientras exploramos mi trabajo y
-        proyectos.
-      </text>
-    </div>
-    <div class="mt-8">
-      <a class="btn btn-neutral" href="https://github.com/SimonCrA/cv_dynamic/raw/main/resume_es.pdf" target="_blank"
-        >Descarga CV 📋</a
-      >
-    </div>
-  </div>
-</BaseLayout>
+<SessionLayout current="inicio">
+  <main class="window window-home">
+    <section class="pane pane-zsh is-active" aria-label="Simonctech: quién soy">
+      <h2 class="pane-title">zsh</h2>
+      <Banner />
+      <PromptLine cmd="whoami" />
+      <div class="out"><h1 class="name">{about.name}</h1>. {about.intro}</div>
+      <PromptLine cmd="cat ahora.txt" />
+      <p class="out"><span data-now>{about.now}</span> <time class="stamp" datetime={about.nowUpdated.toISOString().slice(0, 10)} data-now-updated>({fmtDate(about.nowUpdated)})</time></p>
+      <button type="button" class="prompt-line live" data-open-prompt aria-label="Abrir el prompt de comandos">
+        <PromptLine as="span" cmd="" /><span class="cursor" aria-hidden="true"></span>
+        <span class="live-hint">pulsa <kbd>:</kbd> para escribir un comando o <kbd>?</kbd> para la ayuda</span>
+      </button>
+    </section>
+
+    <Navigator />
+    <LatestFeed />
+  </main>
+</SessionLayout>
+
+<style>
+  .window-home {
+    align-content: start;
+  }
+  @media (min-width: 900px) {
+    .window-home {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+    /* Left column: zsh, then the navigator. The right column is reserved for the Latest feed (#10). */
+    .window-home :global(.pane-zsh),
+    .window-home :global(.pane-nav) {
+      grid-column: 1;
+    }
+    .window-home :global(.pane-latest) {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+  @media (max-width: 899px) {
+    /* Phone order: zsh, últimos, navigator. */
+    .window-home :global(.pane-latest) {
+      order: 1;
+    }
+    .window-home :global(.pane-nav) {
+      order: 2;
+    }
+  }
+  .stamp {
+    color: var(--dim);
+  }
+  /* The page heading reads as the first words of the whoami output. */
+  .name {
+    display: inline;
+    margin: 0;
+    color: var(--accent);
+    font-size: inherit;
+    line-height: inherit;
+  }
+</style>

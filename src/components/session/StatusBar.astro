@@ -1,0 +1,92 @@
+---
+// tmux status line: the window list is the site navigation. The same footer hosts the command
+// prompt, the messages that replace the line for a moment, and the help popup (all driven by
+// src/session/client/prompt.ts).
+import { WINDOWS, CV_URL, type WindowKey } from '../../session/windows'
+
+interface Props {
+  current: WindowKey
+}
+
+const { current } = Astro.props
+
+const keys = [
+  ['0 – 4', 'cambiar de ventana'],
+  ['j  k', 'mover la selección o desplazar el texto'],
+  ['enter', 'abrir lo seleccionado'],
+  ['/', 'buscar en esta ventana (blog o proyectos)'],
+  [':', 'escribir un comando'],
+  ['?', 'mostrar esta ayuda'],
+  ['esc', 'cerrar'],
+]
+const commands = [
+  [':blog  :2  :cd videos', 'ir a una ventana'],
+  [':~  :sobremi', 'ir al inicio o a sobre mí'],
+  [':buscar latex', 'filtrar posts o proyectos'],
+  [':abrir 3', 'abrir el elemento 3 de la lista'],
+  [':cv', 'abrir el CV en otra pestaña'],
+  [':ayuda  :?', 'mostrar esta ayuda'],
+  [':q  :salir', 'salir (aquí no hay nada que cerrar)'],
+]
+---
+
+<footer class="status" transition:persist="status-line">
+  <div class="status-line" data-status-line>
+    <a class="session" href="/">[simonctech]</a>
+    <nav aria-label="Ventanas">
+      {
+        WINDOWS.map((w, i) => (
+          <a href={w.route} aria-current={w.key === current ? 'page' : undefined} aria-label={`${i}: ${w.label}`}>
+            <span class="number">{i}</span>
+            <span class="name">:{w.key}</span>
+            <span class="flag" aria-hidden="true">*</span>
+          </a>
+        ))
+      }
+    </nav>
+    <span class="right">
+      <button type="button" class="hint" data-open-prompt><kbd>:</kbd> comando</button>
+      <button type="button" class="hint" data-open-help><kbd>?</kbd> ayuda</button>
+      <a href={CV_URL} target="_blank" rel="noopener">cv.pdf</a>
+      <span class="date" data-today></span>
+    </span>
+  </div>
+  <form class="status-prompt" data-prompt hidden>
+    <label for="status-prompt-input">:</label>
+    <input id="status-prompt-input" autocomplete="off" spellcheck="false" aria-label="Comando" />
+  </form>
+  <output class="status-msg" data-message hidden></output>
+
+  <dialog class="help" data-help aria-labelledby="help-title">
+    <div class="help-box">
+      <h2 id="help-title">ayuda</h2>
+      <h3>teclas</h3>
+      <table>
+        <tbody>
+          {
+            keys.map(([k, what]) => (
+              <tr>
+                <th>{k}</th>
+                <td>{what}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <h3>comandos</h3>
+      <table>
+        <tbody>
+          {
+            commands.map(([k, what]) => (
+              <tr>
+                <th>{k}</th>
+                <td>{what}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p>Todo también funciona con el ratón: haz clic en las ventanas de abajo.</p>
+    </div>
+  </dialog>
+</footer>

@@ -1,0 +1,221 @@
+---
+// The `eza --icons ~/` pane: one entry per section plus cv.pdf, with a `tree` preview of what the
+// hovered or focused entry holds (script below). Without JS the blog preview stays.
+import { getSortedPosts } from '../../session/posts'
+import PromptLine from './PromptLine.astro'
+import { getSortedProjects } from '../../session/projects'
+import { getVideos } from '../../session/videos'
+import { fmtDate } from '../../session/date'
+import PixelArt from './PixelArt.astro'
+import { ICONS, SECTION_ICON } from '../../session/icons'
+import { CV_URL, WINDOWS } from '../../session/windows'
+import { getAbout } from '../../session/getAbout'
+
+const about = (await getAbout()).data
+const route = (key: string) => WINDOWS.find((w) => w.key === key)!.route
+const number = (key: string) => WINDOWS.findIndex((w) => w.key === key)
+
+const posts = await getSortedPosts()
+const projects = await getSortedProjects()
+const videos = await getVideos()
+const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
+
+interface Entry {
+  key: 'proyectos' | 'blog' | 'videos' | 'sobre-mi' | 'cv'
+  name: string
+  meta: string
+  href: string
+  file?: boolean
+  items: { a: string; b: string; href?: string }[]
+}
+const entries: Entry[] = [
+  {
+    key: 'proyectos',
+    name: 'proyectos/',
+    meta: count(projects.length, 'proyecto', 'proyectos'),
+    href: route('proyectos'),
+    // Featured first, then newest (the collection's order).
+    items: projects.length
+      ? projects.slice(0, 4).map((p) => ({ a: fmtDate(p.data.date), b: `${p.data.featured ? '★ ' : ''}${p.data.title}`, href: `/projects/${p.slug}` }))
+      : [{ a: 'vacío', b: 'Todavía no hay proyectos publicados.' }],
+  },
+  {
+    key: 'blog',
+    name: 'blog/',
+    meta: count(posts.length, 'post', 'posts'),
+    href: route('blog'),
+    items: posts.slice(0, 4).map((p) => ({ a: fmtDate(p.data.publishDate), b: p.data.title, href: `/blog/${p.slug}` })),
+  },
+  {
+    key: 'videos',
+    name: 'videos/',
+    meta: count(videos.length, 'video', 'videos'),
+    href: route('videos'),
+    items: videos.length
+      ? videos.slice(0, 4).map((v) => ({ a: fmtDate(v.date), b: v.title, href: v.url }))
+      : [{ a: 'vacío', b: 'No se pudieron traer los videos de YouTube.' }],
+  },
+  { key: 'sobre-mi', name: 'sobre-mi/', meta: 'quién soy', href: route('sobre-mi'), items: [{ a: 'ahora', b: about.now }] },
+  { key: 'cv', name: 'cv.pdf', meta: 'descargar', href: CV_URL, file: true, items: [{ a: 'pdf', b: 'Mi CV, compilado desde LaTeX con GitHub Actions.' }] },
+]
+---
+
+<section class="pane pane-nav" aria-label="Navegador" data-navigator>
+  <h2 class="pane-title">eza --icons ~/</h2>
+  <div class="pane-scroll">
+    <ul class="nav-list">
+      {
+        entries.map((e) => (
+          <li>
+            <a href={e.href} class:list={{ 'is-file': e.file }} data-preview-key={e.key} target={e.file ? '_blank' : undefined} rel={e.file ? 'noopener' : undefined}>
+              {!e.file && (
+                <kbd class="key" aria-hidden="true" title={`Pulsa ${number(e.key)}`}>
+                  {number(e.key)}
+                </kbd>
+              )}
+              {/* Icons are 16 rows at scale 4; the taller avatar is scaled to the same 64px height. */}
+              <PixelArt name={SECTION_ICON[e.key]} scale={e.key === 'sobre-mi' ? 64 / ICONS.avatar.length : 4} />
+              <span class="name">{e.name}</span>
+              <span class="meta">{e.meta}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="nav-preview">
+      {
+        entries.map((e) => (
+          <div data-preview={e.key} hidden={e.key !== 'blog'}>
+            <PromptLine cmd={`tree ${e.name}`} />
+            <ul class="tree">
+              {e.items.map((it, i) => (
+                <li>
+                  <span class="branch" aria-hidden="true">
+                    {i === e.items.length - 1 ? '└──' : '├──'}
+                  </span>
+                  <span class="a">{it.a}</span>
+                  {it.href ? <a href={it.href} target={it.href.startsWith('http') ? '_blank' : undefined} rel={it.href.startsWith('http') ? 'noopener' : undefined}>{it.b}</a> : <span>{it.b}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Hover and keyboard focus on an entry switch the tree preview. Listeners live on the pane itself,
+  // so re-running this after a navigation never stacks duplicates.
+  document.addEventListener('astro:page-load', () => {
+    for (const nav of document.querySelectorAll<HTMLElement>('[data-navigator]')) {
+      const show = (e: Event) => {
+        const key = (e.target as HTMLElement).closest<HTMLElement>('[data-preview-key]')?.dataset.previewKey
+        if (!key) return
+        nav.querySelectorAll<HTMLElement>('[data-preview]').forEach((p) => (p.hidden = p.dataset.preview !== key))
+      }
+      nav.addEventListener('pointerover', show)
+      nav.addEventListener('focusin', show)
+    }
+  })
+</script>
+
+<style>
+  .nav-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.8667rem, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav-list a {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 2px;
+    padding: 12px 10px 10px;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+  .nav-list a:hover,
+  .nav-list a:focus-visible {
+    border-color: var(--line);
+    background: var(--bg-2);
+  }
+  .nav-list :global(svg) {
+    margin-bottom: 6px;
+  }
+  .name {
+    color: var(--blue);
+    font-weight: 700;
+  }
+  .is-file .name {
+    color: var(--green);
+  }
+  .meta {
+    color: var(--dim);
+    font-size: 0.8667rem;
+  }
+  .key {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 0 5px;
+    border-radius: 2px;
+    background: var(--line);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 0.85em;
+    font-weight: 700;
+  }
+  a:hover .key,
+  a:focus-visible .key {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .nav-preview {
+    margin-top: 6px;
+    border-top: 1px dashed var(--line);
+  }
+  .tree {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9333rem;
+  }
+  .tree li {
+    display: grid;
+    grid-template-columns: 3.5ch 12ch minmax(0, 1fr);
+    gap: 0 8px;
+  }
+  .branch {
+    color: var(--line);
+  }
+  .a {
+    color: var(--dim);
+  }
+  .tree a {
+    text-decoration: none;
+  }
+  .tree a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  [hidden] {
+    display: none;
+  }
+  /* Keyboard hints and the preview are for pointer devices and wide screens. */
+  @media (hover: none) {
+    .key {
+      display: none;
+    }
+  }
+  @media (max-width: 560px) {
+    .nav-preview,
+    .key {
+      display: none;
+    }
+  }
+</style>

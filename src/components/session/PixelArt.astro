@@ -1,0 +1,44 @@
+---
+// Renders an icon grid from src/session/icons.ts as a crisp SVG. Fills are CSS variables
+// (--px-<role>), so icons follow the palette. Decorative (aria-hidden) unless `label` is given.
+import { ICONS, type IconName } from '../../session/icons'
+
+interface Props {
+  name: IconName
+  scale?: number
+  /** Leave the size to CSS instead of `scale`. The drawing keeps its aspect ratio, bottom-aligned in its box. */
+  fluid?: boolean
+  class?: string
+  label?: string
+}
+
+const { name, scale = 3, fluid = false, class: className, label } = Astro.props
+const rows: readonly string[] = ICONS[name]
+const width = Math.max(...rows.map((r) => r.length))
+const height = rows.length
+// One path per colour role, with each horizontal run of same-role pixels as one rectangle: a 24x31
+// avatar is a dozen paths instead of hundreds of <rect>s.
+const paths = new Map<string, string>()
+rows.forEach((row, y) => {
+  for (const run of row.matchAll(/([^.])\1*/g)) {
+    const [text, role] = run
+    paths.set(role, `${paths.get(role) ?? ''}M${run.index} ${y}h${text.length}v1h-${text.length}z`)
+  }
+})
+---
+
+<svg
+  viewBox={`0 0 ${width} ${height}`}
+  width={fluid ? undefined : width * scale}
+  height={fluid ? undefined : height * scale}
+  style={fluid ? undefined : `width:${(width * scale) / 15}rem;height:${(height * scale) / 15}rem`}
+  preserveAspectRatio={fluid ? 'xMidYMax meet' : undefined}
+  shape-rendering="crispEdges"
+  class:list={['pixel-art', `pixel-${name}`, className]}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  {[...paths].map(([role, d]) => <path d={d} style={`fill:var(--px-${role})`} />)}
+</svg>

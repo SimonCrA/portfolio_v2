@@ -1,10 +1,13 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
 import type { BlogSchema } from '../../content/config'
-import PostLayout from '../../layouts/PostLayout.astro'
+import SessionLayout from '../../layouts/SessionLayout.astro'
+import Reader from '../../components/session/Reader.astro'
+import { getSortedPosts } from '../../session/posts'
+import { fmtLongDate } from '../../session/date'
 
 export async function getStaticPaths() {
-  const postEntries = await getCollection('blog')
+  const postEntries = await getSortedPosts()
   return postEntries.map((entry) => ({
     params: { slug: entry.slug },
     props: { entry },
@@ -18,25 +21,48 @@ interface Props {
 const { entry } = Astro.props
 const post: BlogSchema = entry.data
 const { Content } = await entry.render()
+const words = (entry.body ?? '').split(/\s+/).filter(Boolean).length
+const minutes = Math.max(1, Math.ceil(words / 200)) // ~200 words per minute
+const fecha = fmtLongDate(post.publishDate)
+const file = `~/blog/${entry.slug}.md`
 ---
 
-<PostLayout title={post.title} description={post.description} publishDate={post.publishDate} image={post.image} tags={post.tags}>
-  <Content />
-  <script
-    src="https://giscus.app/client.js"
-    data-repo="simoncra/portfolio_v2"
-    data-repo-id="R_kgDOKPAG8g"
-    data-category="General"
-    data-category-id="DIC_kwDOKPAG8s4CZFkZ"
-    data-mapping="pathname"
-    data-strict="0"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="bottom"
-    data-theme="dark"
-    data-lang="es"
-    data-loading="lazy"
-    crossorigin="anonymous"
-    async
-  ></script>
-</PostLayout>
+<SessionLayout current="blog" title={post.title} description={post.description} image={post.image}>
+  <main class="window reader-window" data-post>
+    <Reader
+      file={file}
+      title={post.title}
+      titleId="post-title"
+      lead={post.description}
+      image={post.image}
+      scrollLabel="Texto del post"
+      frontmatter={[
+        { key: 'fecha', value: { text: fecha, datetime: post.publishDate.toISOString() } },
+        { key: 'lectura', value: `${minutes} min` },
+        { key: 'tags', value: post.tags.map((tag) => ({ label: tag, href: `/blog?q=${encodeURIComponent(tag)}` })) },
+      ]}
+      pager={{ href: '/blog', label: '← blog', info: `${minutes} min de lectura` }}
+    >
+      <Content />
+      <script
+        slot="after"
+        src="https://giscus.app/client.js"
+        data-repo="simoncra/portfolio_v2"
+        data-repo-id="R_kgDOKPAG8g"
+        data-category="General"
+        data-category-id="DIC_kwDOKPAG8s4CZFkZ"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="gruvbox_dark"
+        data-lang="es"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+        data-astro-rerun
+      ></script>
+    </Reader>
+  </main>
+</SessionLayout>

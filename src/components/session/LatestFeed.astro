@@ -1,0 +1,100 @@
+---
+// The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only.
+// Videos link out to YouTube, so their rows open in a new tab.
+import { getSortedPosts } from '../../session/posts'
+import PromptLine from './PromptLine.astro'
+import { getSortedProjects } from '../../session/projects'
+import { getVideos } from '../../session/videos'
+import { fmtDate } from '../../session/date'
+import PixelArt from './PixelArt.astro'
+import { KIND_ICON, PROJECT_ICON } from '../../session/icons'
+import { buildFeed, KIND_LABEL, type FeedSource } from '../../session/feed'
+
+const postsSource: FeedSource = async () =>
+  (await getSortedPosts()).map((p) => ({
+    kind: 'post' as const,
+    title: p.data.title,
+    summary: p.data.description,
+    date: p.data.publishDate,
+    href: `/blog/${p.slug}`,
+  }))
+
+const projectsSource: FeedSource = async () =>
+  (await getSortedProjects()).map((p) => ({
+    kind: 'project' as const,
+    title: p.data.title,
+    summary: p.data.summary,
+    date: p.data.date,
+    href: `/projects/${p.slug}`,
+    icon: PROJECT_ICON[p.data.kind],
+  }))
+
+const videosSource: FeedSource = async () =>
+  (await getVideos()).map((v) => ({
+    kind: 'video' as const,
+    title: v.title,
+    summary: v.short ? 'Short en YouTube' : 'Video en YouTube',
+    date: v.date,
+    href: v.url,
+  }))
+
+const feed = await buildFeed([postsSource, projectsSource, videosSource])
+const external = (href: string) => (href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})
+---
+
+<section class="pane pane-latest" aria-label="Últimos">
+  <h2 class="pane-title">últimos</h2>
+  <div class="latest-scroll pane-scroll" data-latest-scroll data-scroll tabindex="0" aria-label="Lista de lo último">
+    <PromptLine cmd="ls -lt ultimos/" />
+    <ol class="entry-list latest-list" data-list>
+      {
+        feed.map((item) => (
+          <li>
+            <a class="entry-row latest-row" href={item.href} data-kind={item.kind} {...external(item.href)}>
+              <PixelArt name={item.icon ?? KIND_ICON[item.kind]} scale={2} />
+              <span class="main">
+                <span class="title">{item.title}</span>
+                <span class="summary">{item.summary}</span>
+              </span>
+              <span class="meta">
+                <span class={`kind kind-${item.kind}`}>{KIND_LABEL[item.kind]}</span>
+                <time datetime={item.date.toISOString()}>{fmtDate(item.date)}</time>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .latest-scroll :global(.prompt-line) {
+    margin-top: 0;
+  }
+  .latest-list {
+    margin: 0;
+  }
+  /* The feed is narrow: summaries stay on one line. */
+  .summary {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .kind-post {
+    color: var(--aqua);
+  }
+  .kind-video {
+    color: var(--orange);
+  }
+  .kind-project {
+    color: var(--purple);
+  }
+  /* On phones the page scrolls, but the feed stays a short scrolling box under the zsh pane. */
+  @media (max-width: 899px) {
+    .latest-scroll {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+  }
+</style>

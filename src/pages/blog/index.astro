@@ -1,0 +1,82 @@
+---
+import SessionLayout from '../../layouts/SessionLayout.astro'
+import PromptLine from '../../components/session/PromptLine.astro'
+import { fmtDate } from '../../session/date'
+import PixelArt from '../../components/session/PixelArt.astro'
+import { KIND_ICON } from '../../session/icons'
+import { getSortedPosts } from '../../session/posts'
+import { postSearchText } from '../../session/search-index'
+
+const posts = await getSortedPosts()
+// Suggested topics for the empty state: the 3 most common Tags.
+const tagCount = new Map<string, number>()
+for (const t of posts.flatMap((p) => p.data.tags)) tagCount.set(t, (tagCount.get(t) ?? 0) + 1)
+const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t)
+---
+
+<SessionLayout current="blog" title="Blog | Simonctech" description="Posts de Simón sobre lo que construye y aprende.">
+  <main class="window">
+    <section class="pane is-active" aria-labelledby="pane-blog">
+      <h2 class="pane-title" id="pane-blog">blog</h2>
+      <PromptLine cmd="ls -lt blog/" search />
+      <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de posts">
+        <ol class="entry-list" data-list data-searchable="blog">
+          {
+            posts.map((post) => (
+              <li data-search={postSearchText(post)}>
+                <a class="entry-row" href={`/blog/${post.slug}`}>
+                  <PixelArt name={KIND_ICON.post} scale={2} />
+                  <span class="main">
+                    <span class="title">{post.data.title}</span>
+                    <span class="summary">{post.data.description}</span>
+                    <span class="tags">{post.data.tags.map((t) => `#${t}`).join(' ')}</span>
+                  </span>
+                  <span class="meta">
+                    <span class="kind">post</span>
+                    <time datetime={post.data.publishDate.toISOString()}>{fmtDate(post.data.publishDate)}</time>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+        {
+          posts.length > 0 ? (
+            <p class="entry-empty" data-empty hidden>
+              Ningún post coincide con «<span data-empty-q />».
+              {topTags.length > 0 && (
+                <>
+                  Prueba con un tema como{' '}
+                  {topTags.map((t, i) => (
+                    <>
+                      <code>{t}</code>
+                      {i < topTags.length - 2 ? ', ' : i === topTags.length - 2 ? ' o ' : ''}
+                    </>
+                  ))}
+                  , o escribe
+                </>
+              )}
+              {topTags.length === 0 && 'Escribe'} <code>:buscar</code> sin texto para ver todos.
+              <span data-other hidden>
+                <br />
+                <a data-other-link />
+              </span>
+            </p>
+          ) : (
+            <p class="entry-empty">Todavía no hay posts publicados. Mientras tanto, mira los proyectos.</p>
+          )
+        }
+      </div>
+    </section>
+  </main>
+</SessionLayout>
+
+<style>
+  .tags {
+    color: var(--blue);
+    font-size: 0.8667rem;
+  }
+  .kind {
+    color: var(--aqua);
+  }
+</style>

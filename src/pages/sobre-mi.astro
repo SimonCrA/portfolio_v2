@@ -1,0 +1,244 @@
+---
+// Window 4: Sobre mí, fed by src/content/about/sobre-mi.md. A `glow` reader holds the story; side
+// panes hold Now, the setup as a `tree`, and the links. On wide screens it splits like tmux.
+import SessionLayout from '../layouts/SessionLayout.astro'
+import PromptLine from '../components/session/PromptLine.astro'
+import PixelArt from '../components/session/PixelArt.astro'
+import Reader from '../components/session/Reader.astro'
+import { CV_URL } from '../session/windows'
+import { getAbout } from '../session/getAbout'
+import { fmtDate } from '../session/date'
+
+const entry = await getAbout()
+const { name, intro, now, nowUpdated, uses, links } = entry.data
+const { Content } = await entry.render()
+
+---
+
+<SessionLayout current="sobre-mi" title={`Sobre mí | ${name}`}>
+  <main class="window reader-window about-window">
+    <Reader as="section" file="sobre-mi.md" title={name} titleId="about-name" lead={intro} scrollLabel="Historia">
+      <div slot="media" class="about-avatar"><PixelArt name="avatar" fluid label="Avatar pixel de Simón" /></div>
+      <p slot="actions" class="cv"><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
+      <Content />
+    </Reader>
+
+    <div class="side">
+      <section class="pane" aria-labelledby="about-now">
+        <h2 class="pane-title" id="about-now">ahora</h2>
+        <PromptLine cmd="cat ahora.txt" />
+        <p class="out" data-now>{now}</p>
+        <p class="stamp">
+          actualizado el <time datetime={nowUpdated.toISOString().slice(0, 10)} data-now-updated>{fmtDate(nowUpdated)}</time>
+        </p>
+      </section>
+
+      <section class="pane" aria-labelledby="about-uses">
+        <h2 class="pane-title" id="about-uses">con qué trabajo</h2>
+        <div class="pane-scroll" tabindex="0" aria-label="Setup">
+          <PromptLine cmd="tree setup/" />
+          <div class="tree">
+            <p class="root">setup/</p>
+            {
+              uses.map((g) => (
+                <div class="group">
+                  <h3>
+                    <PixelArt name={g.icon} scale={1.5} class="group-icon" />{g.group}</h3>
+                  <ul>
+                    {g.items.map((u) => (
+                      <li>
+                        <span class="what">{u.what}</span>
+                        <span class="value">{u.value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="pane" aria-labelledby="about-links">
+        <h2 class="pane-title" id="about-links">dónde encontrarme</h2>
+        <PromptLine cmd="ls enlaces/" />
+        <ul class="links">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href} target="_blank" rel="noopener">
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </main>
+</SessionLayout>
+
+<style>
+  /* The avatar is as tall as the name, intro and CV button beside it. Its box has no height of its
+     own, so it stretches to theirs, and the drawing fills it (bottom-aligned, fixed width, or the
+     text would reflow and change the height it follows). On phones it sits above them. */
+  .about-avatar {
+    position: relative;
+    flex: none;
+    align-self: stretch;
+    width: 10rem;
+  }
+  .about-avatar :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  @media (max-width: 560px) {
+    .about-avatar {
+      align-self: flex-start;
+      width: 7rem;
+      height: 9rem;
+    }
+  }
+  .cv {
+    margin: 0;
+  }
+  .button {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .button:hover,
+  .button:focus-visible {
+    background: var(--fg-bright);
+  }
+
+  .side {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    min-width: 0;
+  }
+  .side :global(.prompt-line) {
+    margin-top: 0;
+  }
+  .stamp {
+    margin: 8px 0 0;
+    color: var(--dim);
+    font-size: 0.8667rem;
+  }
+
+  /* The setup reads as `tree` output: the branches are drawn in CSS so the text stays plain. */
+  .tree {
+    font-size: 0.9333rem;
+  }
+  .tree p,
+  .tree h3,
+  .tree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .root,
+  .tree h3 {
+    color: var(--blue);
+    font-size: inherit;
+    font-weight: 700;
+  }
+  .tree h3::before,
+  .tree li::before {
+    color: var(--line);
+    font-weight: 400;
+    white-space: pre;
+  }
+  .tree h3::before {
+    content: '├── ';
+  }
+  .tree h3::after {
+    content: '/';
+  }
+  .tree :global(.group-icon) {
+    display: inline-block;
+    margin-right: 1ch;
+    vertical-align: -0.35em;
+  }
+  .group:last-child h3::before {
+    content: '└── ';
+  }
+  .tree li {
+    display: grid;
+    grid-template-columns: 8ch minmax(0, 1fr);
+  }
+  .tree li::before {
+    content: '│   ├── ';
+  }
+  .tree li:last-child::before {
+    content: '│   └── ';
+  }
+  .group:last-child li::before {
+    content: '    ├── ';
+  }
+  .group:last-child li:last-child::before {
+    content: '    └── ';
+  }
+  .tree li > span:first-of-type {
+    grid-column: 2;
+  }
+  .what {
+    color: var(--dim);
+  }
+  .value {
+    grid-column: 2;
+    color: var(--fg);
+  }
+  @media (min-width: 640px) {
+    .tree li {
+      grid-template-columns: 8ch 19ch minmax(0, 1fr);
+      gap: 0 8px;
+    }
+    .tree li > span:first-of-type,
+    .value {
+      grid-column: auto;
+    }
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .links a {
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .links a:hover,
+  .links a:focus-visible {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  /* Wide screens split the window like tmux: the story on the left, the side panes on the right,
+     with the setup taking the height that is left. */
+  @media (min-width: 900px) {
+    .about-window {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    }
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+    .side > :global(.pane:has(> .pane-scroll)) {
+      flex: 1;
+    }
+  }
+</style>

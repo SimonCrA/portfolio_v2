@@ -1,0 +1,27 @@
+import { defineConfig, devices } from '@playwright/test'
+
+// E2E over the built site: the one test seam of the redesign (spec #7).
+// The Vercel adapter has no `astro preview`, so the static output is served as-is.
+const PORT = Number(process.env.E2E_PORT ?? 4321) // set E2E_PORT to run several checkouts side by side
+
+export default defineConfig({
+  testDir: 'tests/e2e',
+  fullyParallel: true,
+  reporter: 'list',
+  use: {
+    baseURL: `http://localhost:${PORT}`,
+    trace: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
+    { name: 'phone', use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } } },
+  ],
+  webServer: {
+    // E2E_FIXTURES adds the test-only content entries to the build.
+    command: `E2E_FIXTURES=1 pnpm build && pnpm exec sirv .vercel/output/static --port ${PORT} --quiet`,
+    url: `http://localhost:${PORT}`,
+    // Always serve a fresh build: reusing a server can test another checkout's stale output.
+    reuseExistingServer: false,
+    timeout: 180_000,
+  },
+})

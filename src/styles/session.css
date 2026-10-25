@@ -1,0 +1,526 @@
+/* Session layout: the terminal / TUI look shared by every page. No daisyUI here. */
+@import 'tailwindcss';
+@import '@fontsource/atkinson-hyperlegible-mono/400.css';
+@import '@fontsource/atkinson-hyperlegible-mono/400-italic.css';
+@import '@fontsource/atkinson-hyperlegible-mono/700.css';
+@plugin '@tailwindcss/typography';
+
+/* Palette: gruvbox dark hard. Every colour in the UI goes through these tokens. */
+:root {
+  --bg: #1d2021;
+  --bg-2: #282828;
+  --line: #504945;
+  --fg: #ebdbb2;
+  --fg-bright: #fbf1c7;
+  --dim: #a89984;
+  --yellow: #fabd2f;
+  --green: #b8bb26;
+  --aqua: #8ec07c;
+  --blue: #83a598;
+  --orange: #fe8019;
+  --purple: #d3869b;
+  --red: #fb4934;
+
+  /* roles */
+  --accent: var(--yellow);
+  --active: var(--green);
+  --status-bg: var(--line);
+  --session-bg: var(--green);
+  --session-fg: var(--bg);
+  --active-win: var(--yellow);
+
+  /* pixel-art roles (see src/session/icons.ts): icons recolour when the tokens above change */
+  --px-K: var(--bg);
+  --px-W: var(--fg-bright);
+  --px-L: var(--fg);
+  --px-D: var(--dim);
+  --px-M: var(--line);
+  --px-A: var(--accent);
+  --px-C: var(--blue);
+  --px-F: var(--blue);
+  --px-R: var(--red);
+  /* The avatar keeps Simón's real colours whatever the palette. */
+  --px-S: #c7855a;
+  --px-U: #9c613d;
+  --px-H: #2f2724;
+  --px-G: #5e4a3f;
+  --px-E: #24170f;
+  --px-P: #c46a66;
+  --px-Y: #94494a;
+  --px-N: #2f4058;
+  --px-O: #26344a;
+  --px-Q: #d5c4a1;
+
+  --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  --status-h: 2rem;
+}
+
+/* gruvbox dark medium: the whole alternative is this override. */
+:root[data-palette='medium'] {
+  --bg: #282828;
+  --bg-2: #3c3836;
+  --accent: var(--orange);
+  --active: var(--orange);
+  --status-bg: #3c3836;
+  --session-bg: #a89984;
+  --session-fg: #282828;
+}
+
+/* 1rem is the terminal font size. It grows on large screens the way you would raise the font
+   size of a terminal on a big monitor: 15px at 1440px wide, about 20px at 2560px. Every size
+   is in rem so the whole session scales together. */
+html {
+  font-size: clamp(15px, calc(9px + 0.42vw), 21px);
+  background: var(--bg);
+  color-scheme: dark;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+a {
+  color: inherit;
+}
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- windows & panes ---------- */
+.window {
+  flex: 1;
+  display: grid;
+  gap: 10px;
+  padding: 16px 10px 12px;
+}
+.pane {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 20px 18px 14px;
+}
+.pane.is-active {
+  border-color: var(--active);
+}
+/* On desktop the session is the viewport, like a terminal: windows never scroll the page, the
+   panes do. A pane's scrolling content goes in a `.pane-scroll` box inside it, because clipping
+   the pane itself would cut the title in its border. Phones keep the normal page scroll. */
+@media (min-width: 900px) {
+  .window {
+    flex: none;
+    box-sizing: border-box;
+    height: calc(100dvh - var(--status-h));
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .pane:has(> .pane-scroll) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .pane-scroll {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin: -4px;
+    padding: 4px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+}
+.pane-title {
+  position: absolute;
+  top: -0.8em;
+  left: 12px;
+  z-index: 2;
+  margin: 0;
+  padding: 0 6px;
+  background: var(--bg);
+  color: var(--dim);
+  font-size: 0.8667rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.pane.is-active > .pane-title {
+  color: var(--active);
+}
+
+/* ---------- shell output ---------- */
+.prompt-line {
+  margin: 16px 0 4px;
+  color: var(--dim);
+}
+.prompt-line .user {
+  color: var(--green);
+}
+.prompt-line .path {
+  color: var(--blue);
+}
+.prompt-line .cmd {
+  color: var(--fg);
+}
+.out {
+  margin: 2px 0 0;
+}
+
+/* ---------- tmux status line ---------- */
+.status {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: stretch;
+  height: var(--status-h);
+  background: var(--status-bg);
+  font-size: 0.8667rem;
+  white-space: nowrap;
+}
+.status .session {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--session-bg);
+  color: var(--session-fg);
+  font-weight: 700;
+  text-decoration: none;
+}
+.status nav {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.status nav a {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  text-decoration: none;
+}
+.status nav a:hover {
+  background: var(--bg-2);
+}
+.status nav .flag {
+  visibility: hidden;
+}
+.status nav a[aria-current='page'] {
+  background: var(--active-win);
+  color: var(--bg);
+  font-weight: 700;
+}
+.status nav a[aria-current='page'] .flag {
+  visibility: visible;
+}
+.status .right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  padding: 0 10px;
+  color: var(--dim);
+}
+.status .right a {
+  color: var(--green);
+}
+@media (max-width: 640px) {
+  /* Squeezed status line: only the current window keeps its name. */
+  .status nav a:not([aria-current='page']) .name,
+  .status nav a:not([aria-current='page']) .flag,
+  .status .date {
+    display: none;
+  }
+  .status nav a {
+    padding: 0 9px;
+  }
+}
+
+/* ---------- command prompt, messages and help popup ---------- */
+.status [hidden] {
+  display: none;
+}
+.status-line,
+.status-prompt,
+.status-msg {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: stretch;
+}
+.status-prompt {
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  background: var(--bg-2);
+}
+.status-prompt label {
+  color: var(--accent);
+  font-weight: 700;
+}
+.status-prompt input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.9333rem;
+  outline: none;
+  caret-color: var(--accent);
+}
+.status-msg {
+  align-items: center;
+  padding: 0 10px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.status-msg[data-kind='error'] {
+  background: var(--red);
+}
+.status-msg-link {
+  margin-left: 1ch;
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.status .hint {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dim);
+  font: inherit;
+  cursor: pointer;
+}
+.status .hint:hover {
+  color: var(--fg);
+}
+.status kbd,
+.live-hint kbd {
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+}
+@media (hover: none), (max-width: 640px) {
+  .status .hint,
+  .live-hint {
+    display: none;
+  }
+}
+
+.help {
+  width: min(620px, calc(100% - 32px));
+  max-height: 80vh;
+  margin: auto; /* the reset zeroes dialog margins, which would pin it top-left */
+  padding: 0;
+  border: 1px solid var(--accent);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  white-space: normal;
+}
+.help::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+.help-box {
+  padding: 18px 22px;
+}
+.help h2 {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-size: inherit;
+}
+.help h3 {
+  margin: 16px 0 4px;
+  color: var(--dim);
+  font-size: 0.8667rem;
+  font-weight: 400;
+}
+.help table {
+  border-collapse: collapse;
+}
+.help th {
+  padding: 3px 20px 3px 0;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+.help td {
+  padding: 3px 0;
+}
+.help p {
+  margin: 16px 0 0;
+  color: var(--dim);
+  font-size: 0.8667rem;
+}
+
+.live {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 4px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: text;
+}
+.cursor {
+  width: 0.6em;
+  height: 1.15em;
+  background: var(--fg);
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+  }
+}
+.live-hint {
+  margin-left: 12px;
+  color: var(--dim);
+  font-size: 0.8667rem;
+}
+
+/* ---------- pixel art ---------- */
+.pixel-art {
+  flex: none;
+}
+
+/* ---------- entry lists: Blog, Proyectos, Videos and the Latest feed ---------- */
+/* One row per entry: icon or thumbnail, the text, and the meta column on the right. Pages only
+   restyle what differs (colours, the icon column). */
+.entry-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.entry-row {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+  gap: 0 12px;
+  align-items: start;
+  padding: 10px 6px;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.entry-row:hover,
+.entry-row:focus-visible {
+  border-left-color: var(--accent);
+  background: var(--bg-2);
+}
+.entry-row .main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.entry-row .title {
+  font-weight: 700;
+}
+.entry-row:hover .title {
+  color: var(--accent);
+}
+.entry-row .summary {
+  color: var(--dim);
+  font-size: 0.9rem;
+}
+.entry-row .meta {
+  display: grid;
+  justify-items: end;
+  font-size: 0.8667rem;
+  white-space: nowrap;
+}
+.entry-row time {
+  color: var(--dim);
+}
+.entry-empty {
+  margin: 16px 0;
+  color: var(--dim);
+}
+@media (max-width: 560px) {
+  .entry-row {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+  }
+  .entry-row .meta {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 12px;
+  }
+}
+
+/* ---------- lists: selection cursor & scroll indicators ---------- */
+/* Doubled attribute selector: outranks the pages' scoped `.row` padding. */
+[data-list][data-list] > li > a {
+  position: relative;
+  padding-left: 20px;
+}
+[data-list] > li > a::before {
+  content: '▶';
+  position: absolute;
+  left: 4px;
+  top: 10px;
+  color: transparent;
+  line-height: 2.1333rem;
+  font-size: 0.7333rem;
+}
+[data-list] > li > a[aria-current='true'] {
+  border-left-color: var(--accent);
+  background: var(--bg-2);
+}
+[data-list] > li > a[aria-current='true']::before {
+  color: var(--accent);
+}
+/* `[first-last/total]` in the pane's top border, like the title but on the right. */
+.pane-pos {
+  position: absolute;
+  top: -0.8em;
+  right: 12px;
+  z-index: 2;
+  margin: 0;
+  padding: 0 6px;
+  background: var(--bg);
+  color: var(--accent);
+  font-size: 0.8667rem;
+  line-height: 1.5;
+}
+.pane-pos[hidden],
+.list-more[hidden] {
+  display: none;
+}
+/* Zero-height sticky anchor: showing or hiding the cue never changes the scroll height. */
+.list-more {
+  position: sticky;
+  bottom: 0;
+  height: 0;
+  pointer-events: none;
+}
+.list-more > span {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 28px 0 4px;
+  background: linear-gradient(transparent, var(--bg) 60%);
+  color: var(--accent);
+  font-size: 0.8667rem;
+  text-align: center;
+}

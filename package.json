@@ -6,24 +6,26 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:no-fixtures": "astro build && ! grep -rqs e2e-fixture .vercel/output/static"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.2.3",
     "@astrojs/sitemap": "^3.3.0",
-    "@astrojs/svelte": "^7.0.9",
     "@astrojs/ts-plugin": "^1.10.4",
     "@astrojs/vercel": "^8.1.4",
+    "@fontsource/atkinson-hyperlegible-mono": "^5.3.0",
     "@tailwindcss/vite": "^4.1.0",
     "astro": "^5.5.6",
-    "dayjs": "^1.11.13",
-    "svelte": "^5.25.6",
     "tailwindcss": "^4.1.0",
     "typescript": "^5.8.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/typography": "^0.5.16",
-    "daisyui": "^5.0.9",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "sirv-cli": "^3.0.1",
+    "yaml": "^2.9.1"
   }
 }

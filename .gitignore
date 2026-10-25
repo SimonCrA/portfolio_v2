@@ -22,3 +22,13 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# vercel build output
+.vercel/
+
+# playwright
+/test-results/
+/playwright-report/
+
+# claude code agent worktrees
+.claude/worktrees/

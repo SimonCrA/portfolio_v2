@@ -1,0 +1,238 @@
+/* glow-style reader for Posts and Sobre mí. Tokens only, see session.css. */
+.reader-window {
+  grid-template-columns: minmax(0, 1fr);
+}
+.reader {
+  --reader-pad-x: clamp(14px, 4vw, 44px);
+  width: 100%;
+  padding: 26px var(--reader-pad-x) 40px;
+}
+.reader:has(.pagerbar) {
+  padding-bottom: 0;
+}
+.reader-head.has-media {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.reader-intro {
+  min-width: 0;
+}
+@media (max-width: 560px) {
+  .reader-head.has-media {
+    flex-direction: column;
+  }
+}
+.frontmatter {
+  margin: 0 0 26px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.9333rem;
+  overflow-wrap: anywhere;
+}
+.frontmatter .k {
+  color: var(--accent);
+}
+.frontmatter a {
+  color: var(--aqua);
+  text-decoration: none;
+}
+.frontmatter a:hover {
+  text-decoration: underline;
+}
+.reader-title {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: clamp(1.6rem, 4vw, 2.1333rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.reader-title::before {
+  content: '# ';
+  color: var(--dim);
+}
+.reader-lead {
+  margin: 0 0 24px;
+  color: var(--aqua);
+}
+.reader figure {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 28px;
+  border: 1px solid var(--line);
+  padding: 6px;
+}
+.reader figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Text fills its pane like in a terminal; Tailwind Typography would cap it at 65ch. */
+.reader .prose {
+  max-width: none;
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--accent);
+  --tw-prose-lead: var(--fg);
+  --tw-prose-links: var(--aqua);
+  --tw-prose-bold: var(--fg-bright);
+  --tw-prose-counters: var(--green);
+  --tw-prose-bullets: var(--green);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: var(--green);
+  --tw-prose-captions: var(--dim);
+  --tw-prose-code: var(--orange);
+  --tw-prose-pre-code: var(--fg);
+  --tw-prose-pre-bg: var(--bg-2);
+  --tw-prose-th-borders: var(--line);
+  --tw-prose-td-borders: var(--line);
+}
+.reader .prose :is(h1, h2, h3, h4) {
+  font-family: var(--mono);
+}
+/* A Post's own `# Heading` must not outshout the title. */
+.reader .prose h1 {
+  font-size: 1.6em;
+}
+.reader .prose h1::before {
+  content: '# ';
+  color: var(--dim);
+}
+.reader .prose h2::before {
+  content: '## ';
+  color: var(--dim);
+}
+.reader .prose h3::before {
+  content: '### ';
+  color: var(--dim);
+}
+/* Code blocks are small panes: the language sits in the top border like a pane title and the
+   copy button (added by the reader's script) on the right, like the list position label. */
+.reader .prose .code-block {
+  position: relative;
+  margin: 2.2em 0 1.8em;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+}
+.reader .prose .code-block[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: -0.8em;
+  left: 12px;
+  padding: 0 6px;
+  background: var(--bg);
+  color: var(--dim);
+  font-size: 0.8667rem;
+  line-height: 1.5;
+}
+.reader .prose .code-block:is([data-lang='plaintext'], [data-lang='text'], [data-lang=''])::before {
+  content: none;
+}
+.reader .prose .code-copy {
+  position: absolute;
+  top: -0.8em;
+  right: 12px;
+  padding: 0 6px;
+  border: 0;
+  background: var(--bg);
+  color: var(--dim);
+  font: inherit;
+  font-size: 0.8667rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.reader .prose .code-copy:hover,
+.reader .prose .code-copy:focus-visible,
+.reader .prose .code-copy[data-copied] {
+  color: var(--accent);
+}
+.reader .prose pre {
+  max-width: 100%;
+  margin: 0;
+  padding: 1.1em 1.3em;
+  overflow-x: auto;
+  border: 0;
+  border-radius: 0;
+  /* Shiki paints the page colour inline; the block keeps its own lifted background. */
+  background: transparent !important;
+  font-size: 0.9em;
+  line-height: 1.6;
+  overflow-wrap: normal;
+}
+.reader .prose pre code {
+  overflow-wrap: normal;
+}
+/* Inline code: a lifted chip, without the backticks Tailwind Typography adds. */
+.reader .prose :not(pre) > code {
+  padding: 0.1em 0.4em;
+  background: var(--bg-2);
+  font-weight: 400;
+  font-size: 0.9em;
+}
+.reader .prose :not(pre) > code::before,
+.reader .prose :not(pre) > code::after {
+  content: none;
+}
+/* Quotes read like glow draws them: a bar on the left, the text in its normal style. */
+.reader .prose blockquote {
+  margin: 1.8em 0;
+  padding: 0.4em 1.2em;
+  border-left: 3px solid var(--aqua);
+  background: var(--bg-2);
+  color: var(--fg);
+  font-style: normal;
+  font-weight: 400;
+}
+.reader .prose blockquote p::before,
+.reader .prose blockquote p::after {
+  content: none;
+}
+.reader .prose a {
+  text-underline-offset: 3px;
+}
+.reader .prose a:hover {
+  color: var(--accent);
+}
+.reader .prose hr {
+  border-top-style: dashed;
+}
+.reader .prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+.reader .prose table {
+  display: block;
+  overflow-x: auto;
+}
+
+/* The pager bar is the last line of the reader pane, like `less`. On phones it sticks above the
+   status line while the page scrolls. */
+.pagerbar {
+  position: sticky;
+  bottom: var(--status-h);
+  z-index: 20;
+  display: flex;
+  gap: 18px;
+  margin: 24px calc(-1 * var(--reader-pad-x)) 0;
+  padding: 4px 12px;
+  background: var(--bg-2);
+  border-top: 1px solid var(--line);
+  font-size: 0.8667rem;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+.pagerbar a {
+  text-decoration: none;
+}
+.pagerbar .pct {
+  margin-left: auto;
+  color: var(--accent);
+}

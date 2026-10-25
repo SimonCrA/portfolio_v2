@@ -1,0 +1,103 @@
+---
+// Window 1: the Projects as an `eza -l --icons` listing. Featured first, then newest (see
+// src/session/projects.ts). The status reads like `systemctl status`: a coloured dot and a word.
+import SessionLayout from '../../layouts/SessionLayout.astro'
+import PromptLine from '../../components/session/PromptLine.astro'
+import PixelArt from '../../components/session/PixelArt.astro'
+import { PROJECT_ICON } from '../../session/icons'
+import { fmtDate } from '../../session/date'
+import { getSortedProjects } from '../../session/projects'
+import { projectSearchText } from '../../session/search-index'
+
+const projects = await getSortedProjects()
+---
+
+<SessionLayout current="proyectos" title="Proyectos | Simonctech" description="Lo que Simón ha construido, software y hardware.">
+  <main class="window">
+    <section class="pane is-active" aria-labelledby="pane-proyectos">
+      <h2 class="pane-title" id="pane-proyectos">proyectos</h2>
+      <PromptLine cmd="eza -l --icons proyectos/" search />
+      <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de proyectos">
+        {
+          projects.length > 0 && (
+            <ol class="entry-list" data-list data-searchable="projects">
+              {projects.map((entry) => (
+                <li data-search={projectSearchText(entry)}>
+                  <a class="entry-row" href={`/projects/${entry.slug}`} data-featured={entry.data.featured ? '' : undefined}>
+                    <PixelArt name={PROJECT_ICON[entry.data.kind]} scale={2} />
+                    <span class="main">
+                      <span class="title">
+                        {entry.data.featured && (
+                          <span class="star" aria-label="Destacado">
+                            ★
+                          </span>
+                        )}
+                        {entry.data.title}</span>
+                      <span class="summary">{entry.data.summary}</span>
+                      <span class="stack">{entry.data.stack.join('  ')}</span>
+                    </span>
+                    <span class="meta">
+                      <span class={`state state-${entry.data.status}`}>{entry.data.status}</span>
+                      <span class="kind">{entry.data.kind}</span>
+                      <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          )
+        }
+        <p class="out entry-empty" data-empty hidden={projects.length > 0}>
+          {
+            projects.length > 0 ? (
+              <>
+                Ningún proyecto coincide con «<span data-empty-q />». Escribe <code>:buscar</code> sin texto para verlos todos.
+                <span data-other hidden><br /><a data-other-link /></span>
+              </>
+            ) : (
+              <>Todavía no hay proyectos publicados. Mientras tanto, el blog tiene lo último que he escrito.</>
+            )
+          }
+        </p>
+      </div>
+    </section>
+  </main>
+</SessionLayout>
+
+<style>
+  /* Projects read as folders: the title in blue with a trailing slash. */
+  .title {
+    color: var(--blue);
+  }
+  .title::after {
+    content: '/';
+  }
+  .star {
+    margin-right: 1ch;
+    color: var(--accent);
+  }
+  .summary {
+    color: var(--fg);
+  }
+  .stack {
+    color: var(--dim);
+    font-size: 0.8667rem;
+    white-space: pre-wrap;
+  }
+  /* Like `systemctl status`: the dot carries the state's colour. */
+  .state::before {
+    content: '● ';
+  }
+  .state-activo {
+    color: var(--green);
+  }
+  .state-terminado {
+    color: var(--blue);
+  }
+  .state-archivado {
+    color: var(--dim);
+  }
+  .kind {
+    color: var(--purple);
+  }
+</style>
