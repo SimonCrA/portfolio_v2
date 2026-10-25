@@ -64,7 +64,7 @@ test.describe('phone layout', () => {
 
   test('shows the narrow banner and only the current window name', async ({ page }) => {
     await page.goto('/')
-    await expect(page.locator('pre.banner-narrow')).toBeVisible()
+    await expect(page.locator('svg.banner-narrow')).toBeVisible()
     await expect(page.locator('pre.banner-wide')).toBeHidden()
     const nav = page.getByRole('navigation', { name: 'Ventanas' })
     await expect(nav.getByText(':inicio')).toBeVisible()
@@ -80,5 +80,22 @@ test.describe('desktop layout', () => {
     await page.goto('/')
     await expect(page.locator('pre.banner-wide')).toBeVisible()
     await expect(page.getByRole('navigation', { name: 'Ventanas' }).getByText(':blog')).toBeVisible()
+  })
+})
+
+test.describe('status line stays put', () => {
+  test('it does not move when the page scrolls or after a client navigation', async ({ page, isMobile }) => {
+    await page.goto('/')
+    const status = page.locator('footer.status')
+    const before = (await status.boundingBox())!
+    const viewport = page.viewportSize()!
+    expect(Math.round(before.y + before.height)).toBe(viewport.height)
+    await page.mouse.wheel(0, 1200)
+    await page.waitForTimeout(200)
+    expect((await status.boundingBox())!.y).toBe(before.y)
+    await page.getByRole('navigation', { name: 'Ventanas' }).getByRole('link', { name: '2: Blog' }).click()
+    await expect(page).toHaveURL('/blog')
+    expect((await status.boundingBox())!.y).toBe(before.y)
+    if (isMobile) expect(before.height).toBeGreaterThanOrEqual(40)
   })
 })

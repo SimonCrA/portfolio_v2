@@ -47,8 +47,10 @@ const { Content } = await entry.render()
                   <ul>
                     {g.items.map((u) => (
                       <li>
-                        <span class="what">{u.what}</span>
-                        <span class="value">{u.value}</span>
+                        <span class="kv">
+                          <span class="what">{u.what}</span>
+                          <span class="value">{u.value}</span>
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -155,9 +157,6 @@ const { Content } = await entry.render()
     font-weight: 400;
     white-space: pre;
   }
-  .tree h3::before {
-    content: '├── ';
-  }
   .tree h3::after {
     content: '/';
   }
@@ -166,43 +165,67 @@ const { Content } = await entry.render()
     margin-right: 1ch;
     vertical-align: -0.35em;
   }
-  .group:last-child h3::before {
-    content: '└── ';
-  }
+  /* Phones: short branches, and the name and value on one line that wraps only when it must. */
   .tree li {
     display: grid;
-    grid-template-columns: 8ch minmax(0, 1fr);
+    grid-template-columns: 5ch minmax(0, 1fr);
+  }
+  .tree h3::before {
+    content: '├─ ';
+  }
+  .group:last-child h3::before {
+    content: '└─ ';
   }
   .tree li::before {
-    content: '│   ├── ';
+    content: '│ ├─ ';
   }
   .tree li:last-child::before {
-    content: '│   └── ';
+    content: '│ └─ ';
   }
   .group:last-child li::before {
-    content: '    ├── ';
+    content: '  ├─ ';
   }
   .group:last-child li:last-child::before {
-    content: '    └── ';
+    content: '  └─ ';
   }
-  .tree li > span:first-of-type {
-    grid-column: 2;
+  .kv {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1ch;
+    min-width: 0;
   }
   .what {
     color: var(--dim);
   }
   .value {
-    grid-column: 2;
     color: var(--fg);
   }
+  /* Wider panes: real `tree` branches and the values in their own aligned column. */
   @media (min-width: 640px) {
+    .tree h3::before {
+      content: '├── ';
+    }
+    .group:last-child h3::before {
+      content: '└── ';
+    }
     .tree li {
       grid-template-columns: 8ch 19ch minmax(0, 1fr);
       gap: 0 8px;
     }
-    .tree li > span:first-of-type,
-    .value {
-      grid-column: auto;
+    .tree li::before {
+      content: '│   ├── ';
+    }
+    .tree li:last-child::before {
+      content: '│   └── ';
+    }
+    .group:last-child li::before {
+      content: '    ├── ';
+    }
+    .group:last-child li:last-child::before {
+      content: '    └── ';
+    }
+    .kv {
+      display: contents;
     }
   }
 

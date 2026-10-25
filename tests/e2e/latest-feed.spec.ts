@@ -42,15 +42,15 @@ test.describe('latest feed', () => {
     expect(m.s).toBeGreaterThanOrEqual(m.c)
   })
 
-  test('phone order is zsh, últimos, navigator, without horizontal overflow', async ({ page, isMobile }) => {
+  test('phone order is zsh, navigator, últimos, without horizontal overflow', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phone only')
     await page.goto('/')
     const y = async (name: string | RegExp) => (await page.getByRole('region', { name }).boundingBox())!.y
     const zsh = await y(/quién soy/)
     const feed = await y('Últimos')
     const nav = await y('Navegador')
-    expect(zsh).toBeLessThan(feed)
-    expect(feed).toBeLessThan(nav)
+    expect(zsh).toBeLessThan(nav)
+    expect(nav).toBeLessThan(feed)
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBeLessThanOrEqual(0)
   })

@@ -53,6 +53,9 @@
 
   --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
   --status-h: 2rem;
+  /* The phone's own navigation bar overlaps the bottom of the page; the status line sits above it. */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --status-total: calc(var(--status-h) + var(--safe-bottom));
 }
 
 /* gruvbox dark medium: the whole alternative is this override. */
@@ -77,8 +80,11 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  box-sizing: border-box;
+  min-height: 100dvh;
   margin: 0;
+  /* Room for the fixed status line, so it never covers the end of the page. */
+  padding-bottom: var(--status-total);
   background: var(--bg);
   color: var(--fg);
   font-family: var(--mono);
@@ -120,7 +126,7 @@ a {
   .window {
     flex: none;
     box-sizing: border-box;
-    height: calc(100dvh - var(--status-h));
+    height: calc(100dvh - var(--status-total));
     grid-template-rows: minmax(0, 1fr);
   }
   .pane:has(> .pane-scroll) {
@@ -175,13 +181,19 @@ a {
 }
 
 /* ---------- tmux status line ---------- */
+/* Fixed, not sticky: on phones the viewport changes height as the browser's address bar shows and
+   hides, and a sticky bar jumped with it. */
 .status {
-  position: sticky;
+  position: fixed;
+  right: 0;
   bottom: 0;
+  left: 0;
   z-index: 30;
   display: flex;
   align-items: stretch;
-  height: var(--status-h);
+  box-sizing: border-box;
+  height: var(--status-total);
+  padding-bottom: var(--safe-bottom);
   background: var(--status-bg);
   font-size: 0.8667rem;
   white-space: nowrap;
@@ -310,6 +322,12 @@ a {
   color: var(--accent);
   font: inherit;
   font-weight: 700;
+}
+/* A taller status line on phones: the window names are what you tap to move around. */
+@media (max-width: 640px) {
+  :root {
+    --status-h: 2.75rem;
+  }
 }
 @media (hover: none), (max-width: 640px) {
   .status .hint,
