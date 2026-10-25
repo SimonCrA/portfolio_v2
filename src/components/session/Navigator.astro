@@ -5,8 +5,9 @@ import { getCollection } from 'astro:content'
 import PixelArt from './PixelArt.astro'
 import { SECTION_ICON } from '../../session/icons'
 import { CV_URL, WINDOWS } from '../../session/windows'
-import { NOW } from '../../session/about'
+import { getAbout } from '../../session/getAbout'
 
+const about = (await getAbout()).data
 const route = (key: string) => WINDOWS.find((w) => w.key === key)!.route
 const number = (key: string) => WINDOWS.findIndex((w) => w.key === key)
 
@@ -31,7 +32,7 @@ const entries: Entry[] = [
     items: posts.slice(0, 4).map((p) => ({ a: fmtDate(p.data.publishDate), b: p.data.title, href: `/blog/${p.slug}` })),
   },
   { key: 'videos', name: 'videos/', meta: 'pronto', href: route('videos'), items: [{ a: 'pronto', b: 'Los Videos llegarán pronto.' }] },
-  { key: 'sobre-mi', name: 'sobre-mi/', meta: 'uses y ahora', href: route('sobre-mi'), items: [{ a: 'ahora', b: NOW }] },
+  { key: 'sobre-mi', name: 'sobre-mi/', meta: 'uses y ahora', href: route('sobre-mi'), items: [{ a: 'ahora', b: about.now }] },
   { key: 'cv', name: 'cv.pdf', meta: 'descargar', href: CV_URL, file: true, items: [{ a: 'pdf', b: 'Mi CV, compilado desde LaTeX con GitHub Actions.' }] },
 ]
 const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
