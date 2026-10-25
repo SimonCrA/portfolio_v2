@@ -1,14 +1,12 @@
 // Session client module: loaded once from SessionLayout and survives client-router navigations.
 // Document-level listeners bind here exactly once; per-page setup belongs in `astro:page-load`.
-import { navigate } from 'astro:transitions/client'
 import { WINDOWS } from '../windows'
 import { bind, listen } from './keys'
+// The prompt module registers its bindings first so the help popup can shadow the page keys.
+import { message } from './prompt'
+import { go } from './navigation'
 
-/** Go to a route through the client router, unless already there. */
-export function go(route: string) {
-  if (location.pathname === route) return
-  navigate(route)
-}
+export { go, message }
 
 /** Pages that are a Post mark their `<main>` with `data-post`. */
 export const onPost = () => !!document.querySelector('[data-post]')
