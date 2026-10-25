@@ -43,7 +43,7 @@
   --px-H: var(--dim);
 
   --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
-  --status-h: 30px;
+  --status-h: 2rem;
 }
 
 /* gruvbox dark medium: the whole alternative is this override. */
@@ -57,7 +57,11 @@
   --session-fg: #282828;
 }
 
+/* 1rem is the terminal font size. It grows on large screens the way you would raise the font
+   size of a terminal on a big monitor: 15px at 1440px wide, about 20px at 2560px. Every size
+   is in rem so the whole session scales together. */
 html {
+  font-size: clamp(15px, calc(9px + 0.42vw), 21px);
   background: var(--bg);
   color-scheme: dark;
 }
@@ -69,7 +73,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 1rem;
   line-height: 1.55;
 }
 a {
@@ -109,7 +113,7 @@ a {
   padding: 0 6px;
   background: var(--bg);
   color: var(--dim);
-  font-size: 13px;
+  font-size: 0.8667rem;
   font-weight: 400;
   line-height: 1.5;
 }
@@ -145,7 +149,7 @@ a {
   align-items: stretch;
   height: var(--status-h);
   background: var(--status-bg);
-  font-size: 13px;
+  font-size: 0.8667rem;
   white-space: nowrap;
 }
 .status .session {
@@ -235,7 +239,7 @@ a {
   background: transparent;
   color: var(--fg);
   font: inherit;
-  font-size: 14px;
+  font-size: 0.9333rem;
   outline: none;
   caret-color: var(--accent);
 }
@@ -300,7 +304,7 @@ a {
 .help h3 {
   margin: 16px 0 4px;
   color: var(--dim);
-  font-size: 13px;
+  font-size: 0.8667rem;
   font-weight: 400;
 }
 .help table {
@@ -319,7 +323,7 @@ a {
 .help p {
   margin: 16px 0 0;
   color: var(--dim);
-  font-size: 13px;
+  font-size: 0.8667rem;
 }
 
 .live {
@@ -354,7 +358,7 @@ a {
 .live-hint {
   margin-left: 12px;
   color: var(--dim);
-  font-size: 13px;
+  font-size: 0.8667rem;
 }
 
 /* ---------- pixel art ---------- */
@@ -378,8 +382,8 @@ a {
   left: 4px;
   top: 10px;
   color: transparent;
-  line-height: 32px;
-  font-size: 11px;
+  line-height: 2.1333rem;
+  font-size: 0.7333rem;
 }
 [data-list] > li > a[aria-current='true'] {
   border-left-color: var(--accent);
@@ -398,7 +402,7 @@ a {
   padding: 0 6px;
   background: var(--bg);
   color: var(--accent);
-  font-size: 13px;
+  font-size: 0.8667rem;
   line-height: 1.5;
 }
 .pane-pos[hidden],
@@ -418,6 +422,6 @@ a {
   padding: 28px 0 4px;
   background: linear-gradient(transparent, var(--bg) 60%);
   color: var(--accent);
-  font-size: 13px;
+  font-size: 0.8667rem;
   text-align: center;
 }

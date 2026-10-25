@@ -23,7 +23,7 @@ const runs = wide.match(/█+|[^█]+/g)!.map((text) => ({ text, solid: text[0] 
     color: var(--dim);
     /* Atkinson has no box-drawing glyphs; use a system mono that does. */
     font-family: ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace;
-    font-size: clamp(6px, 0.78vw, 11px);
+    font-size: clamp(6px, 0.78vw, 0.7333rem);
     line-height: 1.05;
     white-space: pre;
     overflow: hidden;
@@ -35,7 +35,7 @@ const runs = wide.match(/█+|[^█]+/g)!.map((text) => ({ text, solid: text[0] 
   .banner-narrow {
     display: none;
     color: var(--accent);
-    font-size: 15px;
+    font-size: 1rem;
   }
   @media (max-width: 560px) {
     .banner-wide {

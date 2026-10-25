@@ -21,6 +21,7 @@ const pixels = rows.flatMap((row, y) => [...row].flatMap((c, x) => (c === '.' ? 
   viewBox={`0 0 ${width} ${height}`}
   width={width * scale}
   height={height * scale}
+  style={`width:${(width * scale) / 15}rem;height:${(height * scale) / 15}rem`}
   shape-rendering="crispEdges"
   class:list={['pixel-art', `pixel-${name}`, className]}
   role={label ? 'img' : undefined}

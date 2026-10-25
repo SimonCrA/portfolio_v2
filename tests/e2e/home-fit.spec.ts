@@ -19,3 +19,18 @@ test.describe('home fits the viewport on desktop', () => {
     })
   }
 })
+
+test.describe('large screens', () => {
+  test.skip(({ isMobile }) => !!isMobile, 'desktop only')
+
+  test('the terminal font grows with the screen and the panes still fit', async ({ page }) => {
+    const fontAt = async (width: number, height: number) => {
+      await page.setViewportSize({ width, height })
+      await page.goto('/')
+      expect(await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight), `page scroll at ${width}px`).toBeLessThanOrEqual(0)
+      return page.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize))
+    }
+    expect(await fontAt(1440, 900)).toBeCloseTo(15, 0)
+    expect(await fontAt(2560, 1440)).toBeGreaterThanOrEqual(19)
+  })
+})

@@ -131,12 +131,12 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
   .stamp {
     margin: 8px 0 0;
     color: var(--dim);
-    font-size: 13px;
+    font-size: 0.8667rem;
   }
 
   /* The setup reads as `tree` output: the branches are drawn in CSS so the text stays plain. */
   .tree {
-    font-size: 14px;
+    font-size: 0.9333rem;
   }
   .tree p,
   .tree h3,
@@ -261,6 +261,12 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     }
     .reader .pane-scroll {
       padding-right: clamp(14px, 3vw, 36px);
+    }
+  }
+  /* The story keeps its reading width, so on very wide screens the side panes take the rest. */
+  @media (min-width: 1800px) {
+    .about-window {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
   }
 </style>

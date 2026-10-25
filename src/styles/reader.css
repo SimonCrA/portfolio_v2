@@ -13,7 +13,7 @@
   margin: 0 0 26px;
   color: var(--dim);
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 0.9333rem;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -30,7 +30,7 @@
 .reader-title {
   margin: 0 0 8px;
   color: var(--accent);
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(1.6rem, 4vw, 2.1333rem);
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
@@ -56,7 +56,7 @@
 .reader .prose {
   max-width: 72ch;
   font-family: var(--mono);
-  font-size: 16.5px;
+  font-size: 1.1rem;
   line-height: 1.75;
   overflow-wrap: anywhere;
   --tw-prose-body: var(--fg);
@@ -123,7 +123,7 @@
   padding: 4px 12px;
   background: var(--bg-2);
   border-top: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 0.8667rem;
   white-space: nowrap;
   overflow-x: auto;
 }
