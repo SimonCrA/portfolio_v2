@@ -20,7 +20,7 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 <SessionLayout current="sobre-mi" title={`Sobre mí | ${name}`}>
   <main class="window reader-window about-window">
     <Reader as="section" file="sobre-mi.md" title={name} titleId="about-name" lead={intro} scrollLabel="Historia">
-      <PixelArt slot="media" name="avatar" scale={6} class="pixel-avatar" label="Avatar pixel de Simón" />
+      <PixelArt slot="media" name="avatar" scale={4} label="Avatar pixel de Simón" />
       <p slot="actions"><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
       <Content />
     </Reader>

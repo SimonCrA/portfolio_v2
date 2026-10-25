@@ -39,8 +39,18 @@
   --px-C: var(--blue);
   --px-F: var(--blue);
   --px-R: var(--red);
-  --px-S: var(--yellow);
-  --px-H: var(--dim);
+  /* The avatar keeps Simón's real colours whatever the palette. */
+  --px-S: #c7855a;
+  --px-V: #e0a276;
+  --px-U: #9c613d;
+  --px-H: #2f2724;
+  --px-G: #5e4a3f;
+  --px-E: #24170f;
+  --px-P: #c46a66;
+  --px-B: #a56b45;
+  --px-N: #2f4058;
+  --px-O: #26344a;
+  --px-Q: #d5c4a1;
 
   --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
   --status-h: 2rem;
@@ -394,10 +404,6 @@ a {
 /* ---------- pixel art ---------- */
 .pixel-art {
   flex: none;
-}
-/* Sobre mí gets an aqua shirt, like the avatar. */
-.pixel-avatar {
-  --px-A: var(--aqua);
 }
 
 /* ---------- lists: selection cursor & scroll indicators ---------- */

@@ -73,7 +73,8 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
                   {number(e.key)}
                 </kbd>
               )}
-              <PixelArt name={SECTION_ICON[e.key]} scale={4} class={e.key === 'sobre-mi' ? 'pixel-avatar' : undefined} />
+              {/* Icons are 16 rows at scale 4; the 30-row avatar is scaled to the same 64px height. */}
+            <PixelArt name={SECTION_ICON[e.key]} scale={e.key === 'sobre-mi' ? 64 / 30 : 4} />
               <span class="name">{e.name}</span>
               <span class="meta">{e.meta}</span>
             </a>
