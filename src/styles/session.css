@@ -3,6 +3,7 @@
 @import '@fontsource/atkinson-hyperlegible-mono/400.css';
 @import '@fontsource/atkinson-hyperlegible-mono/400-italic.css';
 @import '@fontsource/atkinson-hyperlegible-mono/700.css';
+@plugin '@tailwindcss/typography';
 
 /* Palette: gruvbox dark hard. Every colour in the UI goes through these tokens. */
 :root {
