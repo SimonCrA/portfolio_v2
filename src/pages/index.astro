@@ -1,23 +1,38 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import SessionLayout from '../layouts/SessionLayout.astro'
+import Banner from '../components/session/Banner.astro'
+import { INTRO, NOW } from '../session/about'
+
+const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
 
-<BaseLayout sideBarActiveItemID="home">
-  <div class="pb-12 mt-30">
-    <div class="text-xl py-1">Holaa 👋</div>
-    <div class="text-5xl font-bold">Soy Simón Clemente</div>
-    <div class="text-3xl py-3 font-bold"><b>¡Bienvenido a mi portafolio!</b></div>
-    <div class="py-2">
-      <text class="text-lg">
-        Soy un <b>ingeniero de software y desarrollador web backend</b> con habilidades en <b>frontend</b>. Me apasiona crear contenido relacionado
-        con la programación y también tengo experiencia en el <b> desarrollo de hardware con IoT</b>. Acompáñame mientras exploramos mi trabajo y
-        proyectos.
-      </text>
-    </div>
-    <div class="mt-8">
-      <a class="btn btn-neutral" href="https://github.com/SimonCrA/cv_dynamic/raw/main/resume_es.pdf" target="_blank"
-        >Descarga CV 📋</a
-      >
-    </div>
-  </div>
-</BaseLayout>
+<SessionLayout current="inicio">
+  <main class="window window-home">
+    <section class="pane pane-zsh is-active" aria-label="Simonctech: quién soy">
+      <h2 class="pane-title">zsh</h2>
+      <Banner />
+      <p class="prompt-line" set:html={prompt('whoami')} />
+      <h1 class="name">{INTRO.name}</h1>
+      <p class="out">{INTRO.body}</p>
+      <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
+      <p class="out" data-now>{NOW}</p>
+    </section>
+  </main>
+</SessionLayout>
+
+<style>
+  .window-home {
+    align-content: start;
+  }
+  @media (min-width: 900px) {
+    .window-home {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    }
+  }
+  .name {
+    margin: 0;
+    color: var(--accent);
+    font-size: 22px;
+    line-height: 1.3;
+  }
+</style>

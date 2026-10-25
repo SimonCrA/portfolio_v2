@@ -1,0 +1,193 @@
+/* Session layout: the terminal / TUI look shared by every page. No daisyUI here. */
+@import 'tailwindcss';
+@import '@fontsource/atkinson-hyperlegible-mono/400.css';
+@import '@fontsource/atkinson-hyperlegible-mono/400-italic.css';
+@import '@fontsource/atkinson-hyperlegible-mono/700.css';
+
+/* Palette: gruvbox dark hard. Every colour in the UI goes through these tokens. */
+:root {
+  --bg: #1d2021;
+  --bg-2: #282828;
+  --line: #504945;
+  --fg: #ebdbb2;
+  --fg-bright: #fbf1c7;
+  --dim: #a89984;
+  --yellow: #fabd2f;
+  --green: #b8bb26;
+  --aqua: #8ec07c;
+  --blue: #83a598;
+  --orange: #fe8019;
+  --purple: #d3869b;
+  --red: #fb4934;
+
+  /* roles */
+  --accent: var(--yellow);
+  --active: var(--green);
+  --status-bg: var(--line);
+  --session-bg: var(--green);
+  --session-fg: var(--bg);
+  --active-win: var(--yellow);
+
+  --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  --status-h: 30px;
+}
+
+/* gruvbox dark medium: the whole alternative is this override. */
+:root[data-palette='medium'] {
+  --bg: #282828;
+  --bg-2: #3c3836;
+  --accent: var(--orange);
+  --active: var(--orange);
+  --status-bg: #3c3836;
+  --session-bg: #a89984;
+  --session-fg: #282828;
+}
+
+html {
+  background: var(--bg);
+  color-scheme: dark;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.55;
+}
+a {
+  color: inherit;
+}
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- windows & panes ---------- */
+.window {
+  flex: 1;
+  display: grid;
+  gap: 10px;
+  padding: 16px 10px 12px;
+}
+.pane {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 20px 18px 14px;
+}
+.pane.is-active {
+  border-color: var(--active);
+}
+.pane-title {
+  position: absolute;
+  top: -0.8em;
+  left: 12px;
+  z-index: 2;
+  margin: 0;
+  padding: 0 6px;
+  background: var(--bg);
+  color: var(--dim);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.pane.is-active > .pane-title {
+  color: var(--active);
+}
+
+/* ---------- shell output ---------- */
+.prompt-line {
+  margin: 16px 0 4px;
+  color: var(--dim);
+}
+.prompt-line .user {
+  color: var(--green);
+}
+.prompt-line .path {
+  color: var(--blue);
+}
+.prompt-line .cmd {
+  color: var(--fg);
+}
+.out {
+  margin: 2px 0 0;
+  max-width: 62ch;
+}
+
+/* ---------- tmux status line ---------- */
+.status {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: stretch;
+  height: var(--status-h);
+  background: var(--status-bg);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.status .session {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--session-bg);
+  color: var(--session-fg);
+  font-weight: 700;
+  text-decoration: none;
+}
+.status nav {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.status nav a {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  text-decoration: none;
+}
+.status nav a:hover {
+  background: var(--bg-2);
+}
+.status nav .flag {
+  visibility: hidden;
+}
+.status nav a[aria-current='page'] {
+  background: var(--active-win);
+  color: var(--bg);
+  font-weight: 700;
+}
+.status nav a[aria-current='page'] .flag {
+  visibility: visible;
+}
+.status .right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  padding: 0 10px;
+  color: var(--dim);
+}
+.status .right a {
+  color: var(--green);
+}
+@media (max-width: 640px) {
+  /* Squeezed status line: only the current window keeps its name. */
+  .status nav a:not([aria-current='page']) .name,
+  .status nav a:not([aria-current='page']) .flag,
+  .status .date {
+    display: none;
+  }
+  .status nav a {
+    padding: 0 9px;
+  }
+}

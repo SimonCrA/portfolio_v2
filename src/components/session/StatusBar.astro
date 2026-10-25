@@ -1,0 +1,30 @@
+---
+// tmux status line: the window list is the site navigation.
+import { WINDOWS, CV_URL, type WindowKey } from '../../session/windows'
+
+interface Props {
+  current: WindowKey
+}
+
+const { current } = Astro.props
+const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
+---
+
+<footer class="status">
+  <a class="session" href="/">[simonctech]</a>
+  <nav aria-label="Ventanas">
+    {
+      WINDOWS.map((w, i) => (
+        <a href={w.route} aria-current={w.key === current ? 'page' : undefined} aria-label={`${i}: ${w.label}`}>
+          <span class="number">{i}</span>
+          <span class="name">:{w.key}</span>
+          <span class="flag" aria-hidden="true">*</span>
+        </a>
+      ))
+    }
+  </nav>
+  <span class="right">
+    <a href={CV_URL} target="_blank" rel="noopener">cv.pdf</a>
+    <span class="date">{today}</span>
+  </span>
+</footer>
