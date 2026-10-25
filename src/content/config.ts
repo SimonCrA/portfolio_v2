@@ -1,4 +1,5 @@
 import { z, defineCollection } from 'astro:content'
+import { ICONS, type IconName } from '../session/icons'
 
 const blogSchema = z.object({
     title: z.string(),
@@ -23,6 +24,7 @@ const aboutSchema = z.object({
         .array(
             z.object({
                 group: z.string(),
+                icon: z.enum(Object.keys(ICONS) as [IconName, ...IconName[]]),
                 items: z.array(z.object({ what: z.string(), value: z.string() })).nonempty(),
             }),
         )

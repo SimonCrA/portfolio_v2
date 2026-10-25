@@ -53,7 +53,8 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
             {
               uses.map((g) => (
                 <div class="group">
-                  <h3>{g.group}</h3>
+                  <h3>
+                    <PixelArt name={g.icon} scale={1.5} class="group-icon" />{g.group}</h3>
                   <ul>
                     {g.items.map((u) => (
                       <li>
@@ -162,6 +163,11 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
   }
   .tree h3::after {
     content: '/';
+  }
+  .tree :global(.group-icon) {
+    display: inline-block;
+    margin-right: 1ch;
+    vertical-align: -0.35em;
   }
   .group:last-child h3::before {
     content: '└── ';

@@ -5,23 +5,24 @@ now: Estudiando para ser ingeniero de IA y terminando mi home lab con Proxmox, T
 nowUpdated: 2026-10-25
 uses:
   - group: Equipo
+    icon: keyboard
     items:
       - { what: Laptop personal, value: Linux }
       - { what: Laptop de trabajo, value: MacBook Air }
       - { what: Monitores, value: '27" y 24"' }
       - { what: Teclado, value: mecánico }
   - group: Terminal
+    icon: terminal
     items:
-      - { what: Multiplexor, value: tmux }
+      - { what: Multiplexores, value: tmux y herdr }
       - { what: Editor, value: Neovim }
       - { what: Fuente, value: Ubuntu Mono }
       - { what: Tema, value: gruvbox }
       - { what: Lenguajes, value: 'JavaScript, TypeScript y Go' }
   - group: Agentes de IA
+    icon: robot
     items:
-      - { what: Agentes de código, value: 'Claude Code, Codex y OpenCode' }
-      - { what: Asistente, value: Hermes }
-      - { what: Orquestación, value: herdr }
+      - { what: Agentes, value: 'Claude Code, Codex, OpenCode y Hermes' }
 links:
   - { label: GitHub, href: 'https://github.com/simoncra' }
   - { label: LinkedIn, href: 'https://www.linkedin.com/in/simonctech' }
