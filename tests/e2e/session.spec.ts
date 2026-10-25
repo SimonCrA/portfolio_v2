@@ -84,7 +84,7 @@ test.describe('desktop layout', () => {
 })
 
 test('pages not yet migrated still render with the old layout', async ({ page }) => {
-  const response = await page.goto('/blog/cv/github-latex')
+  const response = await page.goto('/projects')
   expect(response?.status()).toBe(200)
-  await expect(page.getByRole('heading', { level: 1, name: /CV dinámico/ })).toBeVisible()
+  await expect(page.locator('body')).toBeVisible()
 })

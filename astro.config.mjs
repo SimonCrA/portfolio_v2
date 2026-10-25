@@ -14,7 +14,7 @@ export default defineConfig({
 
     markdown: {
         shikiConfig: {
-            theme: 'catppuccin-frappe',
+            theme: 'gruvbox-dark-hard',
         },
         syntaxHighlight: 'shiki',
         gfm: false, // GitHub Flavored Markdown

@@ -1,7 +1,8 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content'
 import type { BlogSchema } from '../../content/config'
-import PostLayout from '../../layouts/PostLayout.astro'
+import SessionLayout from '../../layouts/SessionLayout.astro'
+import '../../styles/reader.css'
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('blog')
@@ -18,25 +19,63 @@ interface Props {
 const { entry } = Astro.props
 const post: BlogSchema = entry.data
 const { Content } = await entry.render()
+const words = (entry.body ?? '').split(/\s+/).filter(Boolean).length
+const minutes = Math.max(1, Math.ceil(words / 200)) // ~200 words per minute
+const fecha = post.publishDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+const file = `~/blog/${entry.slug}.md`
 ---
 
-<PostLayout title={post.title} description={post.description} publishDate={post.publishDate} image={post.image} tags={post.tags}>
-  <Content />
-  <script
-    src="https://giscus.app/client.js"
-    data-repo="simoncra/portfolio_v2"
-    data-repo-id="R_kgDOKPAG8g"
-    data-category="General"
-    data-category-id="DIC_kwDOKPAG8s4CZFkZ"
-    data-mapping="pathname"
-    data-strict="0"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="bottom"
-    data-theme="dark"
-    data-lang="es"
-    data-loading="lazy"
-    crossorigin="anonymous"
-    async
-  ></script>
-</PostLayout>
+<SessionLayout current="blog" title={post.title} description={post.description} image={post.image}>
+  <main class="window reader-window">
+    <article class="pane is-active reader" aria-labelledby="post-title">
+      <h2 class="pane-title">glow {file}</h2>
+      <pre class="frontmatter">---
+<span class="k">fecha</span>: <time datetime={post.publishDate.toISOString()}>{fecha}</time>
+<span class="k">lectura</span>: {minutes} min
+<span class="k">tags</span>: [{post.tags.map((tag, i) => <><a href={`/blog?q=${encodeURIComponent(tag)}`}>{tag}</a>{i < post.tags.length - 1 ? ', ' : ''}</>)}]
+---</pre>
+      <h1 class="post-title" id="post-title">{post.title}</h1>
+      <p class="post-desc">{post.description}</p>
+      {post.image && (
+        <figure>
+          <img src={post.image} alt="" loading="lazy" />
+        </figure>
+      )}
+      <div class="prose">
+        <Content />
+      </div>
+      <script
+        src="https://giscus.app/client.js"
+        data-repo="simoncra/portfolio_v2"
+        data-repo-id="R_kgDOKPAG8g"
+        data-category="General"
+        data-category-id="DIC_kwDOKPAG8s4CZFkZ"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="gruvbox_dark"
+        data-lang="es"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </article>
+  </main>
+  <div class="pagerbar">
+    <a href="/blog">← blog</a>
+    <span>{minutes} min de lectura</span>
+    <span class="pct" data-pct>0%</span>
+  </div>
+</SessionLayout>
+
+<script>
+  const pct = document.querySelector('[data-pct]')!
+  const update = () => {
+    const max = document.documentElement.scrollHeight - innerHeight
+    pct.textContent = `${max > 0 ? Math.round((scrollY / max) * 100) : 100}%`
+  }
+  addEventListener('scroll', update, { passive: true })
+  update()
+</script>
