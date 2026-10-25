@@ -26,7 +26,7 @@ const file = `~/blog/${entry.slug}.md`
 ---
 
 <SessionLayout current="blog" title={post.title} description={post.description} image={post.image}>
-  <main class="window reader-window">
+  <main class="window reader-window" data-post>
     <article class="pane is-active reader" aria-labelledby="post-title">
       <h2 class="pane-title">glow {file}</h2>
       <pre class="frontmatter">---
@@ -60,6 +60,7 @@ const file = `~/blog/${entry.slug}.md`
         data-loading="lazy"
         crossorigin="anonymous"
         async
+        data-astro-rerun
       ></script>
     </article>
   </main>
@@ -71,11 +72,13 @@ const file = `~/blog/${entry.slug}.md`
 </SessionLayout>
 
 <script>
-  const pct = document.querySelector('[data-pct]')!
+  // The scroll listener binds once on window; each page load re-reads the new page's counter.
   const update = () => {
+    const pct = document.querySelector('[data-pct]')
+    if (!pct) return
     const max = document.documentElement.scrollHeight - innerHeight
     pct.textContent = `${max > 0 ? Math.round((scrollY / max) * 100) : 100}%`
   }
   addEventListener('scroll', update, { passive: true })
-  update()
+  document.addEventListener('astro:page-load', update)
 </script>
