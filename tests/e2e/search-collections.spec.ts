@@ -78,15 +78,3 @@ test('loading /projects?q= arrives filtered and points to the Blog when empty', 
   await expect(rows(page)).toHaveCount(0)
   await expect(page.locator('[data-empty] [data-other-link]')).toHaveAttribute('href', '/blog?q=e2e-solo-post')
 })
-
-test('Sobre mí lists the Featured Projects', async ({ page }) => {
-  await page.goto('/sobre-mi')
-  const pane = page.getByRole('region', { name: 'proyectos destacados' })
-  const links = pane.getByRole('link')
-  const featured = PROJECTS.filter((p) => p.featured)
-  await expect(links).toHaveCount(featured.length)
-  for (const [i, p] of featured.entries()) {
-    await expect(links.nth(i)).toHaveAttribute('href', `/projects/${p.slug}`)
-    await expect(links.nth(i)).toContainText(p.title)
-  }
-})

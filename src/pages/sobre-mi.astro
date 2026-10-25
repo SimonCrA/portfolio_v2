@@ -7,12 +7,10 @@ import Reader from '../components/session/Reader.astro'
 import { CV_URL } from '../session/windows'
 import { getAbout } from '../session/getAbout'
 import { fmtDate } from '../session/date'
-import { getSortedProjects } from '../session/projects'
 
 const entry = await getAbout()
 const { name, intro, now, nowUpdated, uses, links } = entry.data
 const { Content } = await entry.render()
-const featured = (await getSortedProjects()).filter((p) => p.data.featured)
 
 const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
@@ -34,28 +32,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
           actualizado el <time datetime={nowUpdated.toISOString().slice(0, 10)} data-now-updated>{fmtDate(nowUpdated)}</time>
         </p>
       </section>
-
-      {
-        featured.length > 0 && (
-          <section class="pane" aria-labelledby="about-featured">
-            <h2 class="pane-title" id="about-featured">
-              proyectos destacados
-            </h2>
-            <p class="prompt-line" set:html={prompt('eza proyectos/ --destacados')} />
-            <ul class="featured">
-              {featured.map((p) => (
-                <li>
-                  <a href={`/projects/${p.slug}`}>
-                    <span class="star" aria-hidden="true">★</span>
-                    <span class="featured-title">{p.data.title}/</span>
-                    <span class="featured-summary">{p.data.summary}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
 
       <section class="pane" aria-labelledby="about-uses">
         <h2 class="pane-title" id="about-uses">con qué trabajo</h2>
@@ -230,35 +206,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     }
   }
 
-  .featured {
-    display: grid;
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .featured a {
-    display: grid;
-    grid-template-columns: 2ch minmax(0, 1fr);
-    text-decoration: none;
-  }
-  .star {
-    color: var(--accent);
-  }
-  .featured-title {
-    color: var(--blue);
-    font-weight: 700;
-  }
-  .featured a:hover .featured-title,
-  .featured a:focus-visible .featured-title {
-    color: var(--accent);
-    text-decoration: underline;
-  }
-  .featured-summary {
-    grid-column: 2;
-    color: var(--dim);
-    font-size: 0.9333rem;
-  }
   .links {
     display: flex;
     flex-wrap: wrap;
