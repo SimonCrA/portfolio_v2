@@ -20,6 +20,10 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       <p class="out">{about.intro}</p>
       <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
       <p class="out" data-now>{about.now}</p>
+      <button type="button" class="prompt-line live" data-open-prompt aria-label="Abrir el prompt de comandos">
+        <span set:html={prompt('')} /><span class="cursor" aria-hidden="true"></span>
+        <span class="live-hint">pulsa <kbd>:</kbd> para escribir un comando o <kbd>?</kbd> para la ayuda</span>
+      </button>
     </section>
 
     <Navigator />
