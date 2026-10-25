@@ -1,0 +1,132 @@
+---
+// The `últimos` pane: the Latest feed, one link row per item. Sources are listed here only;
+// Video and Project sources join this array when their collections exist.
+import { getCollection } from 'astro:content'
+import PixelArt from './PixelArt.astro'
+import { KIND_ICON } from '../../session/icons'
+import { buildFeed, KIND_LABEL, type FeedSource } from '../../session/feed'
+
+const postsSource: FeedSource = async () =>
+  (await getCollection('blog')).map((p) => ({
+    kind: 'post' as const,
+    title: p.data.title,
+    summary: p.data.description,
+    date: p.data.publishDate,
+    href: `/blog/${p.slug}`,
+  }))
+
+const feed = await buildFeed([postsSource])
+const fmtDate = (d: Date) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
+---
+
+<section class="pane pane-latest" aria-label="Últimos">
+  <h2 class="pane-title">últimos</h2>
+  <div class="latest-scroll" data-latest-scroll tabindex="0" aria-label="Lista de lo último">
+    <p class="prompt-line" set:html={prompt('ls -lt ultimos/')} />
+    <ol class="latest-list">
+      {
+        feed.map((item) => (
+          <li>
+            <a class="latest-row" href={item.href} data-kind={item.kind}>
+              <PixelArt name={KIND_ICON[item.kind]} scale={2} />
+              <span class="main">
+                <span class="title">{item.title}</span>
+                <span class="summary">{item.summary}</span>
+              </span>
+              <span class="meta">
+                <span class={`kind kind-${item.kind}`}>{KIND_LABEL[item.kind]}</span>
+                <time datetime={item.date.toISOString()}>{fmtDate(item.date)}</time>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .latest-scroll {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+  .latest-scroll .prompt-line {
+    margin-top: 0;
+  }
+  .latest-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .latest-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    gap: 0 12px;
+    align-items: start;
+    padding: 10px 6px;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .latest-row:hover,
+  .latest-row:focus-visible {
+    border-left-color: var(--accent);
+    background: var(--bg-2);
+  }
+  .main {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .title {
+    font-weight: 700;
+  }
+  .summary {
+    color: var(--dim);
+    font-size: 13.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .meta {
+    display: grid;
+    justify-items: end;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  time {
+    color: var(--dim);
+  }
+  .kind-post {
+    color: var(--aqua);
+  }
+  .kind-video {
+    color: var(--orange);
+  }
+  .kind-project {
+    color: var(--purple);
+  }
+  @media (min-width: 900px) {
+    .latest-scroll {
+      position: absolute;
+      inset: 14px 6px 8px 18px;
+    }
+  }
+  @media (max-width: 899px) {
+    .latest-scroll {
+      max-height: 70vh;
+    }
+  }
+  @media (max-width: 560px) {
+    .latest-row {
+      grid-template-columns: 32px minmax(0, 1fr);
+    }
+    .meta {
+      grid-column: 2;
+      grid-row: 2;
+      display: flex;
+      gap: 10px;
+    }
+  }
+</style>
