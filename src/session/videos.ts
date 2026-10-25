@@ -13,11 +13,12 @@ export interface Video {
   date: Date
   views: number
   short: boolean
+  thumbnail: string
 }
 
 const FIXTURE_VIDEOS: Video[] = [
-  { id: 'fixture-video', title: 'Video de prueba (e2e-fixture)', url: 'https://www.youtube.com/watch?v=fixture-video', date: new Date('2001-05-01'), views: 120, short: false },
-  { id: 'fixture-short', title: 'Short de prueba (e2e-fixture)', url: 'https://www.youtube.com/shorts/fixture-short', date: new Date('2001-04-01'), views: 7, short: true },
+  { id: 'fixture-video', title: 'Video de prueba (e2e-fixture)', url: 'https://www.youtube.com/watch?v=fixture-video', date: new Date('2001-05-01'), views: 120, short: false, thumbnail: '/posts/post1.webp' },
+  { id: 'fixture-short', title: 'Short de prueba (e2e-fixture)', url: 'https://www.youtube.com/shorts/fixture-short', date: new Date('2001-04-01'), views: 7, short: true, thumbnail: '/posts/post2.webp' },
 ]
 
 const decode = (s: string) =>
@@ -29,13 +30,16 @@ export function parseFeed(xml: string): Video[] {
   return [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)]
     .map(([, entry]) => {
       const url = entry.match(/<link rel="alternate" href="([^"]+)"/)?.[1] ?? ''
+      const id = tag(entry, 'yt:videoId')
       return {
-        id: tag(entry, 'yt:videoId'),
+        id,
         title: decode(tag(entry, 'title')).replace(/(\s+#[\p{L}\p{N}_]+)+\s*$/u, '').trim(),
         url,
         date: new Date(tag(entry, 'published')),
         views: Number(entry.match(/<media:statistics views="(\d+)"/)?.[1] ?? 0),
         short: url.includes('/shorts/'),
+        // 16:9 without the letterbox bars of the feed's hqdefault.
+        thumbnail: `https://i.ytimg.com/vi/${id}/mqdefault.jpg`,
       }
     })
     .filter((v) => v.id && v.url)

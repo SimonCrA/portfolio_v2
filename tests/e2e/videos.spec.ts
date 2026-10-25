@@ -15,6 +15,7 @@ test.describe('videos window', () => {
       await expect(rows.nth(i).locator('.title')).toHaveText(v.title)
       await expect(rows.nth(i).locator('.kind')).toHaveText(v.short ? 'short' : 'video')
       await expect(rows.nth(i).locator('.views')).toHaveText(v.views)
+      await expect(rows.nth(i).locator('img.thumb')).toHaveAttribute('alt', '')
     }
   })
 
