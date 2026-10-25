@@ -2,7 +2,9 @@
 import SessionLayout from '../layouts/SessionLayout.astro'
 import Navigator from '../components/session/Navigator.astro'
 import Banner from '../components/session/Banner.astro'
-import { INTRO, NOW } from '../session/about'
+import { getAbout } from '../session/getAbout'
+
+const about = (await getAbout()).data
 
 const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<span class="path">~</span>$ <span class="cmd">${cmd}</span>`
 ---
@@ -13,10 +15,10 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       <h2 class="pane-title">zsh</h2>
       <Banner />
       <p class="prompt-line" set:html={prompt('whoami')} />
-      <h1 class="name">{INTRO.name}</h1>
-      <p class="out">{INTRO.body}</p>
+      <h1 class="name">{about.name}</h1>
+      <p class="out">{about.intro}</p>
       <p class="prompt-line" set:html={prompt('cat ahora.txt')} />
-      <p class="out" data-now>{NOW}</p>
+      <p class="out" data-now>{about.now}</p>
     </section>
 
     <Navigator />
