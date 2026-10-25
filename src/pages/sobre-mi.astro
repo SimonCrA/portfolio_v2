@@ -20,8 +20,8 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 <SessionLayout current="sobre-mi" title={`Sobre mí | ${name}`}>
   <main class="window reader-window about-window">
     <Reader as="section" file="sobre-mi.md" title={name} titleId="about-name" lead={intro} scrollLabel="Historia">
-      <PixelArt slot="media" name="avatar" scale={4} label="Avatar pixel de Simón" />
-      <p slot="actions"><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
+      <div slot="media" class="about-avatar"><PixelArt name="avatar" fluid label="Avatar pixel de Simón" /></div>
+      <p slot="actions" class="cv"><a class="button" href={CV_URL} target="_blank" rel="noopener">Descargar CV (pdf)</a></p>
       <Content />
     </Reader>
 
@@ -103,6 +103,31 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
 </SessionLayout>
 
 <style>
+  /* The avatar is as tall as the name, intro and CV button beside it. Its box has no height of its
+     own, so it stretches to theirs, and the drawing fills it (bottom-aligned, fixed width, or the
+     text would reflow and change the height it follows). On phones it sits above them. */
+  .about-avatar {
+    position: relative;
+    flex: none;
+    align-self: stretch;
+    width: 10rem;
+  }
+  .about-avatar :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  @media (max-width: 560px) {
+    .about-avatar {
+      align-self: flex-start;
+      width: 7rem;
+      height: 9rem;
+    }
+  }
+  .cv {
+    margin: 0;
+  }
   .button {
     display: inline-block;
     padding: 4px 12px;

@@ -1,8 +1,8 @@
 // Pixel-art icons as character grids (spec #7). Each character is a palette role, drawn by
 // PixelArt.astro as a crisp SVG. To redraw an icon, edit its grid; no layout code changes.
 // Roles: K outline, F fill, L light, D dark, A accent, W white, M mid body, C screen, R red.
-// The avatar has its own: S skin, V skin light, U skin shadow, H hair, G hair highlight, E brows and eyes,
-// P lips, N shirt, O shirt shade, Q chain.
+// The avatar has its own: S skin, U skin shadow, H hair, G hair highlight, E brows and eyes, Y mouth line,
+// P lower lip, N shirt, O shirt shade, Q chain.
 // '.' is transparent. Roles resolve to CSS variables (--px-<role>, defined in session.css),
 // so icons recolour when the palette tokens change.
 
@@ -93,15 +93,15 @@ export const ICONS = {
     '.....SEEEESSSSEEEES.....',
     '....USSSSSSSSSSSSSSU....',
     '....USWEESSSSSEEWSSU....',
-    '....UUSVSSSUSSSSVSUU....',
+    '....USSSSSSUSSSSSSSU....',
     '.....USSSSSUSSSSSSU.....',
-    '.....UUSSSSUUSSSSUU.....',
+    '.....USSSSSUUSSSSSU.....',
     '......USSSSSSSSSSU......',
-    '......UUSSPPPPSSUU......',
-    '......USSSSSSSSSSU......',
+    '......USSSYYYYSSSU......',
+    '......USSSPPPPSSSU......',
     '.......USSSSSSSSU.......',
-    '.......UUSSSSSSUU.......',
-    '........UUSSSSUU........',
+    '........USSSSSSU........',
+    '.........USSSSU.........',
     '.........UUUUUU.........',
     '........USUUUUSU........',
     '........USSSSSSU........',

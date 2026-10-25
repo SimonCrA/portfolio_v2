@@ -6,11 +6,13 @@ import { ICONS, type IconName } from '../../session/icons'
 interface Props {
   name: IconName
   scale?: number
+  /** Leave the size to CSS instead of `scale`. The drawing keeps its aspect ratio, bottom-aligned in its box. */
+  fluid?: boolean
   class?: string
   label?: string
 }
 
-const { name, scale = 3, class: className, label } = Astro.props
+const { name, scale = 3, fluid = false, class: className, label } = Astro.props
 const rows: readonly string[] = ICONS[name]
 const width = Math.max(...rows.map((r) => r.length))
 const height = rows.length
@@ -19,9 +21,10 @@ const pixels = rows.flatMap((row, y) => [...row].flatMap((c, x) => (c === '.' ? 
 
 <svg
   viewBox={`0 0 ${width} ${height}`}
-  width={width * scale}
-  height={height * scale}
-  style={`width:${(width * scale) / 15}rem;height:${(height * scale) / 15}rem`}
+  width={fluid ? undefined : width * scale}
+  height={fluid ? undefined : height * scale}
+  style={fluid ? undefined : `width:${(width * scale) / 15}rem;height:${(height * scale) / 15}rem`}
+  preserveAspectRatio={fluid ? 'xMidYMax meet' : undefined}
   shape-rendering="crispEdges"
   class:list={['pixel-art', `pixel-${name}`, className]}
   role={label ? 'img' : undefined}
