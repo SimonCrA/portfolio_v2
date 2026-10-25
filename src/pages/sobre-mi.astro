@@ -237,7 +237,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
       display: flex;
       flex-direction: column;
       align-self: stretch;
-      max-width: none;
       min-height: 0;
       padding-right: 8px;
     }
@@ -261,12 +260,6 @@ const prompt = (cmd: string) => `<span class="user">simon@simonctech</span>:<spa
     }
     .reader .pane-scroll {
       padding-right: clamp(14px, 3vw, 36px);
-    }
-  }
-  /* The story keeps its reading width, so on very wide screens the side panes take the rest. */
-  @media (min-width: 1800px) {
-    .about-window {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
   }
 </style>

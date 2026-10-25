@@ -4,8 +4,6 @@
 }
 .reader {
   width: 100%;
-  max-width: 82ch;
-  margin: 0 auto;
   align-self: start;
   padding: 26px clamp(14px, 4vw, 44px) 40px;
 }
@@ -43,18 +41,21 @@
   color: var(--aqua);
 }
 .reader figure {
+  width: fit-content;
+  max-width: 100%;
   margin: 0 0 28px;
   border: 1px solid var(--line);
   padding: 6px;
 }
 .reader figure img {
   display: block;
-  width: 100%;
+  max-width: 100%;
   height: auto;
 }
 
+/* Text fills its pane like in a terminal; Tailwind Typography would cap it at 65ch. */
 .reader .prose {
-  max-width: 72ch;
+  max-width: none;
   font-family: var(--mono);
   font-size: 1.1rem;
   line-height: 1.75;
