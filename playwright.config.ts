@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 // E2E over the built site: the one test seam of the redesign (spec #7).
 // The Vercel adapter has no `astro preview`, so the static output is served as-is.
-const PORT = 4321
+const PORT = Number(process.env.E2E_PORT ?? 4321) // set E2E_PORT to run several checkouts side by side
 
 export default defineConfig({
   testDir: 'tests/e2e',
