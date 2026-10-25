@@ -49,4 +49,42 @@ test.describe('videos window', () => {
     await page.goto('/videos')
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0)
   })
+
+  test('a new upload appears on the next visit, from the fresh list', async ({ page }) => {
+    const fresh = [
+      { id: 'nuevo', title: 'Video recién subido', url: 'https://www.youtube.com/watch?v=nuevo', date: '2001-06-01T00:00:00.000Z', views: 1, short: false, thumbnail: '/posts/post3.webp' },
+      ...VIDEOS.map((v, i) => ({ id: `v${i}`, title: v.title, url: v.url, date: '2001-05-01T00:00:00.000Z', views: 10, short: v.short, thumbnail: '/posts/post1.webp' })),
+    ]
+    await page.route('**/api/videos.json', (route) => route.fulfill({ json: fresh }))
+    await page.goto('/videos')
+    const rows = page.locator('[data-list] > li > a')
+    await expect(rows).toHaveCount(fresh.length)
+    await expect(rows.first()).toHaveAttribute('href', 'https://www.youtube.com/watch?v=nuevo')
+    await expect(rows.first().locator('.title')).toHaveText('Video recién subido')
+    await expect(rows.first().locator('.views')).toHaveText('1 vista')
+    await expect(page.locator('[data-list-pos]')).toHaveText(`[1-${fresh.length}/${fresh.length}]`)
+  })
+
+  test('fresh text is shown literally', async ({ page }) => {
+    const payload = '<img src=x onerror=alert(1)>'
+    page.on('dialog', (d) => {
+      void d.dismiss()
+      throw new Error('unexpected dialog')
+    })
+    await page.route('**/api/videos.json', (route) =>
+      route.fulfill({ json: [{ id: 'x', title: payload, url: 'https://www.youtube.com/watch?v=x', date: '2001-06-01T00:00:00.000Z', views: 2, short: true, thumbnail: '/posts/post3.webp' }] }),
+    )
+    await page.goto('/videos')
+    await expect(page.locator('[data-list] .title').first()).toHaveText(payload)
+    await expect(page.locator('main img[src="x"]')).toHaveCount(0)
+  })
+
+  test('when the fresh list fails, the list from the build stays', async ({ page }) => {
+    await page.route('**/api/videos.json', (route) => route.fulfill({ status: 502, json: { error: 'down' } }))
+    await page.goto('/videos')
+    await page.waitForTimeout(300)
+    const rows = page.locator('[data-list] > li > a')
+    await expect(rows).toHaveCount(VIDEOS.length)
+    await expect(rows.first()).toHaveAttribute('href', VIDEOS[0].url)
+  })
 })

@@ -1,6 +1,7 @@
-// Videos come from the channel's public RSS feed at build time (ADR 0001: the daily rebuild keeps
-// them fresh). Nobody picks them. The E2E build uses fixed fixture Videos so tests never need the
-// network, and a build that cannot reach YouTube shows the empty state instead of failing.
+// Videos come from the channel's public RSS feed. Nobody picks them. The build renders them so
+// /videos works without JavaScript, and /api/videos.json serves them fresh on every visit (ADR 0003).
+// The E2E build uses fixed fixture Videos so tests never need the network, and a build that cannot
+// reach YouTube shows the empty state instead of failing.
 import { FIXTURES } from './fixtures'
 
 export const CHANNEL_URL = 'https://www.youtube.com/channel/UCtTPHC06STvf4fDktedxxMA'
@@ -46,12 +47,18 @@ export function parseFeed(xml: string): Video[] {
     .sort((a, b) => b.date.valueOf() - a.date.valueOf())
 }
 
+/** Read the feed now. Throws when YouTube does not answer. */
+export async function fetchVideos(): Promise<Video[]> {
+  const r = await fetch(FEED_URL)
+  if (!r.ok) throw new Error(`YouTube feed: HTTP ${r.status}`)
+  return parseFeed(await r.text())
+}
+
 let cache: Promise<Video[]> | undefined
+/** The Videos for the build, read once per build. */
 export function getVideos(): Promise<Video[]> {
   if (FIXTURES) return Promise.resolve(FIXTURE_VIDEOS)
-  cache ??= fetch(FEED_URL)
-    .then((r) => (r.ok ? r.text() : Promise.reject(new Error(`YouTube feed: HTTP ${r.status}`))))
-    .then(parseFeed)
+  cache ??= fetchVideos()
     .catch((error) => {
       console.warn(`[videos] No se pudo leer el feed de YouTube, la ventana queda vacía: ${error}`)
       return []

@@ -1,11 +1,13 @@
 ---
 // Window 3: the latest Videos from the YouTube channel, as a list. Each row opens the Video on YouTube.
+// The build renders the list (it works without JavaScript); after load, the script below swaps in the
+// fresh list from /api/videos.json when it differs (ADR 0003).
 import SessionLayout from '../layouts/SessionLayout.astro'
 import { fmtDate } from '../session/date'
 import { CHANNEL_URL, getVideos } from '../session/videos'
+import { viewsLabel } from '../session/videos-format'
 
 const videos = await getVideos()
-const views = (n: number) => `${n.toLocaleString('es-ES')} ${n === 1 ? 'vista' : 'vistas'}`
 ---
 
 <SessionLayout current="videos" title="Videos | Simonctech" description="Los últimos videos del canal de YouTube de Simón.">
@@ -18,9 +20,9 @@ const views = (n: number) => `${n.toLocaleString('es-ES')} ${n === 1 ? 'vista' :
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de videos">
         {
           videos.length > 0 ? (
-            <ol class="list" data-list>
+            <ol class="list" data-list data-videos>
               {videos.map((v) => (
-                <li>
+                <li data-id={v.id}>
                   <a class="row" href={v.url} target="_blank" rel="noopener">
                     <img class="thumb" src={v.thumbnail} alt="" width="320" height="180" loading="lazy" decoding="async" />
                     <span class="main">
@@ -29,7 +31,7 @@ const views = (n: number) => `${n.toLocaleString('es-ES')} ${n === 1 ? 'vista' :
                     </span>
                     <span class="meta">
                       <span class="kind">{v.short ? 'short' : 'video'}</span>
-                      <span class="views">{views(v.views)}</span>
+                      <span class="views">{viewsLabel(v.views)}</span>
                       <time datetime={v.date.toISOString()}>{fmtDate(v.date)}</time>
                     </span>
                   </a>
@@ -46,6 +48,61 @@ const views = (n: number) => `${n.toLocaleString('es-ES')} ${n === 1 ? 'vista' :
     </section>
   </main>
 </SessionLayout>
+
+<script>
+  import { fmtDate } from '../session/date'
+  import { viewsLabel } from '../session/videos-format'
+  import { refreshLists } from '../session/client/lists'
+
+  interface Video {
+    id: string
+    title: string
+    url: string
+    date: string
+    views: number
+    short: boolean
+    thumbnail: string
+  }
+
+  // Rebuild the rows from fresh data. Every value goes in through textContent or attributes.
+  function render(list: HTMLElement, videos: Video[]) {
+    const model = list.querySelector('li')
+    if (!model) return
+    list.replaceChildren(
+      ...videos.map((v) => {
+        const li = model.cloneNode(true) as HTMLElement
+        li.dataset.id = v.id
+        const a = li.querySelector('a')!
+        a.href = v.url
+        a.removeAttribute('aria-current')
+        li.querySelector('img')!.src = v.thumbnail
+        li.querySelector('.title')!.textContent = v.title
+        li.querySelector('.where')!.textContent = `youtube.com/${v.short ? 'shorts' : 'watch'}`
+        li.querySelector('.kind')!.textContent = v.short ? 'short' : 'video'
+        li.querySelector('.views')!.textContent = viewsLabel(v.views)
+        const time = li.querySelector('time')!
+        time.dateTime = new Date(v.date).toISOString()
+        time.textContent = fmtDate(new Date(v.date))
+        return li
+      }),
+    )
+    refreshLists()
+  }
+
+  document.addEventListener('astro:page-load', async () => {
+    const list = document.querySelector<HTMLElement>('[data-videos]')
+    if (!list) return
+    try {
+      const r = await fetch('/api/videos.json')
+      if (!r.ok) return
+      const videos: Video[] = await r.json()
+      const shown = [...list.querySelectorAll<HTMLElement>(':scope > li')].map((li) => li.dataset.id).join()
+      if (videos.length && videos.map((v) => v.id).join() !== shown) render(list, videos)
+    } catch {
+      // Offline or the endpoint failed: the list from the build stays.
+    }
+  })
+</script>
 
 <style>
   .list {
