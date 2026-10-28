@@ -105,12 +105,12 @@ test.describe('post as an article', () => {
     await expect(index.locator('[aria-current]')).toHaveText('reduce()')
   })
 
-  test('on a phone the index folds above the text', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== 'phone', 'phones fold the index')
+  test('on a phone the index sits open above the text', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'phones show the index above the text')
     await page.goto(route)
     await expect(page.getByRole('navigation', { name: 'Índice del post' })).toBeHidden()
     const folded = page.locator('details.toc-inline')
-    await folded.locator('summary').click()
+    await expect(folded).toHaveAttribute('open', '')
     await folded.getByRole('link', { name: 'filter()' }).click()
     await expect(page.getByRole('heading', { name: 'filter()' })).toBeInViewport()
   })
