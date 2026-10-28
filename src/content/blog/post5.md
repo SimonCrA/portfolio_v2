@@ -1,8 +1,8 @@
 ---
-title: 'Optimiza tus imagenes para la web'
-description: 'Aprende a utilizar una libreria de google para convertir a .webp tus imagenes'
+title: 'Optimiza tus imágenes para la web'
+description: 'Aprende a usar una librería de Google para convertir tus imágenes a .webp.'
 publishDate: 'Apr 08 2025'
-tags: ['web', 'imagenes', 'optimizar']
+tags: ['web', 'herramientas']
 slug: 'optimizar/imagenes-web'
 image: '/posts/post5.webp'
 ---

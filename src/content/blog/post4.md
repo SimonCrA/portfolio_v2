@@ -1,8 +1,8 @@
 ---
-title: 'Crea un CV dinámico con LaTeX y github Actions'
-description: 'Automatiza tu curriculum vitae sin mucho esfuerzo con github y LaTeX'
+title: 'Crea un CV dinámico con LaTeX y GitHub Actions'
+description: 'Automatiza tu currículum vitae sin mucho esfuerzo con GitHub y LaTeX.'
 publishDate: 'Apr 08 2025'
-tags: ['github', 'actions', 'latex']
+tags: ['git', 'herramientas']
 slug: 'cv/github-latex'
 image: '/posts/post4.webp'
 ---

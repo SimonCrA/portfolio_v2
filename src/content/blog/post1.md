@@ -1,8 +1,9 @@
 ---
 title: 'Arreglos y sus métodos'
-description: 'Estructura de datos; Arreglos como manipularlos efectivamente.'
+description: 'Estructura de datos; Arreglos y cómo manipularlos efectivamente.'
 publishDate: 'Sep 03 2023'
-tags: ['javascript', 'arrays']
+tags: ['javascript']
+series: { name: 'Arreglos en JavaScript', part: 1 }
 slug: 'javasctipt/arrays-methods'
 image: '/posts/post1.webp'
 ---

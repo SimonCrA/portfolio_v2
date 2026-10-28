@@ -7,6 +7,8 @@ const blogSchema = z.object({
     tags: z.array(z.string()),
     image: z.string().optional(),
     publishDate: z.coerce.date(),
+    // Posts that continue each other share a series name and number their parts from 1.
+    series: z.object({ name: z.string(), part: z.number().int().positive() }).optional(),
 })
 
 export type BlogSchema = z.infer<typeof blogSchema>

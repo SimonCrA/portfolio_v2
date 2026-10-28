@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 const POSTS = [
-  { slug: 'cv/github-latex', title: /CV dinámico/, tags: ['github', 'actions', 'latex'] },
-  { slug: 'javasctipt/loops', title: /ciclos en javascript/, tags: ['javascript', 'arrays'] },
+  { slug: 'cv/github-latex', title: /CV dinámico/, tags: ['git', 'herramientas'] },
+  { slug: 'javasctipt/loops', title: /Ciclos en JavaScript/, tags: ['javascript'] },
 ]
 
 for (const post of POSTS) {
@@ -113,5 +113,20 @@ test.describe('post as an article', () => {
     await expect(folded).toHaveAttribute('open', '')
     await folded.getByRole('link', { name: 'filter()' }).click()
     await expect(page.getByRole('heading', { name: 'filter()' })).toBeInViewport()
+  })
+})
+
+test.describe('series', () => {
+  test('a part lists the whole series and links the other parts', async ({ page }) => {
+    await page.goto('/blog/javasctipt/arrays-methods')
+    const series = page.getByRole('navigation', { name: 'Serie Arreglos en JavaScript' })
+    await expect(series).toContainText('parte 1 de 2')
+    await expect(series.locator('[aria-current="page"]')).toContainText('Arreglos y sus métodos (estás aquí)')
+    await expect(series.getByRole('link', { name: 'Arreglos y sus métodos (intermedio)' })).toHaveAttribute('href', '/blog/javasctipt/arrays-methods-intermediate')
+  })
+
+  test('a post outside a series has none', async ({ page }) => {
+    await page.goto('/blog/cv/github-latex')
+    await expect(page.locator('.series')).toHaveCount(0)
   })
 })

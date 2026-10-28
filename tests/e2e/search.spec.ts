@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 
-const rows = (page: Page) => page.locator('[data-list] > li:not([hidden])')
-const allRows = (page: Page) => page.locator('[data-list] > li')
+const rows = (page: Page) => page.locator('[data-list] > li[data-search]:not([hidden])')
+const allRows = (page: Page) => page.locator('[data-list] > li[data-search]')
 const promptInput = (page: Page) => page.getByRole('textbox', { name: 'Comando' })
 const message = (page: Page) => page.locator('.status output')
 const empty = (page: Page) => page.locator('[data-empty]')
@@ -49,21 +49,21 @@ test.describe('search (keys)', () => {
     await page.goto('/blog')
     await run(page, 'buscar imagenes')
     await expect(rows(page)).toHaveCount(1)
-    await expect(rows(page).first()).toContainText('imagenes')
+    await expect(rows(page).first()).toContainText('imágenes')
   })
 
   test('":buscar imágenes" (accented) matches too', async ({ page }) => {
     await page.goto('/blog')
     await run(page, 'buscar imágenes')
     await expect(rows(page)).toHaveCount(1)
-    await expect(rows(page).first()).toContainText('imagenes')
+    await expect(rows(page).first()).toContainText('imágenes')
   })
 
   test('a Tag matches', async ({ page }) => {
     await page.goto('/blog')
-    await run(page, 'buscar arrays')
+    await run(page, 'buscar herramientas')
     expect(await rows(page).count()).toBeGreaterThan(1)
-    await expect(page).toHaveURL(/q=arrays/)
+    await expect(page).toHaveURL(/q=herramientas/)
   })
 
   test('no match shows the empty state and an error; ":buscar" clears', async ({ page }) => {

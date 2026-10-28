@@ -1,8 +1,9 @@
 ---
 title: 'Arreglos y sus métodos (intermedio)'
-description: 'Estructura de datos; Arreglos y como manipularlos efectivamente.'
+description: 'Más métodos de los arreglos: forEach, map, find, some, every, sort, reduce y filter.'
 publishDate: 'Sep 03 2023'
-tags: ['javascript', 'arrays']
+tags: ['javascript']
+series: { name: 'Arreglos en JavaScript', part: 2 }
 slug: 'javasctipt/arrays-methods-intermediate'
 image: '/posts/post2.webp'
 ---

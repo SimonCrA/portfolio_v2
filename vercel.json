@@ -9,6 +9,10 @@
       "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     },
     {
+      "source": "/rss.xml",
+      "headers": [{ "key": "Content-Type", "value": "application/rss+xml; charset=utf-8" }]
+    },
+    {
       "source": "/index.md",
       "headers": [{ "key": "Link", "value": "<https://www.simonctech.com/>; rel=\"canonical\"" }]
     },

@@ -5,14 +5,16 @@ import PromptLine from '../../components/session/PromptLine.astro'
 import { fmtDate } from '../../session/date'
 import PixelArt from '../../components/session/PixelArt.astro'
 import { KIND_ICON } from '../../session/icons'
-import { getSortedPosts } from '../../session/posts'
+import { getSortedPosts, readingMinutes, seriesOf, topics } from '../../session/posts'
 import { postSearchText } from '../../session/search-index'
 
 const posts = await getSortedPosts()
+const allTopics = topics(posts)
 // Suggested topics for the empty state: the 3 most common Tags.
-const tagCount = new Map<string, number>()
-for (const t of posts.flatMap((p) => p.data.tags)) tagCount.set(t, (tagCount.get(t) ?? 0) + 1)
-const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t)
+const topTags = allTopics.slice(0, 3).map((t) => t.tag)
+// Posts are newest first, so a year starts wherever it differs from the previous Post's.
+const yearOf = (i: number) => posts[i].data.publishDate.getFullYear()
+const startsYear = (i: number) => i === 0 || yearOf(i) !== yearOf(i - 1)
 ---
 
 <SessionLayout
@@ -26,24 +28,49 @@ const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) 
     <section class="pane is-active" aria-labelledby="pane-blog">
       <h1 class="pane-title" id="pane-blog">blog</h1>
       <PromptLine cmd="ls -lt blog/" search />
+      <nav class="topics" aria-label="Temas">
+        <a href="/blog" data-topic="">todos <span class="n">{posts.length}</span></a>
+        {
+          allTopics.map(({ tag, n }) => (
+            <a href={`/blog?q=${encodeURIComponent(tag)}`} data-topic={tag}>
+              #{tag} <span class="n">{n}</span>
+            </a>
+          ))
+        }
+        <a class="rss" href="/rss.xml">rss</a>
+      </nav>
       <div class="pane-scroll" data-scroll tabindex="0" aria-label="Lista de posts">
         <ol class="entry-list" data-list data-searchable="blog">
           {
-            posts.map((post) => (
-              <li data-search={postSearchText(post)}>
-                <a class="entry-row" href={`/blog/${post.slug}`}>
-                  <PixelArt name={KIND_ICON.post} scale={2} />
-                  <span class="main">
-                    <span class="title">{post.data.title}</span>
-                    <span class="summary">{post.data.description}</span>
-                    <span class="tags">{post.data.tags.map((t) => `#${t}`).join(' ')}</span>
-                  </span>
-                  <span class="meta">
-                    <span class="kind">post</span>
-                    <time datetime={post.data.publishDate.toISOString()}>{fmtDate(post.data.publishDate)}</time>
-                  </span>
-                </a>
-              </li>
+            posts.map((post, i) => (
+              <>
+                {startsYear(i) && (
+                  <li class="entry-year" data-year>
+                    {yearOf(i)}
+                  </li>
+                )}
+                <li data-search={postSearchText(post)}>
+                  <a class="entry-row" href={`/blog/${post.slug}`}>
+                    <PixelArt name={KIND_ICON.post} scale={2} />
+                    <span class="main">
+                      <span class="title">{post.data.title}</span>
+                      <span class="summary">{post.data.description}</span>
+                      <span class="tags">
+                        {post.data.tags.map((t) => `#${t}`).join(' ')}
+                        {post.data.series && (
+                          <span class="series">
+                            serie {post.data.series.name}, parte {post.data.series.part} de {seriesOf(post, posts).length}
+                          </span>
+                        )}
+                      </span>
+                    </span>
+                    <span class="meta">
+                      <span class="read">{readingMinutes(post)} min</span>
+                      <time datetime={post.data.publishDate.toISOString()}>{fmtDate(post.data.publishDate)}</time>
+                    </span>
+                  </a>
+                </li>
+              </>
             ))
           }
         </ol>
@@ -83,7 +110,65 @@ const topTags = [...tagCount].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) 
     color: var(--blue);
     font-size: 0.8667rem;
   }
-  .kind {
+  .series {
+    margin-left: 12px;
+    color: var(--purple);
+  }
+  .read {
     color: var(--aqua);
+  }
+  /* Topics filter the list through the search (`?q=`); the one in use is marked like the current window. */
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 10px;
+    font-size: 0.8667rem;
+  }
+  .topics a {
+    padding: 1px 8px;
+    border: 1px solid var(--line);
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .topics a:hover {
+    border-color: var(--blue);
+  }
+  .topics a[aria-current] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .topics .n {
+    color: var(--dim);
+  }
+  .topics a[aria-current] .n {
+    color: inherit;
+  }
+  .topics .rss {
+    color: var(--orange);
+  }
+  @media (min-width: 561px) {
+    .topics .rss {
+      margin-left: auto;
+    }
+  }
+  /* A year opens its Posts, drawn as a rule with the year in it. */
+  .entry-year {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 2px;
+    padding-left: 6px;
+    color: var(--dim);
+    font-size: 0.8667rem;
+  }
+  .entry-year:first-child {
+    margin-top: 4px;
+  }
+  .entry-year::after {
+    content: '';
+    flex: 1;
+    border-top: 1px dashed var(--line);
   }
 </style>
