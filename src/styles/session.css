@@ -3,6 +3,9 @@
 @import '@fontsource/atkinson-hyperlegible-mono/400.css';
 @import '@fontsource/atkinson-hyperlegible-mono/400-italic.css';
 @import '@fontsource/atkinson-hyperlegible-mono/700.css';
+@import '@fontsource/atkinson-hyperlegible-next/400.css';
+@import '@fontsource/atkinson-hyperlegible-next/400-italic.css';
+@import '@fontsource/atkinson-hyperlegible-next/700.css';
 @plugin '@tailwindcss/typography';
 
 /* Palette: gruvbox dark hard. Every colour in the UI goes through these tokens. */
@@ -52,6 +55,8 @@
   --px-Q: #d5c4a1;
 
   --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  /* The proportional sibling of --mono, only for the long text of a Post. */
+  --sans: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
   --status-h: 2rem;
   /* The phone's own navigation bar overlaps the bottom of the page; the status line sits above it. */
   --safe-bottom: env(safe-area-inset-bottom, 0px);

@@ -83,3 +83,35 @@ test.describe('reader body', () => {
     expect(await quote.evaluate((el) => getComputedStyle(el.closest('blockquote')!).fontStyle)).toBe('normal')
   })
 })
+
+test.describe('post as an article', () => {
+  const route = '/blog/javasctipt/arrays-methods-intermediate'
+
+  test('the text column stays near 70 characters wide', async ({ page }) => {
+    await page.goto(route)
+    const width = await page.locator('.prose p').first().evaluate((el) => el.getBoundingClientRect().width / parseFloat(getComputedStyle(el).fontSize))
+    expect(width).toBeLessThanOrEqual(40)
+  })
+
+  test('the index lists the sections and marks the one being read', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'the side index needs a wide pane')
+    await page.goto(route)
+    const index = page.getByRole('navigation', { name: 'Índice del post' })
+    await expect(index).toBeVisible()
+    await expect(index.getByRole('link', { name: 'reduce()' })).toHaveAttribute('href', /#reduce/)
+    await expect(index.locator('[aria-current]')).toHaveText('Introducción')
+    await index.getByRole('link', { name: 'reduce()' }).click()
+    await expect(page.getByRole('heading', { name: 'reduce()' })).toBeInViewport()
+    await expect(index.locator('[aria-current]')).toHaveText('reduce()')
+  })
+
+  test('on a phone the index sits open above the text', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'phones show the index above the text')
+    await page.goto(route)
+    await expect(page.getByRole('navigation', { name: 'Índice del post' })).toBeHidden()
+    const folded = page.locator('details.toc-inline')
+    await expect(folded).toHaveAttribute('open', '')
+    await folded.getByRole('link', { name: 'filter()' }).click()
+    await expect(page.getByRole('heading', { name: 'filter()' })).toBeInViewport()
+  })
+})
