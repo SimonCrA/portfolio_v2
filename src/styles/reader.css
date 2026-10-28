@@ -405,3 +405,19 @@
     scrollbar-color: var(--line) transparent;
   }
 }
+
+/* The other parts of a series, after the text of a Post. */
+.series {
+  margin: 48px 0 32px;
+  border-top: 1px dashed var(--line);
+  padding-top: 20px;
+}
+.series ol {
+  font-size: 0.9333rem;
+}
+.series a {
+  color: var(--aqua);
+}
+.series [aria-current] {
+  color: var(--accent);
+}

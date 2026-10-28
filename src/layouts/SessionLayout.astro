@@ -45,6 +45,7 @@ const imageUrl = new URL(image, SITE_URL).href
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Blog de Simón Clemente" />
     {markdown && <link rel="alternate" type="text/markdown" href={markdown} title="Versión en Markdown" />}
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:locale" content="es_ES" />

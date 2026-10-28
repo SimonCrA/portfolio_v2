@@ -37,10 +37,21 @@ async function matchesIn(c: Collection, q: string) {
 function filter(ol: HTMLElement, q: string) {
   const needle = fold(q)
   let hits = 0
-  for (const row of ol.querySelectorAll<HTMLElement>(':scope > li')) {
+  for (const row of ol.querySelectorAll<HTMLElement>(':scope > li[data-search]')) {
     const match = !needle || fold(row.dataset.search ?? '').includes(needle)
     row.hidden = !match
     if (match) hits++
+  }
+  // A year label stays only while one of its Posts (the rows up to the next label) is shown.
+  for (const year of ol.querySelectorAll<HTMLElement>(':scope > li[data-year]')) {
+    let shown = false
+    for (let li = year.nextElementSibling as HTMLElement | null; li && !li.hasAttribute('data-year'); li = li.nextElementSibling as HTMLElement | null)
+      shown ||= !li.hidden
+    year.hidden = !shown
+  }
+  for (const topic of document.querySelectorAll<HTMLElement>('[data-topic]')) {
+    if (fold(topic.dataset.topic ?? '') === needle) topic.setAttribute('aria-current', 'true')
+    else topic.removeAttribute('aria-current')
   }
 
   const cmd = document.querySelector<HTMLElement>('[data-cmd]')
@@ -108,6 +119,6 @@ bind({ keys: ['/'], run: () => openPrompt('buscar ') })
 // Apply `?q=` on a fresh load and after every client navigation.
 document.addEventListener('astro:page-load', () => {
   const ol = list()
-  const q = new URLSearchParams(location.search).get('q')?.trim()
-  if (ol && q) void pointToOther(collectionOf(ol), q, filter(ol, q))
+  const q = new URLSearchParams(location.search).get('q')?.trim() ?? ''
+  if (ol) void pointToOther(collectionOf(ol), q, filter(ol, q))
 })

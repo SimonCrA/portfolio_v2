@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test'
 import { POSTS, PROJECTS } from './content'
 
 // Fixture Posts and Projects share the `fixture` Tag; only the fixture Post has `e2e-solo-post`.
-const rows = (page: Page) => page.locator('[data-list] > li:not([hidden])')
+const rows = (page: Page) => page.locator('[data-list] > li[data-search]:not([hidden])')
 const promptInput = (page: Page) => page.getByRole('textbox', { name: 'Comando' })
 const message = (page: Page) => page.locator('.status output')
 const withTag = <T extends { tags?: string[] }>(items: T[], tag: string) => items.filter((i) => i.tags?.includes(tag))

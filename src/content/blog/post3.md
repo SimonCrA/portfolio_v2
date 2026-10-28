@@ -1,8 +1,8 @@
 ---
-title: 'ciclos en javascript (for, for...in, for...of, do...while)'
+title: 'Ciclos en JavaScript (for, for...in, for...of, do...while)'
 description: 'Manejo de ciclos para recorrer arreglos y objetos.'
 publishDate: 'Sep 03 2023'
-tags: ['javascript', 'arrays']
+tags: ['javascript']
 slug: 'javasctipt/loops'
 image: '/posts/post3.webp'
 ---

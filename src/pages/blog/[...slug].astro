@@ -4,7 +4,7 @@ import { blogPosting, graph, website } from '../../session/schema'
 import type { BlogSchema } from '../../content/config'
 import SessionLayout from '../../layouts/SessionLayout.astro'
 import Reader from '../../components/session/Reader.astro'
-import { getSortedPosts } from '../../session/posts'
+import { getSortedPosts, readingMinutes, seriesOf } from '../../session/posts'
 import { fmtLongDate } from '../../session/date'
 import { toc } from '../../session/toc'
 
@@ -12,19 +12,19 @@ export async function getStaticPaths() {
   const postEntries = await getSortedPosts()
   return postEntries.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: { entry, series: seriesOf(entry, postEntries) },
   }))
 }
 
 interface Props {
   entry: CollectionEntry<'blog'>
+  series: CollectionEntry<'blog'>[]
 }
 
-const { entry } = Astro.props
+const { entry, series } = Astro.props
 const post: BlogSchema = entry.data
 const { Content, headings } = await entry.render()
-const words = (entry.body ?? '').split(/\s+/).filter(Boolean).length
-const minutes = Math.max(1, Math.ceil(words / 200)) // ~200 words per minute
+const minutes = readingMinutes(entry)
 const fecha = fmtLongDate(post.publishDate)
 const file = `~/blog/${entry.slug}.md`
 ---
@@ -56,6 +56,27 @@ const file = `~/blog/${entry.slug}.md`
       pager={{ href: '/blog', label: '← blog', info: `${minutes} min de lectura` }}
     >
       <Content />
+      {
+        post.series && (
+          <nav slot="after" class="toc series" aria-label={`Serie ${post.series.name}`}>
+            <p class="toc-title">
+              serie {post.series.name}, parte {post.series.part} de {series.length}
+            </p>
+            <ol>
+              {series.map((part, i) => (
+                <li>
+                  <span class="branch">{i === series.length - 1 ? '└── ' : '├── '}</span>
+                  {part.id === entry.id ? (
+                    <span aria-current="page">{part.data.title} (estás aquí)</span>
+                  ) : (
+                    <a href={`/blog/${part.slug}`}>{part.data.title}</a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
       <script
         slot="after"
         src="https://giscus.app/client.js"

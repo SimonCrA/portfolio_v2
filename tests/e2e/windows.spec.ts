@@ -8,7 +8,7 @@ const WINDOWS = [
 ]
 
 test.describe('blog window', () => {
-  test('lists every Post newest first, linking to it with its tags', async ({ page }) => {
+  test('lists every Post newest first, linking to it with its tags and reading time', async ({ page }) => {
     await page.goto('/blog')
     const rows = page.locator('[data-list] a')
     await expect(rows).toHaveCount(posts.length)
@@ -17,9 +17,9 @@ test.describe('blog window', () => {
     expect([...hrefs].sort()).toEqual(posts.map((p) => `/blog/${p.slug}`).sort())
     const dates = hrefs.map((h) => posts.find((p) => `/blog/${p.slug}` === h)!.date)
     expect(dates).toEqual([...dates].sort((a, b) => b - a))
-    for (const row of await page.locator('[data-list] li').all()) {
+    for (const row of await page.locator('[data-list] li[data-search]').all()) {
       await expect(row.getByText(/#\S+/).first()).toBeVisible()
-      await expect(row.getByText('post', { exact: true })).toBeVisible()
+      await expect(row.locator('.read')).toHaveText(/^\d+ min$/)
       await expect(row).toHaveAttribute('data-search', /\S/)
     }
     await expect(page.getByRole('region', { name: 'blog' }).getByText('ls -lt blog/')).toBeVisible()
