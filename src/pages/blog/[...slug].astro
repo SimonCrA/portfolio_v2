@@ -6,6 +6,7 @@ import SessionLayout from '../../layouts/SessionLayout.astro'
 import Reader from '../../components/session/Reader.astro'
 import { getSortedPosts } from '../../session/posts'
 import { fmtLongDate } from '../../session/date'
+import { toc } from '../../session/toc'
 
 export async function getStaticPaths() {
   const postEntries = await getSortedPosts()
@@ -21,7 +22,7 @@ interface Props {
 
 const { entry } = Astro.props
 const post: BlogSchema = entry.data
-const { Content } = await entry.render()
+const { Content, headings } = await entry.render()
 const words = (entry.body ?? '').split(/\s+/).filter(Boolean).length
 const minutes = Math.max(1, Math.ceil(words / 200)) // ~200 words per minute
 const fecha = fmtLongDate(post.publishDate)
@@ -46,6 +47,7 @@ const file = `~/blog/${entry.slug}.md`
       lead={post.description}
       image={post.image}
       scrollLabel="Texto del post"
+      toc={toc(headings)}
       frontmatter={[
         { key: 'fecha', value: { text: fecha, datetime: post.publishDate.toISOString() } },
         { key: 'lectura', value: `${minutes} min` },
